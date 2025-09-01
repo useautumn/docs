@@ -41,6 +41,18 @@ paths:
 
             const { data } = await autumn.customers.list({ limit: 10, offset: 0 });
 
+        - lang: python
+          source: |
+            import asyncio
+            from autumn import Autumn
+            
+            autumn = Autumn('am_sk_1234567890')
+            
+            async def main():
+                data = await autumn.customers.list(limit=10, offset=0)
+            
+            asyncio.run(main())
+
         - lang: curl
           source: |
             curl 'https://api.useautumn.com/v1/customers?limit=10&offset=0' \
