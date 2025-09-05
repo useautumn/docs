@@ -1031,6 +1031,153 @@ paths:
                 allowed: true
                 balance: { balance: 100, required_balance: 12 }
 
+  /query:
+    post:
+      security:
+        - secretKeyAuth: []
+      description: Query usage data for specific features over a time range
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - customer_id
+                - feature_id
+              properties:
+                customer_id:
+                  type: string
+                  description: Your unique identifier for the customer
+                feature_id:
+                  oneOf:
+                    - type: string
+                    - type: array
+                      items:
+                        type: string
+                  description: Feature ID or array of feature IDs to query usage for
+                range:
+                  type: string
+                  enum: ["24h", "7d", "30d", "90d", "last_cycle"]
+                  description: Time range for the query. Defaults to "30d" if not provided. `last_cycle` returns usage since the last billing cycle.
+      x-code-samples:
+        - lang: typescript
+          label: single feature
+          source: |
+            import { Autumn as autumn } from 'autumn-js'
+
+            const response = await autumn.query({
+              customer_id: 'user_123',
+              feature_id: 'messages',
+              range: '30d'
+            })
+        - lang: typescript
+          label: multiple features
+          source: |
+            import { Autumn as autumn } from 'autumn-js'
+
+            const response = await autumn.query({
+              customer_id: 'user_123',
+              feature_id: ['credits', 'messages'],
+              range: '7d'
+            })
+        - lang: curl
+          label: single feature
+          source: |
+            curl -X POST 'https://api.useautumn.com/v1/query' \
+            -H 'Authorization: Bearer am_sk_1234567890' \
+            -H 'Content-Type: application/json' \
+            -d '{
+              "customer_id": "user_123",
+              "feature_id": "messages",
+              "range": "30d"
+            }'
+        - lang: curl
+          label: multiple features
+          source: |
+            curl -X POST 'https://api.useautumn.com/v1/query' \
+            -H 'Authorization: Bearer am_sk_1234567890' \
+            -H 'Content-Type: application/json' \
+            -d '{
+              "customer_id": "user_123",
+              "feature_id": ["credits", "messages"],
+              "range": "7d"
+            }'
+        - lang: python
+          label: single feature
+          source: |
+            import asyncio
+            from autumn import Autumn
+
+            autumn = Autumn("am_sk_1234567890")
+
+            async def main():
+                response = await autumn.query(
+                    customer_id='user_123',
+                    feature_id='messages',
+                    range='30d'
+                )
+
+            asyncio.run(main())
+        - lang: python
+          label: multiple features
+          source: |
+            import asyncio
+            from autumn import Autumn
+
+            autumn = Autumn("am_sk_1234567890")
+
+            async def main():
+                response = await autumn.query(
+                    customer_id='user_123',
+                    feature_id=['credits', 'messages'],
+                    range='7d'
+                )
+
+            asyncio.run(main())
+      responses:
+        "200":
+          description: Usage data for the specified features
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  list:
+                    type: array
+                    description: List of usage data points for each time period
+                    items:
+                      type: object
+                      properties:
+                        period:
+                          type: integer
+                          description: Unix timestamp in milliseconds representing start of period
+                      additionalProperties:
+                        type: integer
+                        description: Usage amount for each feature_id in the period
+              examples:
+                single feature:
+                  value:
+                    list:
+                      - period: 1672531200000
+                        messages: 45
+                      - period: 1672617600000
+                        messages: 32
+                      - period: 1672704000000
+                        messages: 18
+                multiple features:
+                  value:
+                    list:
+                      - period: 1672531200000
+                        credits: 20
+                        messages: 45
+                      - period: 1672617600000
+                        credits: 15
+                        messages: 32
+                      - period: 1672704000000
+                        credits: 30
+                        messages: 18
+
   /cancel:
     post:
       security:

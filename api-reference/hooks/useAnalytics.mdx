@@ -1,0 +1,205 @@
+---
+title: "useAnalytics"
+description: "Query usage analytics data from your React components"
+---
+
+The `useAnalytics` hook provides access to usage analytics and reporting data. It's the client-side equivalent of the [/query](/api-reference/core/query) endpoint, allowing you to fetch and display usage data directly in your React components.
+
+<Note>
+  To use Autumn's React hooks, you should set up the `autumnHandler` in your
+  backend and the `<AutumnProvider />` in your frontend, as described in the
+  [quickstart guide](/setup#4-mount-the-autumn-handler). This gives the hooks
+  access to the customerId making the request.
+</Note>
+
+## Parameters
+
+<ParamField body="featureId" type="string | string[]" required>
+  The feature ID or array of feature IDs to query usage data for.
+</ParamField>
+
+<ParamField body="range" type="string">
+  Time range for the analytics query. Available options: "24h", "7d", "30d", "90d", "last_cycle". Defaults to "30d" if not provided.
+</ParamField>
+
+## Return Values
+
+### `data`
+
+Array of usage data points for each time period. Each item includes:
+- `period`: Unix timestamp in milliseconds representing the start of the time period
+- Dynamic properties for each queried `featureId` with their usage amounts
+
+### `isLoading`
+
+Boolean indicating whether the analytics data is currently being fetched.
+
+### `error`
+
+Any error that occurred while fetching analytics data.
+
+### `refetch`
+
+Function to manually refetch the analytics data.
+
+{/* ## Examples
+
+### Single Feature Analytics
+
+Query analytics for a single feature:
+
+```jsx
+import { useAnalytics } from "autumn-js/react";
+
+export default function MessageUsageChart() {
+  const { data, isLoading, error } = useAnalytics({
+    featureId: "messages",
+    range: "30d"
+  });
+
+  if (isLoading) {
+    return <div>Loading analytics...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading analytics: {error.message}</div>;
+  }
+
+  return (
+    <div>
+      <h3>Message Usage (Last 30 Days)</h3>
+      {data?.map((point) => (
+        <div key={point.period}>
+          {new Date(point.period).toLocaleDateString()}: {point.messages} messages
+        </div>
+      ))}
+    </div>
+  );
+}
+```
+
+### Multiple Features Analytics
+
+Query analytics for multiple features simultaneously:
+
+```jsx
+import { useAnalytics } from "autumn-js/react";
+
+export default function MultiFeatureChart() {
+  const { data, isLoading, error, refetch } = useAnalytics({
+    featureId: ["credits", "messages"],
+    range: "7d"
+  });
+
+  if (isLoading) {
+    return <div>Loading analytics...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-4">
+        <h3>Usage Analytics (Last 7 Days)</h3>
+        <button onClick={refetch}>Refresh</button>
+      </div>
+      
+      {data?.map((point) => (
+        <div key={point.period} className="border p-2 mb-2">
+          <div className="font-semibold">
+            {new Date(point.period).toLocaleDateString()}
+          </div>
+          <div>Credits: {point.credits || 0}</div>
+          <div>Messages: {point.messages || 0}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+```
+
+### Usage Dashboard with Different Time Ranges
+
+Create a dashboard component with time range selection:
+
+```jsx
+import { useState } from "react";
+import { useAnalytics } from "autumn-js/react";
+
+const TIME_RANGES = [
+  { value: "24h", label: "Last 24 Hours" },
+  { value: "7d", label: "Last 7 Days" },
+  { value: "30d", label: "Last 30 Days" },
+  { value: "90d", label: "Last 90 Days" },
+  { value: "last_cycle", label: "Current Billing Cycle" }
+];
+
+export default function UsageDashboard() {
+  const [selectedRange, setSelectedRange] = useState("30d");
+  
+  const { data, isLoading, error } = useAnalytics({
+    featureId: ["api_calls", "storage", "bandwidth"],
+    range: selectedRange
+  });
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center space-x-4">
+        <h2>Usage Dashboard</h2>
+        <select 
+          value={selectedRange} 
+          onChange={(e) => setSelectedRange(e.target.value)}
+          className="border rounded px-3 py-1"
+        >
+          {TIME_RANGES.map((range) => (
+            <option key={range.value} value={range.value}>
+              {range.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {isLoading && <div>Loading usage data...</div>}
+      {error && <div>Error: {error.message}</div>}
+      
+      {data && (
+        <div className="grid gap-4">
+          {data.map((point) => (
+            <div key={point.period} className="bg-gray-50 p-4 rounded">
+              <h4 className="font-semibold mb-2">
+                {new Date(point.period).toLocaleDateString()}
+              </h4>
+              <div className="grid grid-cols-3 gap-4 text-sm">
+                <div>
+                  <span className="text-gray-600">API Calls:</span>
+                  <span className="ml-2 font-medium">{point.api_calls || 0}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">Storage:</span>
+                  <span className="ml-2 font-medium">{point.storage || 0} GB</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">Bandwidth:</span>
+                  <span className="ml-2 font-medium">{point.bandwidth || 0} GB</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+## Use Cases
+
+The `useAnalytics` hook is ideal for:
+
+- **Customer Dashboards**: Show customers their usage patterns and trends
+- **Admin Panels**: Display usage analytics across different features
+- **Billing Interfaces**: Present usage data for billing transparency
+- **Usage Monitoring**: Track feature adoption and usage patterns
+- **Performance Metrics**: Analyze feature usage for product decisions */}

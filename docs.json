@@ -79,7 +79,8 @@
 						"group": "Hooks",
 						"pages": [
 							"api-reference/hooks/useCustomer",
-							"api-reference/hooks/useEntity"
+							"api-reference/hooks/useEntity",
+							"api-reference/hooks/useAnalytics"
 						]
 					},
 					{
@@ -92,7 +93,9 @@
 							"api-reference/core/checkout",
 							"api-reference/core/attach",
 							"api-reference/core/check",
-							"api-reference/core/track"
+							"api-reference/core/track",
+							"api-reference/core/cancel",
+							"api-reference/core/query"
 						]
 					},
 					{
@@ -119,10 +122,14 @@
 						"group": "Products",
 						"pages": [
 							"api-reference/products/post",
-							"api-reference/products/get",
+							"api-reference/products/get"
+						]
+					},
+					{
+						"group": "Referrals",
+						"pages": [
 							"api-reference/products/referral-code",
-							"api-reference/products/referral-redeem",
-							"api-reference/products/cancel"
+							"api-reference/products/referral-redeem"
 						]
 					}
 				]
