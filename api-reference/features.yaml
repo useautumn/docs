@@ -99,8 +99,8 @@ paths:
             autumn = Autumn('am_sk_1234567890')
 
             async def main():
-                entity = await autumn.create_entity(
-                    'user_123',
+                entity = await autumn.features.create_entity(
+                    customer_id='user_123',
                     feature_id='seats',
                     id='seat_456',
                     name='Brandon Yeo'
@@ -130,6 +130,26 @@ paths:
       responses:
         "200":
           description: ""
+      x-code-samples:
+        - lang: curl
+          source: |
+            curl -X DELETE 'https://api.useautumn.com/v1/customers/user_123/entities/seat_456' \
+            -H 'Authorization: Bearer am_sk_1234567890'
+
+        - lang: python
+          source: |
+            import asyncio
+            from autumn import Autumn
+
+            autumn = Autumn('am_sk_1234567890')
+
+            async def main():
+                await autumn.features.delete_entity(
+                    customer_id='user_123',
+                    entity_id='seat_456'
+                )
+
+            asyncio.run(main())
 
   /usage:
     post:
@@ -206,6 +226,48 @@ paths:
       responses:
         "200":
           description: ""
+      x-code-samples:
+        - lang: curl
+          source: |
+            curl -X POST 'https://api.useautumn.com/v1/customers/user_123/balances' \
+            -H 'Authorization: Bearer am_sk_1234567890' \
+            -H 'Content-Type: application/json' \
+            -d '{
+              "balances": [
+                {
+                  "feature_id": "chat_messages",
+                  "balance": 10
+                },
+                {
+                  "feature_id": "seats",
+                  "balance": 15
+                }
+              ]
+            }'
+
+        - lang: python
+          source: |
+            import asyncio
+            from autumn import Autumn, Balance
+
+            autumn = Autumn('am_sk_1234567890')
+
+            async def main():
+                balances = await autumn.features.set_balances(
+                    customer_id='user_123',
+                    balances=[
+                        Balance(
+                            feature_id='chat_messages',
+                            balance=10
+                        ),
+                        Balance(
+                            feature_id='seats',
+                            balance=15
+                        )
+                    ]
+                )
+
+            asyncio.run(main())
 
 components:
   schemas:
