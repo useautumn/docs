@@ -1,0 +1,31 @@
+---
+title: "List Features"
+openapi: "features GET /features"
+---
+
+<CodeGroup>
+
+```javascript Node.js
+const features = await autumn.features.list();
+```
+
+</CodeGroup>
+
+<ResponseExample>
+```json Response
+{
+  "list": [
+    {
+      "id": "messages",
+      "name": "Messages",
+      "type": "single_use",
+      "display": {
+        "singular": "message",
+        "plural": "messages"
+      },
+      "archived": false
+    }
+  ]
+}
+```
+</ResponseExample>

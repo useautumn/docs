@@ -110,19 +110,27 @@
 						]
 					},
 					{
+						"group": "Entities",
+						"pages": [
+							"api-reference/entities/create-entity",
+							"api-reference/entities/delete-entity"
+						]
+					},
+					{
 						"group": "Features",
 						"pages": [
+							"api-reference/features/get",
+							"api-reference/features/list",
 							"api-reference/features/usage",
-							"api-reference/features/balances",
-							"api-reference/features/create-entity",
-							"api-reference/features/delete-entity"
+							"api-reference/features/balances"
 						]
 					},
 					{
 						"group": "Products",
 						"pages": [
 							"api-reference/products/post",
-							"api-reference/products/get"
+							"api-reference/products/get",
+							"api-reference/products/delete"
 						]
 					},
 					{

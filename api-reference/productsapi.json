@@ -72,7 +72,7 @@
         }
       }
     },
-    "/products/{id}": {
+    "/products/{product_id}": {
       "get": {
         "summary": "Get a product by ID",
         "operationId": "getProduct",
@@ -83,7 +83,7 @@
         ],
         "parameters": [
           {
-            "name": "id",
+            "name": "product_id",
             "in": "path",
             "required": true,
             "schema": {
@@ -118,7 +118,7 @@
         ],
         "parameters": [
           {
-            "name": "id",
+            "name": "product_id",
             "in": "path",
             "required": true,
             "schema": {
@@ -167,6 +167,70 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Product not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a product",
+        "operationId": "deleteProduct",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The product ID of the product to delete"
+          },
+          {
+            "name": "all_versions",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Delete all versions of the product. By default only the latest version is deleted."
+          }
+        ],
+        "x-code-samples": [
+          {
+            "lang": "typescript",
+            "label": "Delete latest version",
+            "source": "// Delete latest version\nawait autumn.products.delete(productId);"
+          },
+          {
+            "lang": "typescript", 
+            "label": "Delete all versions",
+            "source": "// Delete all versions\nawait autumn.products.delete(productId, { all_versions: true });"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Product cannot be deleted because it has been attached to customers"
           },
           "404": {
             "description": "Product not found"

@@ -7,6 +7,56 @@ servers:
 security:
   - bearerAuth: []
 paths:
+  /features:
+    get:
+      summary: List all features
+      operationId: listFeatures
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Features retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  list:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Feature"
+      x-code-samples:
+        - lang: typescript
+          source: |
+            const features = await autumn.features.list();
+  
+  /features/{feature_id}:
+    get:
+      summary: Get a feature by ID
+      operationId: getFeature
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: feature_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The feature ID
+      responses:
+        "200":
+          description: Feature retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Feature"
+        "404":
+          description: Feature not found
+      x-code-samples:
+        - lang: typescript
+          source: |
+            const feature = await autumn.features.get(featureId);
+
   /customers/{customer_id}/entities:
     post:
       summary: Create a new entity
@@ -99,10 +149,10 @@ paths:
             autumn = Autumn('am_sk_1234567890')
 
             async def main():
-                entity = await autumn.create_entity(
-                    'user_123',
-                    feature_id='seats',
+                entity = await autumn.entities.create(
+                    customer_id='user_123',
                     id='seat_456',
+                    feature_id='seats',
                     name='Brandon Yeo'
                 )
 
@@ -130,6 +180,21 @@ paths:
       responses:
         "200":
           description: ""
+      x-code-samples:
+        - lang: typescript
+          source: |
+            await autumn.entities.delete(customer_id='user_123', entity_id='seat_456');
+        - lang: python
+          source: |
+            import asyncio
+            from autumn import Autumn
+
+            autumn = Autumn('am_sk_1234567890')
+
+            async def main():
+                await autumn.entities.delete(customer_id='user_123', entity_id='seat_456')
+
+            asyncio.run(main())
 
   /usage:
     post:
@@ -209,6 +274,42 @@ paths:
 
 components:
   schemas:
+    Feature:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the feature
+        name:
+          type: string
+          description: The name of the feature
+        type:
+          type: string
+          enum: [boolean, single_use, continuous_use, credit_system]
+          description: The type of feature
+        display:
+          type: object
+          nullable: true
+          properties:
+            singular:
+              type: string
+            plural:
+              type: string
+          description: Display names for the feature
+        credit_schema:
+          type: array
+          nullable: true
+          items:
+            type: object
+            properties:
+              metered_feature_id:
+                type: string
+              credit_cost:
+                type: number
+          description: Credit cost schema for credit system features
+        archived:
+          type: boolean
+          description: Whether the feature is archived
     CreateEntityRequest:
       type: array
       items:
