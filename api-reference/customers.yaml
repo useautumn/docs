@@ -149,6 +149,17 @@ paths:
           schema:
             type: string
           description: Your unique identifier for the customer
+        - name: expand
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum: ["invoices", "rewards", "trials_used", "entities", "referrals", "payment_method"]
+          style: form
+          explode: false
+          description: Array of additional data to include in the customer response. Options include invoices, rewards, trials_used, entities, referrals, payment_method
       x-code-samples:
         - lang: typescript
           source: |
@@ -430,6 +441,11 @@ components:
           description: List of features the customer has access to
           items:
             $ref: "#/components/schemas/CustomerFeature"
+        invoices:
+          type: array
+          description: Invoices for this customer (only included when expand=invoices)
+          items:
+            $ref: "#/components/schemas/Invoice"
     Product:
       type: object
       properties:

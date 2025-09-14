@@ -112,6 +112,7 @@
 					{
 						"group": "Entities",
 						"pages": [
+							"api-reference/entities/get-entity",
 							"api-reference/entities/create-entity",
 							"api-reference/entities/delete-entity"
 						]

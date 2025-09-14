@@ -14,10 +14,9 @@ The `useCustomer` hook provides access to customer data and related operations. 
 
 ## Parameters
 
-<ParamField body="expand" type="string[]">
-  Array of additional data to include in the customer response. Options may
-  include `invoices`, `entities`, `trials_used`, `rewards`, `referral`,
-  `payment_method`.
+<ParamField body="expand" type="CustomerExpandOption[]">
+  Array of additional data to include in the customer response. Options include
+  `invoices`, `rewards`, `trials_used`, `entities`, `referrals`, `payment_method`.
 </ParamField>
 
 ## `customer`
