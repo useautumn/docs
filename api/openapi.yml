@@ -1,0 +1,3290 @@
+openapi: 3.1.0
+info:
+  title: Autumn API
+  version: 1.2.0
+servers:
+  - url: https://api.useautumn.com
+    description: Production server
+security:
+  - secretKey: []
+paths:
+  /products:
+    post:
+      summary: Create Product
+      tags:
+        - products
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductParams'
+      responses:
+        '200':
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+      x-codeSamples:
+        - lang: JavaScript
+          source: |-
+            import Autumn from 'autumn-typescript';
+
+            const client = new Autumn({
+              secretKey: 'My Secret Key',
+            });
+
+            const product = await client.products.create({ id: 'id', name: 'name' });
+
+            console.log(product.id);
+    patch:
+      summary: Update Product
+      tags:
+        - products
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProductParams'
+      responses:
+        '200':
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+      x-codeSamples:
+        - lang: JavaScript
+          source: |-
+            import Autumn from 'autumn-typescript';
+
+            const client = new Autumn({
+              secretKey: 'My Secret Key',
+            });
+
+            const product = await client.products.update();
+
+            console.log(product.id);
+  /core/attach:
+    post:
+      summary: Attach Product
+      tags:
+        - core
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customer_id:
+                  description: ID of the customer to attach the product to
+                  type: string
+                customer_data:
+                  description: Customer data if using attach to auto create customer
+                  anyOf:
+                    - {}
+                    - type: 'null'
+                entity_id:
+                  anyOf:
+                    - type: string
+                    - type: 'null'
+                entity_data:
+                  anyOf:
+                    - {}
+                    - type: 'null'
+                product_id:
+                  anyOf:
+                    - type: string
+                    - type: 'null'
+                product_ids:
+                  anyOf:
+                    - minItems: 1
+                      type: array
+                      items:
+                        type: string
+                    - type: 'null'
+                options:
+                  anyOf:
+                    - type: array
+                      items:
+                        type: object
+                        properties:
+                          feature_id:
+                            type: string
+                          quantity:
+                            type: number
+                          upcoming_quantity:
+                            anyOf:
+                              - type: number
+                              - type: 'null'
+                          adjustable_quantity:
+                            anyOf:
+                              - type: boolean
+                              - type: 'null'
+                          internal_feature_id:
+                            anyOf:
+                              - type: string
+                              - type: 'null'
+                        required:
+                          - feature_id
+                          - quantity
+                    - type: 'null'
+                free_trial:
+                  type: boolean
+                success_url:
+                  type: string
+                force_checkout:
+                  type: boolean
+                checkout_session_params: {}
+                reward:
+                  anyOf:
+                    - type: string
+                    - type: array
+                      items:
+                        type: string
+                invoice:
+                  type: boolean
+                skip_checkout:
+                  type: boolean
+                setup_payment:
+                  type: boolean
+              required:
+                - customer_id
+                - free_trial
+      responses:
+        '200':
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  customer_id:
+                    type: string
+                  product_ids:
+                    type: array
+                    items:
+                      type: string
+                  code:
+                    type: string
+                  message:
+                    type: string
+                  checkout_url:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  invoice:
+                    anyOf:
+                      - {}
+                      - type: 'null'
+                required:
+                  - customer_id
+                  - product_ids
+                  - code
+                  - message
+                additionalProperties: false
+      x-codeSamples:
+        - lang: JavaScript
+          source: |-
+            import Autumn from 'autumn-typescript';
+
+            const client = new Autumn({
+              secretKey: 'My Secret Key',
+            });
+
+            const response = await client.core.attach({ customer_id: 'customer_id', free_trial: true });
+
+            console.log(response.customer_id);
+  /core/checkout:
+    post:
+      summary: Checkout
+      tags:
+        - core
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customer_id:
+                  description: ID of the customer to attach the product to
+                  type: string
+                customer_data:
+                  description: Customer data if using attach to auto create customer
+                  anyOf:
+                    - {}
+                    - type: 'null'
+                entity_id:
+                  anyOf:
+                    - type: string
+                    - type: 'null'
+                entity_data:
+                  anyOf:
+                    - {}
+                    - type: 'null'
+                product_id:
+                  anyOf:
+                    - type: string
+                    - type: 'null'
+                product_ids:
+                  anyOf:
+                    - minItems: 1
+                      type: array
+                      items:
+                        type: string
+                    - type: 'null'
+                options:
+                  anyOf:
+                    - type: array
+                      items:
+                        type: object
+                        properties:
+                          feature_id:
+                            type: string
+                          quantity:
+                            type: number
+                          upcoming_quantity:
+                            anyOf:
+                              - type: number
+                              - type: 'null'
+                          adjustable_quantity:
+                            anyOf:
+                              - type: boolean
+                              - type: 'null'
+                          internal_feature_id:
+                            anyOf:
+                              - type: string
+                              - type: 'null'
+                        required:
+                          - feature_id
+                          - quantity
+                    - type: 'null'
+                free_trial:
+                  type: boolean
+                success_url:
+                  type: string
+                force_checkout:
+                  type: boolean
+                checkout_session_params: {}
+                reward:
+                  anyOf:
+                    - type: string
+                    - type: array
+                      items:
+                        type: string
+                invoice:
+                  type: boolean
+                skip_checkout:
+                  type: boolean
+                setup_payment:
+                  type: boolean
+              required:
+                - customer_id
+                - free_trial
+      responses:
+        '200':
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  customer_id:
+                    type: string
+                  lines:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        description:
+                          type: string
+                        amount:
+                          type: number
+                        item:
+                          anyOf:
+                            - $ref: '#/components/schemas/ProductItem'
+                            - type: 'null'
+                      required:
+                        - description
+                        - amount
+                      additionalProperties: false
+                  product:
+                    anyOf:
+                      - $ref: '#/components/schemas/Product'
+                      - type: 'null'
+                  current_product:
+                    anyOf:
+                      - $ref: '#/components/schemas/Product'
+                      - type: 'null'
+                  options:
+                    anyOf:
+                      - type: array
+                        items:
+                          type: object
+                          properties:
+                            feature_id:
+                              type: string
+                            quantity:
+                              type: number
+                            upcoming_quantity:
+                              anyOf:
+                                - type: number
+                                - type: 'null'
+                            adjustable_quantity:
+                              anyOf:
+                                - type: boolean
+                                - type: 'null'
+                            internal_feature_id:
+                              anyOf:
+                                - type: string
+                                - type: 'null'
+                          required:
+                            - feature_id
+                            - quantity
+                          additionalProperties: false
+                      - type: 'null'
+                  total:
+                    anyOf:
+                      - type: number
+                      - type: 'null'
+                  currency:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  has_prorations:
+                    anyOf:
+                      - type: boolean
+                      - type: 'null'
+                  next_cycle:
+                    anyOf:
+                      - type: object
+                        properties:
+                          starts_at:
+                            anyOf:
+                              - type: number
+                              - type: 'null'
+                          total:
+                            anyOf:
+                              - type: number
+                              - type: 'null'
+                        additionalProperties: false
+                      - type: 'null'
+                required:
+                  - customer_id
+                  - lines
+                additionalProperties: false
+      x-codeSamples:
+        - lang: JavaScript
+          source: |-
+            import Autumn from 'autumn-typescript';
+
+            const client = new Autumn({
+              secretKey: 'My Secret Key',
+            });
+
+            const response = await client.core.checkout({ customer_id: 'customer_id', free_trial: true });
+
+            console.log(response.customer_id);
+  /core/cancel:
+    post:
+      summary: Cancel Product
+      tags:
+        - core
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CancelBody'
+      responses:
+        '200':
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CancelResult'
+      x-codeSamples:
+        - lang: JavaScript
+          source: |-
+            import Autumn from 'autumn-typescript';
+
+            const client = new Autumn({
+              secretKey: 'My Secret Key',
+            });
+
+            const response = await client.core.cancel({ customer_id: 'cus_123', product_id: 'pro_plan' });
+
+            console.log(response.customer_id);
+  /core/track:
+    post:
+      summary: Track Event
+      tags:
+        - core
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrackParams'
+      responses:
+        '200':
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackResult'
+      x-codeSamples:
+        - lang: JavaScript
+          source: |-
+            import Autumn from 'autumn-typescript';
+
+            const client = new Autumn({
+              secretKey: 'My Secret Key',
+            });
+
+            const response = await client.core.track({ customer_id: 'cus_123' });
+
+            console.log(response.id);
+  /core/query:
+    post:
+      summary: Query Analytics
+      tags:
+        - core
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryParams'
+      responses:
+        '200':
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+      x-codeSamples:
+        - lang: JavaScript
+          source: |-
+            import Autumn from 'autumn-typescript';
+
+            const client = new Autumn({
+              secretKey: 'My Secret Key',
+            });
+
+            const response = await client.core.query({ customer_id: 'cus_123', feature_id: 'api_calls' });
+
+            console.log(response.list);
+  /features:
+    get:
+      summary: List Features
+      tags:
+        - features
+      parameters:
+        - in: query
+          name: include_archived
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeatureListResponse'
+      x-codeSamples:
+        - lang: JavaScript
+          source: |-
+            import Autumn from 'autumn-typescript';
+
+            const client = new Autumn({
+              secretKey: 'My Secret Key',
+            });
+
+            const features = await client.features.list();
+
+            console.log(features.list);
+    post:
+      summary: Create Feature
+      tags:
+        - features
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFeatureParams'
+      responses:
+        '200':
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feature'
+      x-codeSamples:
+        - lang: JavaScript
+          source: |-
+            import Autumn from 'autumn-typescript';
+
+            const client = new Autumn({
+              secretKey: 'My Secret Key',
+            });
+
+            const feature = await client.features.create({ id: 'feature_123', type: 'single_use' });
+
+            console.log(feature.id);
+  /features/{featureId}:
+    get:
+      summary: Get Feature
+      tags:
+        - features
+      parameters:
+        - in: path
+          name: featureId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feature'
+      x-codeSamples:
+        - lang: JavaScript
+          source: |-
+            import Autumn from 'autumn-typescript';
+
+            const client = new Autumn({
+              secretKey: 'My Secret Key',
+            });
+
+            const feature = await client.features.get('featureId');
+
+            console.log(feature.id);
+    post:
+      summary: Update Feature
+      tags:
+        - features
+      parameters:
+        - in: path
+          name: featureId
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateFeatureParams'
+      responses:
+        '200':
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feature'
+      x-codeSamples:
+        - lang: JavaScript
+          source: |-
+            import Autumn from 'autumn-typescript';
+
+            const client = new Autumn({
+              secretKey: 'My Secret Key',
+            });
+
+            const feature = await client.features.update('featureId');
+
+            console.log(feature.id);
+    delete:
+      summary: Delete Feature
+      tags:
+        - features
+      parameters:
+        - in: path
+          name: featureId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+      x-codeSamples:
+        - lang: JavaScript
+          source: |-
+            import Autumn from 'autumn-typescript';
+
+            const client = new Autumn({
+              secretKey: 'My Secret Key',
+            });
+
+            const feature = await client.features.delete('featureId');
+
+            console.log(feature.success);
+  /customers:
+    get:
+      summary: List Customers
+      tags:
+        - customers
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 10
+            maximum: 100
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 9007199254740991
+      responses:
+        '200':
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListCustomersResponse'
+      x-codeSamples:
+        - lang: JavaScript
+          source: |-
+            import Autumn from 'autumn-typescript';
+
+            const client = new Autumn({
+              secretKey: 'My Secret Key',
+            });
+
+            const customers = await client.customers.list();
+
+            console.log(customers.limit);
+    post:
+      summary: Create Customer
+      tags:
+        - customers
+      parameters:
+        - in: query
+          name: expand
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCustomerParams'
+      responses:
+        '200':
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+      x-codeSamples:
+        - lang: JavaScript
+          source: |-
+            import Autumn from 'autumn-typescript';
+
+            const client = new Autumn({
+              secretKey: 'My Secret Key',
+            });
+
+            const customer = await client.customers.create();
+
+            console.log(customer.id);
+  /customers/{customer_id}:
+    get:
+      summary: Get Customer
+      tags:
+        - customers
+      parameters:
+        - in: path
+          name: customer_id
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: expand
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+      x-codeSamples:
+        - lang: JavaScript
+          source: |-
+            import Autumn from 'autumn-typescript';
+
+            const client = new Autumn({
+              secretKey: 'My Secret Key',
+            });
+
+            const customer = await client.customers.get('customer_id');
+
+            console.log(customer.id);
+    post:
+      summary: Update Customer
+      tags:
+        - customers
+      parameters:
+        - in: path
+          name: customer_id
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: expand
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCustomerParams'
+      responses:
+        '200':
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+      x-codeSamples:
+        - lang: JavaScript
+          source: |-
+            import Autumn from 'autumn-typescript';
+
+            const client = new Autumn({
+              secretKey: 'My Secret Key',
+            });
+
+            const customer = await client.customers.update('customer_id');
+
+            console.log(customer.id);
+    delete:
+      summary: Delete Customer
+      tags:
+        - customers
+      parameters:
+        - in: path
+          name: customer_id
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+      x-codeSamples:
+        - lang: JavaScript
+          source: |-
+            import Autumn from 'autumn-typescript';
+
+            const client = new Autumn({
+              secretKey: 'My Secret Key',
+            });
+
+            const customer = await client.customers.delete('customer_id');
+
+            console.log(customer.success);
+  /customers/{customer_id}/entities:
+    get:
+      summary: List Entities
+      tags:
+        - entities
+      parameters:
+        - in: path
+          name: customer_id
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: expand
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityListResponse'
+      x-codeSamples:
+        - lang: JavaScript
+          source: |-
+            import Autumn from 'autumn-typescript';
+
+            const client = new Autumn({
+              secretKey: 'My Secret Key',
+            });
+
+            const entities = await client.entities.list('customer_id');
+
+            console.log(entities.data);
+    post:
+      summary: Create Entity
+      tags:
+        - entities
+      parameters:
+        - in: path
+          name: customer_id
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEntityParams'
+      responses:
+        '200':
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entity'
+      x-codeSamples:
+        - lang: JavaScript
+          source: >-
+            import Autumn from 'autumn-typescript';
+
+
+            const client = new Autumn({
+              secretKey: 'My Secret Key',
+            });
+
+
+            const entity = await client.entities.create('customer_id', { id: 'entity_123', feature_id: 'seats'
+            });
+
+
+            console.log(entity.id);
+  /customers/{customer_id}/entities/{entity_id}:
+    get:
+      summary: Get Entity
+      tags:
+        - entities
+      parameters:
+        - in: path
+          name: customer_id
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: entity_id
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: expand
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entity'
+      x-codeSamples:
+        - lang: JavaScript
+          source: |-
+            import Autumn from 'autumn-typescript';
+
+            const client = new Autumn({
+              secretKey: 'My Secret Key',
+            });
+
+            const entity = await client.entities.get('entity_id', { customer_id: 'customer_id' });
+
+            console.log(entity.id);
+    delete:
+      summary: Delete Entity
+      tags:
+        - entities
+      parameters:
+        - in: path
+          name: customer_id
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: entity_id
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+      x-codeSamples:
+        - lang: JavaScript
+          source: |-
+            import Autumn from 'autumn-typescript';
+
+            const client = new Autumn({
+              secretKey: 'My Secret Key',
+            });
+
+            const entity = await client.entities.delete('entity_id', { customer_id: 'customer_id' });
+
+            console.log(entity.success);
+components:
+  schemas:
+    CreateProductParams:
+      description: Create Product
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 1
+          pattern: ^[a-zA-Z0-9_-]+$
+        name:
+          type: string
+        is_add_on:
+          default: false
+          type: boolean
+        is_default:
+          default: false
+          type: boolean
+        version:
+          type: number
+        group:
+          default: ''
+          type: string
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              feature_id:
+                anyOf:
+                  - type: string
+                  - type: 'null'
+              feature_type:
+                anyOf:
+                  - type: string
+                    enum:
+                      - single_use
+                      - continuous_use
+                      - boolean
+                      - static
+                  - type: 'null'
+              included_usage:
+                anyOf:
+                  - anyOf:
+                      - type: number
+                      - type: string
+                        const: inf
+                  - type: 'null'
+              interval:
+                anyOf:
+                  - type: string
+                    enum:
+                      - minute
+                      - hour
+                      - day
+                      - week
+                      - month
+                      - quarter
+                      - semi_annual
+                      - year
+                  - type: 'null'
+              interval_count:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              entity_feature_id:
+                anyOf:
+                  - type: string
+                  - type: 'null'
+              usage_model:
+                anyOf:
+                  - type: string
+                    enum:
+                      - prepaid
+                      - pay_per_use
+                  - type: 'null'
+              price:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              tiers:
+                anyOf:
+                  - type: array
+                    items:
+                      type: object
+                      properties:
+                        to:
+                          anyOf:
+                            - type: number
+                            - type: string
+                              const: inf
+                        amount:
+                          type: number
+                      required:
+                        - to
+                        - amount
+                  - type: 'null'
+              billing_units:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              usage_limit:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              reset_usage_when_enabled:
+                anyOf:
+                  - type: boolean
+                  - type: 'null'
+              config:
+                anyOf:
+                  - type: object
+                    properties:
+                      on_increase:
+                        anyOf:
+                          - type: string
+                            enum:
+                              - bill_immediately
+                              - prorate_immediately
+                              - prorate_next_cycle
+                              - bill_next_cycle
+                          - type: 'null'
+                      on_decrease:
+                        anyOf:
+                          - type: string
+                            enum:
+                              - prorate
+                              - prorate_immediately
+                              - prorate_next_cycle
+                              - none
+                              - no_prorations
+                          - type: 'null'
+                      rollover:
+                        anyOf:
+                          - type: object
+                            properties:
+                              max:
+                                anyOf:
+                                  - type: number
+                                  - type: 'null'
+                              duration:
+                                default: month
+                                type: string
+                                enum:
+                                  - month
+                                  - forever
+                              length:
+                                type: number
+                            required:
+                              - max
+                              - length
+                          - type: 'null'
+                  - type: 'null'
+              created_at:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              entitlement_id:
+                anyOf:
+                  - type: string
+                  - type: 'null'
+              price_id:
+                anyOf:
+                  - type: string
+                  - type: 'null'
+              price_config:
+                anyOf:
+                  - {}
+                  - type: 'null'
+        free_trial:
+          anyOf:
+            - type: object
+              properties:
+                length:
+                  anyOf:
+                    - type: string
+                    - type: number
+                unique_fingerprint:
+                  default: false
+                  type: boolean
+                duration:
+                  default: day
+                  type: string
+                  enum:
+                    - day
+                    - month
+                    - year
+                card_required:
+                  default: true
+                  type: boolean
+              required:
+                - length
+            - type: 'null'
+      required:
+        - id
+        - name
+    UpdateProductParams:
+      description: Update Product
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 1
+          pattern: ^[a-zA-Z0-9_-]+$
+        name:
+          type: string
+        is_add_on:
+          type: boolean
+        is_default:
+          type: boolean
+        version:
+          type: number
+        group:
+          type: string
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              feature_id:
+                anyOf:
+                  - type: string
+                  - type: 'null'
+              feature_type:
+                anyOf:
+                  - type: string
+                    enum:
+                      - single_use
+                      - continuous_use
+                      - boolean
+                      - static
+                  - type: 'null'
+              included_usage:
+                anyOf:
+                  - anyOf:
+                      - type: number
+                      - type: string
+                        const: inf
+                  - type: 'null'
+              interval:
+                anyOf:
+                  - type: string
+                    enum:
+                      - minute
+                      - hour
+                      - day
+                      - week
+                      - month
+                      - quarter
+                      - semi_annual
+                      - year
+                  - type: 'null'
+              interval_count:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              entity_feature_id:
+                anyOf:
+                  - type: string
+                  - type: 'null'
+              usage_model:
+                anyOf:
+                  - type: string
+                    enum:
+                      - prepaid
+                      - pay_per_use
+                  - type: 'null'
+              price:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              tiers:
+                anyOf:
+                  - type: array
+                    items:
+                      type: object
+                      properties:
+                        to:
+                          anyOf:
+                            - type: number
+                            - type: string
+                              const: inf
+                        amount:
+                          type: number
+                      required:
+                        - to
+                        - amount
+                  - type: 'null'
+              billing_units:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              usage_limit:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              reset_usage_when_enabled:
+                anyOf:
+                  - type: boolean
+                  - type: 'null'
+              config:
+                anyOf:
+                  - type: object
+                    properties:
+                      on_increase:
+                        anyOf:
+                          - type: string
+                            enum:
+                              - bill_immediately
+                              - prorate_immediately
+                              - prorate_next_cycle
+                              - bill_next_cycle
+                          - type: 'null'
+                      on_decrease:
+                        anyOf:
+                          - type: string
+                            enum:
+                              - prorate
+                              - prorate_immediately
+                              - prorate_next_cycle
+                              - none
+                              - no_prorations
+                          - type: 'null'
+                      rollover:
+                        anyOf:
+                          - type: object
+                            properties:
+                              max:
+                                anyOf:
+                                  - type: number
+                                  - type: 'null'
+                              duration:
+                                default: month
+                                type: string
+                                enum:
+                                  - month
+                                  - forever
+                              length:
+                                type: number
+                            required:
+                              - max
+                              - length
+                          - type: 'null'
+                  - type: 'null'
+              created_at:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              entitlement_id:
+                anyOf:
+                  - type: string
+                  - type: 'null'
+              price_id:
+                anyOf:
+                  - type: string
+                  - type: 'null'
+              price_config:
+                anyOf:
+                  - {}
+                  - type: 'null'
+        free_trial:
+          anyOf:
+            - type: object
+              properties:
+                length:
+                  anyOf:
+                    - type: string
+                    - type: number
+                unique_fingerprint:
+                  default: false
+                  type: boolean
+                duration:
+                  default: day
+                  type: string
+                  enum:
+                    - day
+                    - month
+                    - year
+                card_required:
+                  default: true
+                  type: boolean
+              required:
+                - length
+            - type: 'null'
+        archived:
+          type: boolean
+    CancelBody:
+      description: Parameters for canceling a customer's product
+      type: object
+      properties:
+        customer_id:
+          description: The ID of the customer
+          example: cus_123
+          type: string
+        product_id:
+          description: The ID of the product to cancel
+          example: pro_plan
+          type: string
+        entity_id:
+          description: The ID of the entity (optional)
+          example: entity_123
+          anyOf:
+            - type: string
+            - type: 'null'
+        cancel_immediately:
+          description: Whether to cancel the product immediately or at period end
+          example: false
+          type: boolean
+        prorate:
+          description: Whether to prorate the cancellation (defaults to true if not specified)
+          example: true
+          anyOf:
+            - type: boolean
+            - type: 'null'
+      required:
+        - customer_id
+        - product_id
+    TrackParams:
+      description: Parameters for tracking an event
+      type: object
+      properties:
+        customer_id:
+          description: The ID of the customer
+          example: cus_123
+          type: string
+          minLength: 1
+        customer_data:
+          description: Customer data to create or update the customer if they don't exist
+          example:
+            name: John Doe
+            email: john@example.com
+          anyOf:
+            - {}
+            - type: 'null'
+        event_name:
+          description: The name of the event to track
+          example: api_call
+          type: string
+          minLength: 1
+        feature_id:
+          description: The ID of the feature (alternative to event_name for usage events)
+          example: api_calls
+          type: string
+        properties:
+          description: Additional properties for the event
+          example:
+            endpoint: /api/users
+          anyOf:
+            - type: object
+              propertyNames:
+                type: string
+              additionalProperties: {}
+            - type: 'null'
+        timestamp:
+          description: Unix timestamp in milliseconds when the event occurred
+          example: 1717000000000
+          anyOf:
+            - type: number
+            - type: 'null'
+        idempotency_key:
+          description: Idempotency key to prevent duplicate events
+          example: evt_abc123
+          anyOf:
+            - type: string
+            - type: 'null'
+        value:
+          description: The value/count of the event
+          example: 1
+          anyOf:
+            - type: number
+            - type: 'null'
+        set_usage:
+          description: Whether to set the usage to this value instead of increment
+          example: false
+          anyOf:
+            - type: boolean
+            - type: 'null'
+        entity_id:
+          description: The ID of the entity this event is associated with
+          example: entity_123
+          anyOf:
+            - type: string
+            - type: 'null'
+        entity_data:
+          description: Data for creating the entity if it doesn't exist
+          example:
+            name: Team Alpha
+          anyOf:
+            - {}
+            - type: 'null'
+      required:
+        - customer_id
+    QueryParams:
+      description: Parameters for querying analytics data
+      type: object
+      properties:
+        customer_id:
+          description: The ID of the customer to query analytics for
+          example: cus_123
+          type: string
+        feature_id:
+          description: The feature ID(s) to query
+          example: api_calls
+          anyOf:
+            - type: string
+            - type: array
+              items:
+                type: string
+        range:
+          description: Time range for the query (defaults to last_cycle if not provided)
+          example: 7d
+          anyOf:
+            - type: string
+              enum:
+                - 24h
+                - 7d
+                - 30d
+                - 90d
+                - last_cycle
+            - type: 'null'
+      required:
+        - customer_id
+        - feature_id
+    CreateFeatureParams:
+      description: Parameters for creating a feature
+      type: object
+      properties:
+        id:
+          description: The ID of the feature
+          example: feature_123
+          type: string
+        name:
+          description: The name of the feature
+          example: API Calls
+          anyOf:
+            - type: string
+            - type: 'null'
+        type:
+          description: The type of the feature
+          example: single_use
+          type: string
+          enum:
+            - boolean
+            - single_use
+            - continuous_use
+            - credit_system
+        display:
+          description: Display names for the feature
+          example:
+            singular: API Call
+            plural: API Calls
+          anyOf:
+            - type: object
+              properties:
+                singular:
+                  type: string
+                plural:
+                  type: string
+              required:
+                - singular
+                - plural
+            - type: 'null'
+        credit_schema:
+          description: Credit schema for credit system features (only applicable when type is credit_system)
+          example:
+            - metered_feature_id: api_calls
+              credit_cost: 10
+          anyOf:
+            - type: array
+              items:
+                type: object
+                properties:
+                  metered_feature_id:
+                    type: string
+                  credit_cost:
+                    type: number
+                required:
+                  - metered_feature_id
+                  - credit_cost
+            - type: 'null'
+      required:
+        - id
+        - type
+    UpdateFeatureParams:
+      description: Parameters for updating a feature
+      type: object
+      properties:
+        id:
+          description: The ID of the feature
+          example: feature_123
+          type: string
+        name:
+          description: The name of the feature
+          example: API Calls
+          anyOf:
+            - type: string
+            - type: 'null'
+        type:
+          description: The type of the feature
+          example: single_use
+          type: string
+          enum:
+            - boolean
+            - single_use
+            - continuous_use
+            - credit_system
+        display:
+          description: Display names for the feature
+          example:
+            singular: API Call
+            plural: API Calls
+          anyOf:
+            - type: object
+              properties:
+                singular:
+                  type: string
+                plural:
+                  type: string
+              required:
+                - singular
+                - plural
+            - type: 'null'
+        credit_schema:
+          description: Credit schema for credit system features (only applicable when type is credit_system)
+          example:
+            - metered_feature_id: api_calls
+              credit_cost: 10
+          anyOf:
+            - type: array
+              items:
+                type: object
+                properties:
+                  metered_feature_id:
+                    type: string
+                  credit_cost:
+                    type: number
+                required:
+                  - metered_feature_id
+                  - credit_cost
+            - type: 'null'
+        archived:
+          description: Whether the feature is archived
+          example: false
+          anyOf:
+            - type: boolean
+            - type: 'null'
+    CreateCustomerParams:
+      description: Parameters for creating a customer
+      type: object
+      properties:
+        id:
+          description: Your unique identifier for the customer
+          example: cus_123
+          anyOf:
+            - type: string
+            - type: 'null'
+        name:
+          description: Customer's name
+          example: John Doe
+          anyOf:
+            - type: string
+            - type: 'null'
+        email:
+          description: Customer's email address
+          example: john@example.com
+          anyOf:
+            - anyOf:
+                - type: string
+                  format: email
+                  pattern: >-
+                    ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
+                - type: string
+                  const: ''
+            - type: 'null'
+        fingerprint:
+          description: Unique identifier (eg, serial number) to detect duplicate customers and prevent free trial abuse
+          example: fp_123abc
+          anyOf:
+            - type: string
+            - type: 'null'
+        metadata:
+          description: Additional metadata for the customer
+          example:
+            company: Acme Inc
+          anyOf:
+            - default: {}
+              type: object
+              propertyNames: {}
+              additionalProperties: {}
+            - type: 'null'
+        stripe_id:
+          description: Stripe customer ID if you already have one
+          example: cus_stripe123
+          anyOf:
+            - type: string
+            - type: 'null'
+        entity_id:
+          description: Entity ID to associate with the customer
+          example: entity_123
+          anyOf:
+            - type: string
+            - type: 'null'
+        entity_data:
+          description: Data for creating an entity
+          example:
+            name: Team Alpha
+            feature_id: seats
+          anyOf:
+            - {}
+            - type: 'null'
+    UpdateCustomerParams:
+      description: Parameters for updating a customer
+      type: object
+      properties:
+        id:
+          description: New unique identifier for the customer (cannot be changed to null)
+          example: cus_123
+          anyOf:
+            - type: string
+            - type: 'null'
+        name:
+          description: Customer's name
+          example: John Doe
+          anyOf:
+            - type: string
+            - type: 'null'
+        email:
+          description: Customer's email address
+          example: john@example.com
+          anyOf:
+            - anyOf:
+                - type: string
+                  format: email
+                  pattern: >-
+                    ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
+                - type: string
+                  const: ''
+            - type: 'null'
+        fingerprint:
+          description: Unique identifier (eg, serial number) to detect duplicate customers
+          example: fp_123abc
+          anyOf:
+            - type: string
+            - type: 'null'
+        metadata:
+          description: Additional metadata for the customer (set individual keys to null to delete them)
+          example:
+            company: Acme Inc
+          anyOf:
+            - type: object
+              propertyNames: {}
+              additionalProperties: {}
+            - type: 'null'
+        stripe_id:
+          description: Stripe customer ID
+          example: cus_stripe123
+          anyOf:
+            - type: string
+            - type: 'null'
+    CreateEntityParams:
+      description: Parameters for creating an entity
+      type: object
+      properties:
+        id:
+          description: The ID of the entity
+          example: entity_123
+          type: string
+        name:
+          description: The name of the entity
+          example: Team Alpha
+          anyOf:
+            - type: string
+            - type: 'null'
+        feature_id:
+          description: The ID of the feature this entity is associated with
+          example: seats
+          type: string
+      required:
+        - id
+        - feature_id
+    Product:
+      description: A product
+      type: object
+      properties:
+        id:
+          description: The ID of the product you set when creating the product
+          example: pro_plan
+          type: string
+        name:
+          description: The name of the product
+          example: Pro Plan
+          type: string
+        group:
+          description: The group of the product
+          example: product_set_1
+          anyOf:
+            - type: string
+            - type: 'null'
+        env:
+          description: The environment of the product
+          example: production
+          type: string
+          enum:
+            - sandbox
+            - live
+        is_add_on:
+          description: Whether the product is an add-on and can be purchased alongside other products
+          example: true
+          type: boolean
+        is_default:
+          description: Whether the product is the default product
+          example: true
+          type: boolean
+        archived:
+          description: Whether this product has been archived and is no longer available
+          example: false
+          type: boolean
+        version:
+          description: The version of the product
+          example: 1
+          type: number
+        created_at:
+          description: The timestamp of when the product was created in milliseconds since epoch
+          example: 1759247877000
+          type: number
+        items:
+          description: Array of product items that define the features and pricing
+          example:
+            - feature_id: <string>
+              feature_type: single_use
+              included_usage: 123
+              interval: <string>
+              usage_model: prepaid
+              price: 123
+              billing_units: 123
+              entity_feature_id: <string>
+              reset_usage_when_enabled: true
+              tiers:
+                - to: 123
+                  amount: 123
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductItem'
+        free_trial:
+          description: Free trial configuration for this product, if available
+          example:
+            duration: <string>
+            length: 123
+            unique_fingerprint: true
+          anyOf:
+            - type: object
+              properties:
+                duration:
+                  type: string
+                  enum:
+                    - day
+                    - month
+                    - year
+                length:
+                  type: number
+                unique_fingerprint:
+                  type: boolean
+                card_required:
+                  type: boolean
+                trial_available:
+                  default: true
+                  anyOf:
+                    - type: boolean
+                    - type: 'null'
+              required:
+                - duration
+                - length
+                - unique_fingerprint
+                - card_required
+                - trial_available
+              additionalProperties: false
+            - type: 'null'
+        base_variant_id:
+          description: ID of the base variant this product is derived from
+          example: var_1234567890abcdef
+          anyOf:
+            - type: string
+            - type: 'null'
+        scenario:
+          description: Scenario context for when this product is used in attach flows
+          example: upgrade
+          type: string
+          enum:
+            - scheduled
+            - active
+            - new
+            - renew
+            - upgrade
+            - downgrade
+            - cancel
+            - expired
+        properties:
+          description: Additional properties and metadata for the product
+          example:
+            is_free: false
+            is_one_off: false
+            interval_group: monthly
+            has_trial: true
+            updateable: true
+          type: object
+          properties:
+            is_free:
+              description: True if the product has no base price or usage prices
+              example: false
+              type: boolean
+            is_one_off:
+              description: True if the product only contains a one-time price
+              example: false
+              type: boolean
+            interval_group:
+              description: The billing interval group for recurring products (e.g., 'monthly', 'yearly')
+              example: monthly
+              anyOf:
+                - type: string
+                - type: 'null'
+            has_trial:
+              description: True if the product includes a free trial
+              example: true
+              anyOf:
+                - type: boolean
+                - type: 'null'
+            updateable:
+              description: >-
+                True if the product can be updated after creation (only applicable if there are prepaid
+                recurring prices)
+              example: true
+              anyOf:
+                - type: boolean
+                - type: 'null'
+          required:
+            - is_free
+            - is_one_off
+          additionalProperties: false
+      required:
+        - id
+        - name
+        - group
+        - env
+        - is_add_on
+        - is_default
+        - archived
+        - version
+        - created_at
+        - items
+        - free_trial
+        - base_variant_id
+      additionalProperties: false
+    ProductItem:
+      description: A product item that defines a feature
+      example:
+        feature_id: feature_1
+        feature_type: single_use
+        included_usage: 123
+        interval: monthly
+        usage_model: prepaid
+      type: object
+      properties:
+        type:
+          anyOf:
+            - type: string
+              enum:
+                - feature
+                - priced_feature
+                - price
+            - type: 'null'
+        feature_id:
+          anyOf:
+            - type: string
+            - type: 'null'
+        feature_type:
+          anyOf:
+            - type: string
+              enum:
+                - single_use
+                - continuous_use
+                - boolean
+                - static
+            - type: 'null'
+        feature:
+          anyOf:
+            - $ref: '#/components/schemas/Feature'
+            - type: 'null'
+        included_usage:
+          anyOf:
+            - anyOf:
+                - type: number
+                - type: string
+                  const: inf
+            - type: 'null'
+        interval:
+          anyOf:
+            - type: string
+              enum:
+                - minute
+                - hour
+                - day
+                - week
+                - month
+                - quarter
+                - semi_annual
+                - year
+            - type: 'null'
+        interval_count:
+          anyOf:
+            - type: number
+            - type: 'null'
+        price:
+          anyOf:
+            - type: number
+            - type: 'null'
+        tiers:
+          anyOf:
+            - type: array
+              items:
+                type: object
+                properties:
+                  to:
+                    anyOf:
+                      - type: number
+                      - type: string
+                        const: inf
+                  amount:
+                    type: number
+                required:
+                  - to
+                  - amount
+                additionalProperties: false
+            - type: 'null'
+        usage_model:
+          anyOf:
+            - type: string
+              enum:
+                - prepaid
+                - pay_per_use
+            - type: 'null'
+        billing_units:
+          anyOf:
+            - type: number
+            - type: 'null'
+        reset_usage_when_enabled:
+          anyOf:
+            - type: boolean
+            - type: 'null'
+        quantity:
+          anyOf:
+            - type: number
+            - type: 'null'
+        next_cycle_quantity:
+          anyOf:
+            - type: number
+            - type: 'null'
+        entity_feature_id:
+          anyOf:
+            - type: string
+            - type: 'null'
+        display:
+          anyOf:
+            - type: object
+              properties:
+                primary_text:
+                  type: string
+                secondary_text:
+                  anyOf:
+                    - type: string
+                    - type: 'null'
+              required:
+                - primary_text
+              additionalProperties: false
+            - type: 'null'
+      additionalProperties: false
+    Feature:
+      description: Feature object returned by the API
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          anyOf:
+            - type: string
+            - type: 'null'
+        type:
+          type: string
+          enum:
+            - boolean
+            - single_use
+            - continuous_use
+            - credit_system
+        display:
+          anyOf:
+            - type: object
+              properties:
+                singular:
+                  type: string
+                plural:
+                  type: string
+              required:
+                - singular
+                - plural
+              additionalProperties: false
+            - type: 'null'
+        credit_schema:
+          anyOf:
+            - type: array
+              items:
+                type: object
+                properties:
+                  metered_feature_id:
+                    type: string
+                  credit_cost:
+                    type: number
+                required:
+                  - metered_feature_id
+                  - credit_cost
+                additionalProperties: false
+            - type: 'null'
+        archived:
+          anyOf:
+            - type: boolean
+            - type: 'null'
+      required:
+        - id
+        - type
+      additionalProperties: false
+    CancelResult:
+      description: Result of a product cancellation
+      type: object
+      properties:
+        success:
+          description: Whether the cancellation was successful
+          example: true
+          type: boolean
+        customer_id:
+          description: The ID of the customer
+          example: cus_123
+          type: string
+        product_id:
+          description: The ID of the canceled product
+          example: pro_plan
+          type: string
+      required:
+        - success
+        - customer_id
+        - product_id
+      additionalProperties: false
+    TrackResult:
+      description: Result of tracking an event
+      type: object
+      properties:
+        id:
+          description: The ID of the created event
+          example: evt_123
+          type: string
+        code:
+          description: Response code
+          example: event_received
+          type: string
+        customer_id:
+          description: The ID of the customer
+          example: cus_123
+          type: string
+        entity_id:
+          description: The ID of the entity (if provided)
+          example: entity_123
+          type: string
+        event_name:
+          description: The name of the event
+          example: api_call
+          type: string
+        feature_id:
+          description: The ID of the feature (if provided)
+          example: api_calls
+          type: string
+      required:
+        - id
+        - code
+        - customer_id
+      additionalProperties: false
+    QueryResult:
+      description: Result of an analytics query
+      type: object
+      properties:
+        list:
+          description: List of usage data points
+          example:
+            - period: 1717000000000
+              count: 100
+          type: array
+          items: {}
+      required:
+        - list
+      additionalProperties: false
+    FeatureListResponse:
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: '#/components/schemas/Feature'
+      required:
+        - list
+      additionalProperties: false
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+      required:
+        - success
+      additionalProperties: false
+    ListCustomersResponse:
+      description: Response for listing customers
+      type: object
+      properties:
+        list:
+          description: List of customers
+          type: array
+          items: {}
+        total:
+          description: Total number of customers available
+          example: 100
+          type: integer
+          minimum: -9007199254740991
+          maximum: 9007199254740991
+        limit:
+          description: Maximum number of customers returned
+          example: 10
+          type: integer
+          minimum: -9007199254740991
+          maximum: 9007199254740991
+        offset:
+          description: Number of customers skipped before returning results
+          example: 0
+          type: integer
+          minimum: -9007199254740991
+          maximum: 9007199254740991
+      required:
+        - list
+        - total
+        - limit
+        - offset
+      additionalProperties: false
+    Customer:
+      description: Customer object returned by the API
+      type: object
+      properties:
+        autumn_id:
+          anyOf:
+            - type: string
+            - type: 'null'
+        id:
+          description: Your internal ID for the customer
+          example: cus_123
+          anyOf:
+            - type: string
+            - type: 'null'
+        created_at:
+          description: The date and time the customer was created in milliseconds since epoch
+          example: 1717000000
+          type: number
+        name:
+          anyOf:
+            - type: string
+            - type: 'null'
+        email:
+          anyOf:
+            - type: string
+            - type: 'null'
+        fingerprint:
+          anyOf:
+            - type: string
+            - type: 'null'
+        stripe_id:
+          default: null
+          anyOf:
+            - type: string
+            - type: 'null'
+        env:
+          type: string
+          enum:
+            - sandbox
+            - live
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                anyOf:
+                  - type: string
+                  - type: 'null'
+              group:
+                anyOf:
+                  - type: string
+                  - type: 'null'
+              status:
+                type: string
+                enum:
+                  - active
+                  - expired
+                  - scheduled
+              canceled_at:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              started_at:
+                type: number
+              is_default:
+                type: boolean
+              is_add_on:
+                type: boolean
+              version:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              stripe_subscription_ids:
+                anyOf:
+                  - type: array
+                    items:
+                      type: string
+                  - type: 'null'
+              current_period_start:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              current_period_end:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              entity_id:
+                anyOf:
+                  - type: string
+                  - type: 'null'
+              items:
+                anyOf:
+                  - type: array
+                    items:
+                      $ref: '#/components/schemas/ProductItem'
+                  - type: 'null'
+              quantity:
+                type: number
+            required:
+              - id
+              - name
+              - group
+              - status
+              - started_at
+              - is_default
+              - is_add_on
+            additionalProperties: false
+        features:
+          type: object
+          propertyNames:
+            type: string
+          additionalProperties:
+            type: object
+            properties:
+              id:
+                type: string
+              type:
+                type: string
+                enum:
+                  - single_use
+                  - continuous_use
+                  - boolean
+                  - static
+              name:
+                anyOf:
+                  - type: string
+                  - type: 'null'
+              interval:
+                anyOf:
+                  - anyOf:
+                      - type: string
+                        enum:
+                          - lifetime
+                          - minute
+                          - hour
+                          - day
+                          - week
+                          - month
+                          - quarter
+                          - semi_annual
+                          - year
+                      - type: string
+                        const: multiple
+                  - type: 'null'
+              interval_count:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              unlimited:
+                anyOf:
+                  - type: boolean
+                  - type: 'null'
+              balance:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              usage:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              included_usage:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              next_reset_at:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              overage_allowed:
+                anyOf:
+                  - type: boolean
+                  - type: 'null'
+              breakdown:
+                anyOf:
+                  - type: array
+                    items:
+                      type: object
+                      properties:
+                        interval:
+                          type: string
+                          enum:
+                            - lifetime
+                            - minute
+                            - hour
+                            - day
+                            - week
+                            - month
+                            - quarter
+                            - semi_annual
+                            - year
+                        interval_count:
+                          anyOf:
+                            - type: number
+                            - type: 'null'
+                        balance:
+                          anyOf:
+                            - type: number
+                            - type: 'null'
+                        usage:
+                          anyOf:
+                            - type: number
+                            - type: 'null'
+                        included_usage:
+                          anyOf:
+                            - type: number
+                            - type: 'null'
+                        next_reset_at:
+                          anyOf:
+                            - type: number
+                            - type: 'null'
+                      required:
+                        - interval
+                      additionalProperties: false
+                  - type: 'null'
+              credit_schema:
+                anyOf:
+                  - type: array
+                    items:
+                      type: object
+                      properties:
+                        feature_id:
+                          type: string
+                        credit_amount:
+                          type: number
+                      required:
+                        - feature_id
+                        - credit_amount
+                      additionalProperties: false
+                  - type: 'null'
+              usage_limit:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              rollovers:
+                anyOf:
+                  - type: array
+                    items:
+                      type: object
+                      properties:
+                        balance:
+                          type: number
+                        expires_at:
+                          type: number
+                      required:
+                        - balance
+                        - expires_at
+                      additionalProperties: false
+                  - type: 'null'
+            required:
+              - id
+              - type
+            additionalProperties: false
+        invoices:
+          type: array
+          items:
+            type: object
+            properties:
+              product_ids:
+                type: array
+                items:
+                  type: string
+              stripe_id:
+                type: string
+              status:
+                type: string
+              total:
+                type: number
+              currency:
+                type: string
+              created_at:
+                type: number
+              hosted_invoice_url:
+                anyOf:
+                  - type: string
+                  - type: 'null'
+            required:
+              - product_ids
+              - stripe_id
+              - status
+              - total
+              - currency
+              - created_at
+            additionalProperties: false
+        trials_used:
+          type: array
+          items:
+            type: object
+            properties:
+              product_id:
+                type: string
+              customer_id:
+                type: string
+              fingerprint:
+                anyOf:
+                  - type: string
+                  - type: 'null'
+            required:
+              - product_id
+              - customer_id
+            additionalProperties: false
+        rewards:
+          anyOf:
+            - type: object
+              properties:
+                discounts:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                      type:
+                        type: string
+                        enum:
+                          - percentage_discount
+                          - fixed_discount
+                          - free_product
+                          - invoice_credits
+                      discount_value:
+                        type: number
+                      duration_type:
+                        type: string
+                        enum:
+                          - one_off
+                          - months
+                          - forever
+                      duration_value:
+                        anyOf:
+                          - type: number
+                          - type: 'null'
+                      currency:
+                        anyOf:
+                          - type: string
+                          - type: 'null'
+                      start:
+                        anyOf:
+                          - type: number
+                          - type: 'null'
+                      end:
+                        anyOf:
+                          - type: number
+                          - type: 'null'
+                      subscription_id:
+                        anyOf:
+                          - type: string
+                          - type: 'null'
+                      total_discount_amount:
+                        anyOf:
+                          - type: number
+                          - type: 'null'
+                    required:
+                      - id
+                      - name
+                      - type
+                      - discount_value
+                      - duration_type
+                    additionalProperties: false
+              required:
+                - discounts
+              additionalProperties: false
+            - type: 'null'
+        metadata:
+          default: {}
+          type: object
+          propertyNames: {}
+          additionalProperties: {}
+        entities:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                anyOf:
+                  - type: string
+                  - type: 'null'
+              name:
+                anyOf:
+                  - type: string
+                  - type: 'null'
+              customer_id:
+                type: string
+              feature_id:
+                anyOf:
+                  - type: string
+                  - type: 'null'
+              created_at:
+                type: number
+              env:
+                type: string
+                enum:
+                  - sandbox
+                  - live
+              products:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                    group:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                    status:
+                      type: string
+                      enum:
+                        - active
+                        - expired
+                        - scheduled
+                    canceled_at:
+                      anyOf:
+                        - type: number
+                        - type: 'null'
+                    started_at:
+                      type: number
+                    is_default:
+                      type: boolean
+                    is_add_on:
+                      type: boolean
+                    version:
+                      anyOf:
+                        - type: number
+                        - type: 'null'
+                    stripe_subscription_ids:
+                      anyOf:
+                        - type: array
+                          items:
+                            type: string
+                        - type: 'null'
+                    current_period_start:
+                      anyOf:
+                        - type: number
+                        - type: 'null'
+                    current_period_end:
+                      anyOf:
+                        - type: number
+                        - type: 'null'
+                    entity_id:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                    items:
+                      anyOf:
+                        - type: array
+                          items:
+                            $ref: '#/components/schemas/ProductItem'
+                        - type: 'null'
+                    quantity:
+                      type: number
+                  required:
+                    - id
+                    - name
+                    - group
+                    - status
+                    - started_at
+                    - is_default
+                    - is_add_on
+                  additionalProperties: false
+              features:
+                type: object
+                propertyNames:
+                  type: string
+                additionalProperties:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    type:
+                      type: string
+                      enum:
+                        - single_use
+                        - continuous_use
+                        - boolean
+                        - static
+                    name:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                    interval:
+                      anyOf:
+                        - anyOf:
+                            - type: string
+                              enum:
+                                - lifetime
+                                - minute
+                                - hour
+                                - day
+                                - week
+                                - month
+                                - quarter
+                                - semi_annual
+                                - year
+                            - type: string
+                              const: multiple
+                        - type: 'null'
+                    interval_count:
+                      anyOf:
+                        - type: number
+                        - type: 'null'
+                    unlimited:
+                      anyOf:
+                        - type: boolean
+                        - type: 'null'
+                    balance:
+                      anyOf:
+                        - type: number
+                        - type: 'null'
+                    usage:
+                      anyOf:
+                        - type: number
+                        - type: 'null'
+                    included_usage:
+                      anyOf:
+                        - type: number
+                        - type: 'null'
+                    next_reset_at:
+                      anyOf:
+                        - type: number
+                        - type: 'null'
+                    overage_allowed:
+                      anyOf:
+                        - type: boolean
+                        - type: 'null'
+                    breakdown:
+                      anyOf:
+                        - type: array
+                          items:
+                            type: object
+                            properties:
+                              interval:
+                                type: string
+                                enum:
+                                  - lifetime
+                                  - minute
+                                  - hour
+                                  - day
+                                  - week
+                                  - month
+                                  - quarter
+                                  - semi_annual
+                                  - year
+                              interval_count:
+                                anyOf:
+                                  - type: number
+                                  - type: 'null'
+                              balance:
+                                anyOf:
+                                  - type: number
+                                  - type: 'null'
+                              usage:
+                                anyOf:
+                                  - type: number
+                                  - type: 'null'
+                              included_usage:
+                                anyOf:
+                                  - type: number
+                                  - type: 'null'
+                              next_reset_at:
+                                anyOf:
+                                  - type: number
+                                  - type: 'null'
+                            required:
+                              - interval
+                            additionalProperties: false
+                        - type: 'null'
+                    credit_schema:
+                      anyOf:
+                        - type: array
+                          items:
+                            type: object
+                            properties:
+                              feature_id:
+                                type: string
+                              credit_amount:
+                                type: number
+                            required:
+                              - feature_id
+                              - credit_amount
+                            additionalProperties: false
+                        - type: 'null'
+                    usage_limit:
+                      anyOf:
+                        - type: number
+                        - type: 'null'
+                    rollovers:
+                      anyOf:
+                        - type: array
+                          items:
+                            type: object
+                            properties:
+                              balance:
+                                type: number
+                              expires_at:
+                                type: number
+                            required:
+                              - balance
+                              - expires_at
+                            additionalProperties: false
+                        - type: 'null'
+                  required:
+                    - id
+                    - type
+                  additionalProperties: false
+              invoices:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    product_ids:
+                      type: array
+                      items:
+                        type: string
+                    stripe_id:
+                      type: string
+                    status:
+                      type: string
+                    total:
+                      type: number
+                    currency:
+                      type: string
+                    created_at:
+                      type: number
+                    hosted_invoice_url:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                  required:
+                    - product_ids
+                    - stripe_id
+                    - status
+                    - total
+                    - currency
+                    - created_at
+                  additionalProperties: false
+            required:
+              - id
+              - name
+              - customer_id
+              - created_at
+              - env
+            additionalProperties: false
+        referrals:
+          type: array
+          items:
+            type: object
+            properties:
+              program_id:
+                type: string
+              customer:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  email:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                required:
+                  - id
+                additionalProperties: false
+              reward_applied:
+                type: boolean
+              created_at:
+                type: number
+            required:
+              - program_id
+              - customer
+              - reward_applied
+              - created_at
+            additionalProperties: false
+        upcoming_invoice:
+          anyOf:
+            - type: object
+              properties:
+                lines:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      product_id:
+                        anyOf:
+                          - type: string
+                          - type: 'null'
+                      description:
+                        type: string
+                      amount:
+                        type: number
+                    required:
+                      - description
+                      - amount
+                    additionalProperties: false
+                discounts:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                      type:
+                        type: string
+                        enum:
+                          - percentage_discount
+                          - fixed_discount
+                          - free_product
+                          - invoice_credits
+                      discount_value:
+                        type: number
+                      duration_type:
+                        type: string
+                        enum:
+                          - one_off
+                          - months
+                          - forever
+                      duration_value:
+                        anyOf:
+                          - type: number
+                          - type: 'null'
+                      currency:
+                        anyOf:
+                          - type: string
+                          - type: 'null'
+                      start:
+                        anyOf:
+                          - type: number
+                          - type: 'null'
+                      end:
+                        anyOf:
+                          - type: number
+                          - type: 'null'
+                      subscription_id:
+                        anyOf:
+                          - type: string
+                          - type: 'null'
+                      total_discount_amount:
+                        anyOf:
+                          - type: number
+                          - type: 'null'
+                    required:
+                      - id
+                      - name
+                      - type
+                      - discount_value
+                      - duration_type
+                    additionalProperties: false
+                subtotal:
+                  type: number
+                total:
+                  type: number
+                currency:
+                  type: string
+              required:
+                - lines
+                - discounts
+                - subtotal
+                - total
+                - currency
+              additionalProperties: false
+            - type: 'null'
+        payment_method:
+          anyOf:
+            - {}
+            - type: 'null'
+      required:
+        - id
+        - created_at
+        - name
+        - email
+        - fingerprint
+        - stripe_id
+        - env
+        - products
+        - features
+        - metadata
+      additionalProperties: false
+    EntityListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+      required:
+        - data
+      additionalProperties: false
+    Entity:
+      description: Entity object returned by the API
+      type: object
+      properties:
+        id:
+          anyOf:
+            - type: string
+            - type: 'null'
+        name:
+          anyOf:
+            - type: string
+            - type: 'null'
+        customer_id:
+          type: string
+        feature_id:
+          anyOf:
+            - type: string
+            - type: 'null'
+        created_at:
+          type: number
+        env:
+          type: string
+          enum:
+            - sandbox
+            - live
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                anyOf:
+                  - type: string
+                  - type: 'null'
+              group:
+                anyOf:
+                  - type: string
+                  - type: 'null'
+              status:
+                type: string
+                enum:
+                  - active
+                  - expired
+                  - scheduled
+              canceled_at:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              started_at:
+                type: number
+              is_default:
+                type: boolean
+              is_add_on:
+                type: boolean
+              version:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              stripe_subscription_ids:
+                anyOf:
+                  - type: array
+                    items:
+                      type: string
+                  - type: 'null'
+              current_period_start:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              current_period_end:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              entity_id:
+                anyOf:
+                  - type: string
+                  - type: 'null'
+              items:
+                anyOf:
+                  - type: array
+                    items:
+                      $ref: '#/components/schemas/ProductItem'
+                  - type: 'null'
+              quantity:
+                type: number
+            required:
+              - id
+              - name
+              - group
+              - status
+              - started_at
+              - is_default
+              - is_add_on
+            additionalProperties: false
+        features:
+          type: object
+          propertyNames:
+            type: string
+          additionalProperties:
+            type: object
+            properties:
+              id:
+                type: string
+              type:
+                type: string
+                enum:
+                  - single_use
+                  - continuous_use
+                  - boolean
+                  - static
+              name:
+                anyOf:
+                  - type: string
+                  - type: 'null'
+              interval:
+                anyOf:
+                  - anyOf:
+                      - type: string
+                        enum:
+                          - lifetime
+                          - minute
+                          - hour
+                          - day
+                          - week
+                          - month
+                          - quarter
+                          - semi_annual
+                          - year
+                      - type: string
+                        const: multiple
+                  - type: 'null'
+              interval_count:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              unlimited:
+                anyOf:
+                  - type: boolean
+                  - type: 'null'
+              balance:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              usage:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              included_usage:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              next_reset_at:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              overage_allowed:
+                anyOf:
+                  - type: boolean
+                  - type: 'null'
+              breakdown:
+                anyOf:
+                  - type: array
+                    items:
+                      type: object
+                      properties:
+                        interval:
+                          type: string
+                          enum:
+                            - lifetime
+                            - minute
+                            - hour
+                            - day
+                            - week
+                            - month
+                            - quarter
+                            - semi_annual
+                            - year
+                        interval_count:
+                          anyOf:
+                            - type: number
+                            - type: 'null'
+                        balance:
+                          anyOf:
+                            - type: number
+                            - type: 'null'
+                        usage:
+                          anyOf:
+                            - type: number
+                            - type: 'null'
+                        included_usage:
+                          anyOf:
+                            - type: number
+                            - type: 'null'
+                        next_reset_at:
+                          anyOf:
+                            - type: number
+                            - type: 'null'
+                      required:
+                        - interval
+                      additionalProperties: false
+                  - type: 'null'
+              credit_schema:
+                anyOf:
+                  - type: array
+                    items:
+                      type: object
+                      properties:
+                        feature_id:
+                          type: string
+                        credit_amount:
+                          type: number
+                      required:
+                        - feature_id
+                        - credit_amount
+                      additionalProperties: false
+                  - type: 'null'
+              usage_limit:
+                anyOf:
+                  - type: number
+                  - type: 'null'
+              rollovers:
+                anyOf:
+                  - type: array
+                    items:
+                      type: object
+                      properties:
+                        balance:
+                          type: number
+                        expires_at:
+                          type: number
+                      required:
+                        - balance
+                        - expires_at
+                      additionalProperties: false
+                  - type: 'null'
+            required:
+              - id
+              - type
+            additionalProperties: false
+        invoices:
+          type: array
+          items:
+            type: object
+            properties:
+              product_ids:
+                type: array
+                items:
+                  type: string
+              stripe_id:
+                type: string
+              status:
+                type: string
+              total:
+                type: number
+              currency:
+                type: string
+              created_at:
+                type: number
+              hosted_invoice_url:
+                anyOf:
+                  - type: string
+                  - type: 'null'
+            required:
+              - product_ids
+              - stripe_id
+              - status
+              - total
+              - currency
+              - created_at
+            additionalProperties: false
+      required:
+        - id
+        - name
+        - customer_id
+        - created_at
+        - env
+      additionalProperties: false
+    AutumnError:
+      description: An error that occurred in the API
+      type: object
+      properties:
+        message:
+          type: string
+        code:
+          type: string
+        env:
+          type: string
+          enum:
+            - sandbox
+            - live
+      required:
+        - message
+        - code
+        - env
+      additionalProperties: false
+  securitySchemes:
+    secretKey:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

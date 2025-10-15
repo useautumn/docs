@@ -12,7 +12,7 @@
 		"strict": false
 	},
 	"contextual": {
-		"options": ["copy", "view", "chatgpt", "claude", "perplexity", "mcp"]
+		"options": ["copy", "view", "chatgpt", "claude", "perplexity", "mcp", "cursor"]
 	},
 	"favicon": "/favicon.png",
 	"navigation": {
@@ -143,6 +143,71 @@
 					}
 				]
 			}
+		],
+		"tabs": [
+			{
+				"tab": "Docs",
+				"icon": "folder-open",
+				"groups": [
+					{
+						"group": " ",
+						"pages": ["welcome"]
+					},
+					{
+						"group": "Setup",
+						"pages": [
+							{
+								"group": "Integrate",
+								"pages": ["setup", "setup/backend", "setup/convex", "setup/ai-builders"]
+							},
+							{
+								"group": "Components",
+								"pages": ["setup/shadcn", "setup/roll"]
+							}
+						]
+					},
+					{
+						"group": "Products",
+						"pages": [
+							"products/create-product",
+							"products/product-items",
+							"products/enabling-product",
+							"products/changing-product",
+							"products/rewards"
+						]
+					},
+					{
+						"group": "Features",
+						"pages": [
+							"features/check",
+							"features/tracking-usage",
+							"features/balances",
+							"features/credits",
+							"features/feature-entities"
+						]
+					},
+					{
+						"group": "Customers",
+						"pages": [
+							"customers/creating-customers",
+							"customers/managing-customers"
+						]
+					},
+					{
+						"group": "Pricing Guides",
+						"pages": ["guides/credits", "guides/prepaid"]
+					}
+				]
+			},
+			{
+				"tab": "API Reference",
+				"versions": [
+					{
+						"version": "Version 1.0.0",
+						"openapi": "api/openapi.yml"
+					}
+				]
+			}
 		]
 	},
 	"logo": {
@@ -154,7 +219,7 @@
 			"display": "interactive"
 		},
 		"examples": {
-			"languages": ["typescript", "bash", "python"]
+			"languages": ["typescript", "bash", "python", "javascript"]
 		}
 	},
 	"background": {

@@ -1,10 +1,12 @@
 {
   "dependencies": {
-    "mintlify": "^4.2.87"
+    "mintlify": "^4.2.87",
+    "yaml": "^2.8.1"
   },
   "scripts": {
-    "dev": "mintlify dev",
-    "build": "mintlify -v",
-    "start": "mintlify dev"
+    "dev": "node scripts/pull.js && mint dev",
+    "build": "mint build",
+    "start": "mint dev",
+    "pull": "node scripts/pull.js"
   }
 }
