@@ -3,8 +3,8 @@
     "mintlify": "^4.2.87"
   },
   "scripts": {
-    "dev": "mintlify dev",
-    "build": "mintlify -v",
-    "start": "mintlify dev"
+    "dev": "mint dev",
+    "build": "mint -v",
+    "start": "mint dev"
   }
 }
