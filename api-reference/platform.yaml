@@ -3,7 +3,7 @@ info:
   title: Platform API (Beta)
   version: 1.0.0
   description: |
-    **Private Preview** - Contact founders@useautumn.com to get access.
+    **Private Preview** - Contact hey@useautumn.com to get access.
 
     The Platform API allows you to manage organizations and Stripe Connect accounts on behalf of your tenants. All endpoints require platform feature access.
 servers:
