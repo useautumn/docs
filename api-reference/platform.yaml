@@ -206,7 +206,7 @@ paths:
             curl -X GET 'https://api.useautumn.com/v1/platform/beta/users?limit=20&offset=0&expand=organizations' \
             -H 'Authorization: Bearer am_sk_test_...'
 
-  /platform/beta/orgs:
+  /platform/beta/organizations:
     get:
       summary: List Organizations
       operationId: listPlatformOrganizations
@@ -247,7 +247,7 @@ paths:
       x-code-samples:
         - lang: curl
           source: |
-            curl -X GET 'https://api.useautumn.com/v1/platform/beta/orgs?limit=20&offset=0' \
+            curl -X GET 'https://api.useautumn.com/v1/platform/beta/organizations?limit=20&offset=0' \
             -H 'Authorization: Bearer am_sk_test_...'
 
 components:
