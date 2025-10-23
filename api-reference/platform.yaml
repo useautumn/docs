@@ -11,7 +11,7 @@ servers:
 security:
   - bearerAuth: []
 paths:
-  /platform/beta/organization:
+  /platform/organizations:
     post:
       summary: Create Organization
       operationId: createPlatformOrganization
@@ -46,7 +46,7 @@ paths:
       x-code-samples:
         - lang: curl
           source: |
-            curl -X POST 'https://api.useautumn.com/v1/platform/beta/organization' \
+            curl -X POST 'https://api.useautumn.com/v1/platform/organizations' \
             -H 'Authorization: Bearer am_sk_test_...' \
             -H 'Content-Type: application/json' \
             -d '{
@@ -55,8 +55,50 @@ paths:
               "slug": "tenant-org",
               "env": "both"
             }'
+    get:
+      summary: List Organizations
+      operationId: listPlatformOrganizations
+      description: Lists all organizations created by your master organization. Supports pagination.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+          description: Number of organizations to return (1-100)
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          description: Number of organizations to skip for pagination
+      responses:
+        '200':
+          description: Organizations retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListOrganizationsResponse'
+        '403':
+          description: Platform feature not enabled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-code-samples:
+        - lang: curl
+          source: |
+            curl -X GET 'https://api.useautumn.com/v1/platform/organizations?limit=20&offset=0' \
+            -H 'Authorization: Bearer am_sk_test_...'
 
-  /platform/beta/oauth_url:
+  /platform/oauth_url:
     post:
       summary: Generate Stripe OAuth URL
       operationId: generateOAuthURL
@@ -97,7 +139,7 @@ paths:
       x-code-samples:
         - lang: curl
           source: |
-            curl -X POST 'https://api.useautumn.com/v1/platform/beta/oauth_url' \
+            curl -X POST 'https://api.useautumn.com/v1/platform/oauth_url' \
             -H 'Authorization: Bearer am_sk_test_...' \
             -H 'Content-Type: application/json' \
             -d '{
@@ -106,7 +148,7 @@ paths:
               "redirect_url": "https://yourapp.com/stripe/callback"
             }'
 
-  /platform/beta/organization/stripe:
+  /platform/organizations/stripe:
     post:
       summary: Update Connected Stripe Account
       operationId: updateStripeConfig
@@ -147,7 +189,7 @@ paths:
       x-code-samples:
         - lang: curl
           source: |
-            curl -X POST 'https://api.useautumn.com/v1/platform/beta/organization/stripe' \
+            curl -X POST 'https://api.useautumn.com/v1/platform/organizations/stripe' \
             -H 'Authorization: Bearer am_sk_test_...' \
             -H 'Content-Type: application/json' \
             -d '{
@@ -156,7 +198,7 @@ paths:
               "live_account_id": "acct_0987654321"
             }'
 
-  /platform/beta/users:
+  /platform/users:
     get:
       summary: List Users
       operationId: listPlatformUsers
@@ -203,51 +245,7 @@ paths:
       x-code-samples:
         - lang: curl
           source: |
-            curl -X GET 'https://api.useautumn.com/v1/platform/beta/users?limit=20&offset=0&expand=organizations' \
-            -H 'Authorization: Bearer am_sk_test_...'
-
-  /platform/beta/organizations:
-    get:
-      summary: List Organizations
-      operationId: listPlatformOrganizations
-      description: Lists all organizations created by your master organization. Supports pagination.
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: limit
-          in: query
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 100
-            default: 10
-          description: Number of organizations to return (1-100)
-        - name: offset
-          in: query
-          required: false
-          schema:
-            type: integer
-            minimum: 0
-            default: 0
-          description: Number of organizations to skip for pagination
-      responses:
-        '200':
-          description: Organizations retrieved successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ListOrganizationsResponse'
-        '403':
-          description: Platform feature not enabled
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      x-code-samples:
-        - lang: curl
-          source: |
-            curl -X GET 'https://api.useautumn.com/v1/platform/beta/organizations?limit=20&offset=0' \
+            curl -X GET 'https://api.useautumn.com/v1/platform/users?limit=20&offset=0&expand=organizations' \
             -H 'Authorization: Bearer am_sk_test_...'
 
 components:
