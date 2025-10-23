@@ -1,0 +1,478 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Features API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.useautumn.com/v1"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/features": {
+      "get": {
+        "summary": "List all features",
+        "operationId": "listFeatures",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "include_archived",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Include archived features in the response"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Features retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "list": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Feature"
+                      }
+                    }
+                  },
+                  "required": ["list"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/features/{feature_id}": {
+      "get": {
+        "summary": "Get a feature by ID",
+        "operationId": "getFeature",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "feature_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The feature ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Feature retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Feature"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Feature not found"
+          }
+        }
+      },
+      "post": {
+        "summary": "Update a feature",
+        "operationId": "updateFeature",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "feature_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The feature ID to update"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "The ID of the feature"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the feature"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": ["static", "boolean", "single_use", "continuous_use", "credit_system"],
+                    "description": "The type of the feature"
+                  },
+                  "display": {
+                    "type": "object",
+                    "properties": {
+                      "singular": {
+                        "type": "string",
+                        "description": "Singular form of the feature name"
+                      },
+                      "plural": {
+                        "type": "string",
+                        "description": "Plural form of the feature name"
+                      }
+                    },
+                    "required": ["singular", "plural"],
+                    "description": "Display names for the feature"
+                  },
+                  "credit_schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "metered_feature_id": {
+                          "type": "string",
+                          "description": "The metered feature ID"
+                        },
+                        "credit_cost": {
+                          "type": "number",
+                          "description": "Cost in credits for this metered feature"
+                        }
+                      },
+                      "required": ["metered_feature_id", "credit_cost"]
+                    },
+                    "description": "Credit schema for credit system features (only applicable when type is credit_system)"
+                  },
+                  "archived": {
+                    "type": "boolean",
+                    "description": "Whether the feature is archived"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Feature updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Feature"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Feature not found"
+          }
+        }
+      }
+    },
+    "/customers/{customer_id}/entities": {
+      "post": {
+        "summary": "Create a new entity",
+        "operationId": "createEntity",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The unique identifier of the customer"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEntityRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Entity created successfully"
+          }
+        }
+      }
+    },
+    "/customers/{customer_id}/entities/{entity_id}": {
+      "delete": {
+        "summary": "Delete an entity",
+        "operationId": "deleteEntity",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The unique identifier of the customer"
+          },
+          {
+            "name": "entity_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The unique identifier of the entity"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Entity deleted successfully"
+          },
+          "404": {
+            "description": "Entity not found"
+          }
+        }
+      }
+    },
+    "/usage": {
+      "post": {
+        "summary": "Record usage for a feature",
+        "operationId": "recordUsage",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordUsageRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Usage recorded successfully"
+          }
+        }
+      }
+    },
+    "/customers/{customer_id}/balances": {
+      "post": {
+        "summary": "Set balances for features",
+        "operationId": "setBalances",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The unique identifier of the customer"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetBalancesRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Balances set successfully"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Feature": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier for the feature"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "description": "The name of the feature"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["static", "boolean", "single_use", "continuous_use", "credit_system"],
+            "description": "The type of the feature"
+          },
+          "display": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "singular": {
+                "type": "string",
+                "description": "Singular form display name"
+              },
+              "plural": {
+                "type": "string",
+                "description": "Plural form display name"
+              }
+            },
+            "required": ["singular", "plural"]
+          },
+          "credit_schema": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "object",
+              "properties": {
+                "metered_feature_id": {
+                  "type": "string"
+                },
+                "credit_cost": {
+                  "type": "number"
+                }
+              },
+              "required": ["metered_feature_id", "credit_cost"]
+            }
+          },
+          "archived": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Whether the feature is archived"
+          }
+        },
+        "required": ["id", "type"]
+      },
+      "CreateEntityRequest": {
+        "type": "object",
+        "required": ["id", "feature_id", "name"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier for the entity"
+          },
+          "feature_id": {
+            "type": "string",
+            "description": "The feature identifier associated with this entity"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name or identifier for the entity (e.g., email)"
+          }
+        }
+      },
+      "Entity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "feature_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "RecordUsageRequest": {
+        "type": "object",
+        "required": ["feature_id", "customer_id", "value"],
+        "properties": {
+          "feature_id": {
+            "type": "string",
+            "description": "The identifier of the feature"
+          },
+          "customer_id": {
+            "type": "string",
+            "description": "The identifier of the customer"
+          },
+          "value": {
+            "type": "number",
+            "description": "The usage value to record"
+          }
+        }
+      },
+      "SetBalancesRequest": {
+        "type": "object",
+        "required": ["balances"],
+        "properties": {
+          "balances": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["feature_id", "balance"],
+              "properties": {
+                "feature_id": {
+                  "type": "string",
+                  "description": "The identifier of the feature"
+                },
+                "balance": {
+                  "type": "number",
+                  "description": "The balance value to set for the feature"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

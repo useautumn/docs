@@ -108,7 +108,7 @@
           }
         }
       },
-      "put": {
+      "post": {
         "summary": "Update a product",
         "operationId": "updateProduct",
         "security": [
@@ -134,20 +134,42 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z0-9_-]+$",
+                    "description": "Update the product ID"
+                  },
                   "name": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The name of the product"
                   },
                   "is_add_on": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "description": "Whether the product is an add-on"
                   },
                   "is_default": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "description": "Whether the product is the default product"
+                  },
+                  "version": {
+                    "type": "number",
+                    "description": "The version number for this product"
+                  },
+                  "group": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "The product group this belongs to"
+                  },
+                  "archived": {
+                    "type": "boolean",
+                    "description": "Whether to archive this product"
                   },
                   "items": {
                     "type": "array",
                     "items": {
                       "$ref": "#/components/schemas/ProductItem"
-                    }
+                    },
+                    "description": "Array of product items that define features and pricing"
                   },
                   "free_trial": {
                     "$ref": "#/components/schemas/FreeTrial"
@@ -432,10 +454,6 @@
       "Product": {
         "type": "object",
         "properties": {
-          "autumn_id": {
-            "type": "string",
-            "description": "Autumn's internal ID of the product"
-          },
           "created_at": {
             "type": "integer",
             "description": "The timestamp of when the product was created"

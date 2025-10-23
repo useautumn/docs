@@ -122,6 +122,7 @@
 						"pages": [
 							"api-reference/features/get",
 							"api-reference/features/list",
+							"api-reference/features/update",
 							"api-reference/features/usage",
 							"api-reference/features/balances"
 						]
@@ -131,6 +132,7 @@
 						"pages": [
 							"api-reference/products/post",
 							"api-reference/products/get",
+							"api-reference/products/put",
 							"api-reference/products/delete"
 						]
 					},
