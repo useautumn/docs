@@ -6,6 +6,7 @@ import { removeSnippets } from './utils/remove-snippets';
 import { removeConstraints } from './utils/remove-constraints';
 import { removeFieldProperties } from './utils/remove-field-properties';
 import { removeInternalFields } from './utils/remove-internal-fields';
+import { stripJsDoc } from './utils/strip-jsdoc';
 
 
 const SCHEMA_FIELD_REMOVALS: Record<string, string[]> = {
@@ -16,6 +17,13 @@ const SCHEMA_FIELD_REMOVALS: Record<string, string[]> = {
 const SNIPPET_REMOVALS: Record<string, string[]> = {
   'POST /products/{product_id}': ['TypeScript', 'Python'],
   'GET /products': ['Python'],
+
+  // Missing create, update and delete for features
+  'GET /features': ['Python'],
+  'GET /features/{feature_id}': ['Python'],
+  'POST /features': ['TypeScript', 'Python'],
+  'UPDATE /features/{feature_id}': ['TypeScript', 'Python'],
+  'DELETE /features/{feature_id}': ['TypeScript', 'Python'],
 };
 
 /**
@@ -83,13 +91,13 @@ async function pull() {
   const spec = parse(data);
   const version = spec.info?.version || 'unknown';
 
+  // Strip JSDoc from descriptions
+  console.log('Stripping JSDoc from descriptions...');
+  stripJsDoc({ spec });
+
   // Remove specified fields from schemas
   console.log('Removing fields from schemas...');
   removeSchemaFields({ spec, removals: SCHEMA_FIELD_REMOVALS });
-
-  // Remove code snippets for specific endpoints
-  console.log('Removing code snippets from endpoints...');
-  removeSnippets({ spec, removals: SNIPPET_REMOVALS });
 
   // Remove schema constraints
   console.log('Removing schema constraints...');
@@ -113,7 +121,11 @@ async function pull() {
 
   // Transform Python snippets to async/await
   console.log('Transforming Python snippets...');
-  const finalSpec = transformPythonSnippets({ spec: specWithJs });
+  const specWithPython = transformPythonSnippets({ spec: specWithJs });
+
+  // Remove code snippets for specific endpoints (must be after transformations)
+  console.log('Removing code snippets from endpoints...');
+  const finalSpec = removeSnippets({ spec: specWithPython, removals: SNIPPET_REMOVALS });
 
   // Write the modified spec
   const filename = `./mintlify/api/openapi-${version}.yml`;

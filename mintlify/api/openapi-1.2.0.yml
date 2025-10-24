@@ -266,16 +266,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Product"
-      x-codeSamples:
-        - lang: TypeScript
-          source: |-
-            import { Autumn } from 'autumn-js';
-
-            const autumn = new Autumn();
-
-            const product = await autumn.products.update('product_id');
-
-            console.log(product.id);
     delete:
       summary: Delete Product
       tags:
@@ -325,6 +315,804 @@ paths:
                     product_id="product_id",
                 )
                 print(product.success)
+
+            asyncio.run(main())
+  /features:
+    get:
+      summary: List Features
+      tags:
+        - features
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  list:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Feature"
+                required:
+                  - list
+                additionalProperties: false
+      x-codeSamples:
+        - lang: TypeScript
+          source: |-
+            import { Autumn } from 'autumn-js';
+
+            const autumn = new Autumn();
+
+            const features = await autumn.features.list();
+
+            console.log(features.list);
+    post:
+      summary: Create Feature
+      tags:
+        - features
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  description: The ID of the feature. This is used to refer to it in other API
+                    calls like /track or /check.
+                  type: string
+                name:
+                  description: The name of the feature.
+                  anyOf:
+                    - type: string
+                    - type: "null"
+                type:
+                  description: The type of the feature. 'single_use' features are consumed, like
+                    API calls, tokens, or messages. 'continuous_use' features
+                    are allocated, like seats, workspaces, or projects.
+                    'credit_system' features are schemas that unify multiple
+                    'single_use' features into a single credit system.
+                  type: string
+                  enum:
+                    - static
+                    - boolean
+                    - single_use
+                    - continuous_use
+                    - credit_system
+                display:
+                  description: Singular and plural display names for the feature in your user
+                    interface.
+                  anyOf:
+                    - type: object
+                      properties:
+                        singular:
+                          type: string
+                        plural:
+                          type: string
+                      required:
+                        - singular
+                        - plural
+                    - type: "null"
+                credit_schema:
+                  description: A schema that maps 'single_use' feature IDs to credit costs.
+                    Applicable only for 'credit_system' features.
+                  anyOf:
+                    - type: array
+                      items:
+                        type: object
+                        properties:
+                          metered_feature_id:
+                            type: string
+                          credit_cost:
+                            type: number
+                        required:
+                          - metered_feature_id
+                          - credit_cost
+                    - type: "null"
+              required:
+                - id
+                - type
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Feature"
+  /features/{feature_id}:
+    get:
+      summary: Get Feature
+      tags:
+        - features
+      parameters:
+        - in: path
+          name: feature_id
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Feature"
+      x-codeSamples:
+        - lang: TypeScript
+          source: |-
+            import { Autumn } from 'autumn-js';
+
+            const autumn = new Autumn();
+
+            const feature = await autumn.features.get('feature_id');
+
+            console.log(feature.id);
+    post:
+      summary: Update Feature
+      tags:
+        - features
+      parameters:
+        - in: path
+          name: feature_id
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  description: The ID of the feature. This is used to refer to it in other API
+                    calls like /track or /check.
+                  type: string
+                name:
+                  description: The name of the feature.
+                  type: string
+                type:
+                  description: The type of the feature. 'single_use' features are consumed, like
+                    API calls, tokens, or messages. 'continuous_use' features
+                    are allocated, like seats, workspaces, or projects.
+                    'credit_system' features are schemas that unify multiple
+                    'single_use' features into a single credit system.
+                  type: string
+                  enum:
+                    - static
+                    - boolean
+                    - single_use
+                    - continuous_use
+                    - credit_system
+                display:
+                  description: Singular and plural display names for the feature in your user
+                    interface.
+                  type: object
+                  properties:
+                    singular:
+                      type: string
+                    plural:
+                      type: string
+                  required:
+                    - singular
+                    - plural
+                credit_schema:
+                  description: A schema that maps 'single_use' feature IDs to credit costs.
+                    Applicable only for 'credit_system' features.
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      metered_feature_id:
+                        type: string
+                      credit_cost:
+                        type: number
+                    required:
+                      - metered_feature_id
+                      - credit_cost
+                archived:
+                  description: Whether the feature is archived. Archived features are hidden from
+                    the dashboard and list features endpoint.
+                  type: boolean
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Feature"
+      x-codeSamples:
+        - lang: TypeScript
+          source: |-
+            import { Autumn } from 'autumn-js';
+
+            const autumn = new Autumn();
+
+            const feature = await autumn.features.update('feature_id');
+
+            console.log(feature.id);
+        - lang: Python
+          source: |-
+            import asyncio
+            from autumn import Autumn
+
+            autumn = Autumn("am_sk_1234567890")
+
+            async def main():
+                feature = await autumn.features.update(
+                    feature_id="feature_id",
+                )
+                print(feature.id)
+
+            asyncio.run(main())
+    delete:
+      summary: Delete Feature
+      tags:
+        - features
+      parameters:
+        - in: path
+          name: feature_id
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                required:
+                  - success
+                additionalProperties: false
+  /customers:
+    get:
+      summary: List Customers
+      tags:
+        - customers
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 10
+            maximum: 100
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 9007199254740991
+      responses:
+        "200":
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  list:
+                    description: List of customers
+                    type: array
+                    items: {}
+                  total:
+                    description: Total number of customers available
+                    example: 100
+                    type: integer
+                    minimum: -9007199254740991
+                    maximum: 9007199254740991
+                  limit:
+                    description: Maximum number of customers returned
+                    example: 10
+                    type: integer
+                    minimum: -9007199254740991
+                    maximum: 9007199254740991
+                  offset:
+                    description: Number of customers skipped before returning results
+                    example: 0
+                    type: integer
+                    minimum: -9007199254740991
+                    maximum: 9007199254740991
+                required:
+                  - list
+                  - total
+                  - limit
+                  - offset
+                additionalProperties: false
+      x-codeSamples:
+        - lang: TypeScript
+          source: |-
+            import { Autumn } from 'autumn-js';
+
+            const autumn = new Autumn();
+
+            const customers = await autumn.customers.list();
+
+            console.log(customers.limit);
+        - lang: Python
+          source: |-
+            import asyncio
+            from autumn import Autumn
+
+            autumn = Autumn("am_sk_1234567890")
+
+            async def main():
+                customers = await autumn.customers.list()
+                print(customers.limit)
+
+            asyncio.run(main())
+    post:
+      summary: Create Customer
+      tags:
+        - customers
+      parameters:
+        - in: query
+          name: expand
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - invoices
+                - trials_used
+                - rewards
+                - entities
+                - referrals
+                - payment_method
+                - upcoming_invoice
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  description: Your unique identifier for the customer
+                  example: cus_123
+                  anyOf:
+                    - type: string
+                    - type: "null"
+                name:
+                  description: Customer's name
+                  example: John Doe
+                  anyOf:
+                    - type: string
+                    - type: "null"
+                email:
+                  description: Customer's email address
+                  example: john@example.com
+                  anyOf:
+                    - type: string
+                      format: email
+                      pattern: ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
+                    - type: "null"
+                fingerprint:
+                  description: Unique identifier (eg, serial number) to detect duplicate customers
+                    and prevent free trial abuse
+                  example: fp_123abc
+                  type: string
+                metadata:
+                  description: Additional metadata for the customer
+                  example:
+                    company: Acme Inc
+                  default: {}
+                  type: object
+                  propertyNames:
+                    type: string
+                  additionalProperties: {}
+                stripe_id:
+                  description: Stripe customer ID if you already have one
+                  example: cus_stripe123
+                  type: string
+                entity_id:
+                  description: Entity ID to associate with the customer
+                  example: entity_123
+                  type: string
+                entity_data:
+                  description: Data for creating an entity
+                  type: object
+                  properties:
+                    feature_id:
+                      description: The feature ID that this entity is associated with
+                      example: seats
+                      type: string
+                    name:
+                      description: Name of the entity
+                      example: Team Alpha
+                      type: string
+                  required:
+                    - feature_id
+              required:
+                - id
+      responses:
+        "200":
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+      x-codeSamples:
+        - lang: TypeScript
+          source: |-
+            import { Autumn } from 'autumn-js';
+
+            const autumn = new Autumn();
+
+            const customer = await autumn.customers.create({ id: 'cus_123' });
+
+            console.log(customer.id);
+        - lang: Python
+          source: |-
+            import asyncio
+            from autumn import Autumn
+
+            autumn = Autumn("am_sk_1234567890")
+
+            async def main():
+                customer = await autumn.customers.create(
+                    id="cus_123",
+                )
+                print(customer.id)
+
+            asyncio.run(main())
+  /customers/{customer_id}:
+    get:
+      summary: Get Customer
+      tags:
+        - customers
+      parameters:
+        - in: path
+          name: customer_id
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: expand
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - invoices
+                - trials_used
+                - rewards
+                - entities
+                - referrals
+                - payment_method
+                - upcoming_invoice
+      responses:
+        "200":
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+      x-codeSamples:
+        - lang: TypeScript
+          source: |-
+            import { Autumn } from 'autumn-js';
+
+            const autumn = new Autumn();
+
+            const customer = await autumn.customers.get('customer_id');
+
+            console.log(customer.id);
+        - lang: Python
+          source: |-
+            import asyncio
+            from autumn import Autumn
+
+            autumn = Autumn("am_sk_1234567890")
+
+            async def main():
+                customer = await autumn.customers.get(
+                    customer_id="customer_id",
+                )
+                print(customer.id)
+
+            asyncio.run(main())
+    post:
+      summary: Update Customer
+      tags:
+        - customers
+      parameters:
+        - in: path
+          name: customer_id
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: expand
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  description: New unique identifier for the customer (cannot be changed to null)
+                  example: cus_123
+                  anyOf:
+                    - type: string
+                    - type: "null"
+                name:
+                  description: Customer's name
+                  example: John Doe
+                  anyOf:
+                    - type: string
+                    - type: "null"
+                email:
+                  description: Customer's email address
+                  example: john@example.com
+                  anyOf:
+                    - anyOf:
+                        - type: string
+                          format: email
+                          pattern: ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
+                        - type: string
+                          const: ""
+                    - type: "null"
+                fingerprint:
+                  description: Unique identifier (eg, serial number) to detect duplicate customers
+                  example: fp_123abc
+                  anyOf:
+                    - type: string
+                    - type: "null"
+                metadata:
+                  description: Additional metadata for the customer (set individual keys to null
+                    to delete them)
+                  example:
+                    company: Acme Inc
+                  anyOf:
+                    - type: object
+                      propertyNames: {}
+                      additionalProperties: {}
+                    - type: "null"
+                stripe_id:
+                  description: Stripe customer ID
+                  example: cus_stripe123
+                  anyOf:
+                    - type: string
+                    - type: "null"
+      responses:
+        "200":
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+      x-codeSamples:
+        - lang: TypeScript
+          source: |-
+            import { Autumn } from 'autumn-js';
+
+            const autumn = new Autumn();
+
+            const customer = await autumn.customers.update('customer_id');
+
+            console.log(customer.id);
+        - lang: Python
+          source: |-
+            import asyncio
+            from autumn import Autumn
+
+            autumn = Autumn("am_sk_1234567890")
+
+            async def main():
+                customer = await autumn.customers.update(
+                    customer_id="customer_id",
+                )
+                print(customer.id)
+
+            asyncio.run(main())
+    delete:
+      summary: Delete Customer
+      tags:
+        - customers
+      parameters:
+        - in: path
+          name: customer_id
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                required:
+                  - success
+                additionalProperties: false
+      x-codeSamples:
+        - lang: TypeScript
+          source: |-
+            import { Autumn } from 'autumn-js';
+
+            const autumn = new Autumn();
+
+            const customer = await autumn.customers.delete('customer_id');
+
+            console.log(customer.success);
+        - lang: Python
+          source: |-
+            import asyncio
+            from autumn import Autumn
+
+            autumn = Autumn("am_sk_1234567890")
+
+            async def main():
+                customer = await autumn.customers.delete(
+                    "customer_id",
+                )
+                print(customer.success)
+
+            asyncio.run(main())
+  /customers/{customer_id}/balances:
+    post:
+      summary: Set Feature Balances
+      description: Set the balance of a feature for a specific customer
+      tags:
+        - customers
+      parameters:
+        - in: path
+          name: customer_id
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                balances:
+                  - feature_id: tokens
+                    balance: 1000
+              type: object
+              properties:
+                balances:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      feature_id:
+                        description: The ID of the feature to update balance for.
+                        type: string
+                      balance:
+                        description: The new balance value.
+                        type: number
+                    required:
+                      - feature_id
+                      - balance
+              required:
+                - balances
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                required:
+                  - success
+                additionalProperties: false
+      x-codeSamples:
+        - lang: TypeScript
+          source: >-
+            import { Autumn } from 'autumn-js';
+
+
+            const autumn = new Autumn();
+
+
+            const response = await
+            autumn.customers.updateBalances('customer_id', {
+              balances: [{ balance: 1000, feature_id: 'tokens' }],
+            });
+
+
+            console.log(response.success);
+        - lang: Python
+          source: |-
+            import asyncio
+            from autumn import Autumn
+
+            autumn = Autumn("am_sk_1234567890")
+
+            async def main():
+                response = await autumn.customers.update_balances(
+                    customer_id="customer_id",
+                    balances=[{
+                        "balance": 1000,
+                        "feature_id": "tokens",
+                    }],
+                )
+                print(response.success)
+
+            asyncio.run(main())
+  /usage:
+    post:
+      summary: Set Usage
+      description: Set usage for a feature. This is similar to /track instead of
+        incrementing usage, it sets the usage value to exactly what is provided.
+      tags:
+        - core
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customer_id:
+                  description: The ID of the customer.
+                  type: string
+                feature_id:
+                  description: The ID of the feature to set usage for.
+                  type: string
+                value:
+                  description: The value you want to set this customer's usage of the feature to.
+                  type: number
+                entity_id:
+                  description: The ID of the entity to set usage for.
+                  type: string
+                customer_data:
+                  $ref: "#/components/schemas/CustomerData"
+              required:
+                - customer_id
+                - feature_id
+                - value
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                required:
+                  - success
+                additionalProperties: false
+      x-codeSamples:
+        - lang: TypeScript
+          source: >-
+            import { Autumn } from 'autumn-js';
+
+
+            const autumn = new Autumn();
+
+
+            const response = await autumn.usage({ customer_id: 'x', feature_id:
+            'feature_id', value: 0 });
+
+
+            console.log(response.success);
+        - lang: Python
+          source: |-
+            import asyncio
+            from autumn import Autumn
+
+            autumn = Autumn("am_sk_1234567890")
+
+            async def main():
+                response = await autumn.usage(
+                    customer_id="x",
+                    feature_id="feature_id",
+                    value=0,
+                )
+                print(response.success)
 
             asyncio.run(main())
 components:
@@ -423,6 +1211,39 @@ components:
             - type: "null"
       required:
         - interval
+    CustomerData:
+      description: Used to add customer details like name or email when auto-creating
+        a customer.
+      type: object
+      properties:
+        name:
+          description: Customer's name
+          anyOf:
+            - type: string
+            - type: "null"
+        email:
+          description: Customer's email address
+          anyOf:
+            - type: string
+            - type: "null"
+        fingerprint:
+          description: Unique identifier (eg, serial number) to detect duplicate customers
+            and prevent free trial abuse
+          anyOf:
+            - type: string
+            - type: "null"
+        metadata:
+          description: Additional metadata for the customer
+          anyOf:
+            - type: object
+              propertyNames: {}
+              additionalProperties: {}
+            - type: "null"
+        stripe_id:
+          description: Stripe customer ID if you already have one
+          anyOf:
+            - type: string
+            - type: "null"
     CustomerProduct:
       description: Customer product object returned by the API
       type: object
@@ -677,227 +1498,7 @@ components:
           anyOf:
             - type: number
             - type: "null"
-    Product:
-      examples:
-        - id: Pro Product
-          name: Pro Plan
-          group: null
-          env: sandbox
-          is_add_on: false
-          is_default: false
-          archived: false
-          version: 1
-          created_at: 1761296829908
-          items:
-            - type: price
-              feature_id: null
-              interval: month
-              interval_count: 1
-              price: 20
-              display:
-                primary_text: $20
-                secondary_text: per month
-            - type: priced_feature
-              feature_id: words
-              included_usage: 1000
-              interval: month
-              interval_count: 1
-              price: 0.5
-              usage_model: pay_per_use
-              billing_units: 1000
-              reset_usage_when_enabled: true
-              entity_feature_id: null
-              display:
-                primary_text: 1,000 Words
-                secondary_text: then $0.5 per 1,000 Words
-            - type: feature
-              feature_id: dashboard
-              entity_feature_id: null
-              display:
-                primary_text: Dashboard
-            - type: feature
-              feature_id: messages
-              included_usage: 10
-              interval: month
-              interval_count: 1
-              reset_usage_when_enabled: true
-              entity_feature_id: null
-              display:
-                primary_text: 10 Messages
-          free_trial:
-            duration: day
-            length: 7
-            unique_fingerprint: false
-            card_required: true
-          base_variant_id: null
-          scenario: new
-      type: object
-      properties:
-        id:
-          description: The ID of the product you set when creating the product
-          type: string
-        name:
-          description: The name of the product
-          type: string
-        group:
-          description: Product group which this product belongs to
-          anyOf:
-            - type: string
-            - type: "null"
-        env:
-          description: The environment of the product
-          type: string
-          enum:
-            - sandbox
-            - live
-        is_add_on:
-          description: Whether the product is an add-on and can be purchased alongside
-            other products
-          type: boolean
-        is_default:
-          description: Whether the product is the default product
-          type: boolean
-        archived:
-          description: Whether this product has been archived and is no longer available
-          type: boolean
-        version:
-          description: The current version of the product
-          type: number
-        created_at:
-          description: The timestamp of when the product was created in milliseconds since
-            epoch
-          type: number
-        items:
-          description: Array of product items that define the product's features and pricing
-          type: array
-          items:
-            $ref: "#/components/schemas/ProductItem"
-        free_trial:
-          description: Free trial configuration for this product, if available
-          anyOf:
-            - type: object
-              properties:
-                duration:
-                  description: The duration type of the free trial
-                  type: string
-                  enum:
-                    - day
-                    - month
-                    - year
-                length:
-                  description: The length of the duration type specified
-                  type: number
-                unique_fingerprint:
-                  description: Whether the free trial is limited to one per customer fingerprint
-                  type: boolean
-                card_required:
-                  description: Whether the free trial requires a card. If false, the customer can
-                    attach the product without going through a checkout flow or
-                    having a card on file.
-                  type: boolean
-                trial_available:
-                  description: Used in customer context. Whether the free trial is available for
-                    the customer if they were to attach the product.
-                  default: true
-                  anyOf:
-                    - type: boolean
-                    - type: "null"
-              required:
-                - duration
-                - length
-                - unique_fingerprint
-                - card_required
-                - trial_available
-              additionalProperties: false
-            - type: "null"
-        base_variant_id:
-          description: ID of the base variant this product is derived from
-          anyOf:
-            - type: string
-            - type: "null"
-        scenario:
-          description: Scenario for when this product is used in attach flows
-          type: string
-          enum:
-            - scheduled
-            - active
-            - new
-            - renew
-            - upgrade
-            - downgrade
-            - cancel
-            - expired
-            - past_due
-      required:
-        - id
-        - name
-        - group
-        - env
-        - is_add_on
-        - is_default
-        - archived
-        - version
-        - created_at
-        - items
-        - free_trial
-        - base_variant_id
-      additionalProperties: false
-    CustomerData:
-      description: Customer data for creating or updating a customer
-      type: object
-      properties:
-        name:
-          description: Customer's name
-          example: John Doe
-          anyOf:
-            - type: string
-            - type: "null"
-        email:
-          description: Customer's email address
-          example: john@example.com
-          anyOf:
-            - type: string
-            - type: "null"
-        fingerprint:
-          description: Unique identifier (eg, serial number) to detect duplicate customers
-            and prevent free trial abuse
-          example: fp_123abc
-          anyOf:
-            - type: string
-            - type: "null"
-        metadata:
-          description: Additional metadata for the customer
-          example:
-            company: Acme Inc
-          anyOf:
-            - type: object
-              propertyNames: {}
-              additionalProperties: {}
-            - type: "null"
-        stripe_id:
-          description: Stripe customer ID if you already have one
-          example: cus_stripe123
-          anyOf:
-            - type: string
-            - type: "null"
-      additionalProperties: false
-    EntityData:
-      description: Entity data for creating an entity
-      type: object
-      properties:
-        feature_id:
-          description: The feature ID that this entity is associated with
-          example: seats
-          type: string
-        name:
-          description: Name of the entity
-          example: Team Alpha
-          type: string
-      required:
-        - feature_id
-      additionalProperties: false
     Customer:
-      description: Customer object returned by the API
       type: object
       properties:
         id:
@@ -1552,6 +2153,257 @@ components:
         - products
         - features
       additionalProperties: false
+    Product:
+      examples:
+        - id: Pro Product
+          name: Pro Plan
+          group: null
+          env: sandbox
+          is_add_on: false
+          is_default: false
+          archived: false
+          version: 1
+          created_at: 1761296829908
+          items:
+            - type: price
+              feature_id: null
+              interval: month
+              interval_count: 1
+              price: 20
+              display:
+                primary_text: $20
+                secondary_text: per month
+            - type: priced_feature
+              feature_id: words
+              included_usage: 1000
+              interval: month
+              interval_count: 1
+              price: 0.5
+              usage_model: pay_per_use
+              billing_units: 1000
+              reset_usage_when_enabled: true
+              entity_feature_id: null
+              display:
+                primary_text: 1,000 Words
+                secondary_text: then $0.5 per 1,000 Words
+            - type: feature
+              feature_id: dashboard
+              entity_feature_id: null
+              display:
+                primary_text: Dashboard
+            - type: feature
+              feature_id: messages
+              included_usage: 10
+              interval: month
+              interval_count: 1
+              reset_usage_when_enabled: true
+              entity_feature_id: null
+              display:
+                primary_text: 10 Messages
+          free_trial:
+            duration: day
+            length: 7
+            unique_fingerprint: false
+            card_required: true
+          base_variant_id: null
+          scenario: new
+      type: object
+      properties:
+        id:
+          description: The ID of the product you set when creating the product
+          type: string
+        name:
+          description: The name of the product
+          type: string
+        group:
+          description: Product group which this product belongs to
+          anyOf:
+            - type: string
+            - type: "null"
+        env:
+          description: The environment of the product
+          type: string
+          enum:
+            - sandbox
+            - live
+        is_add_on:
+          description: Whether the product is an add-on and can be purchased alongside
+            other products
+          type: boolean
+        is_default:
+          description: Whether the product is the default product
+          type: boolean
+        archived:
+          description: Whether this product has been archived and is no longer available
+          type: boolean
+        version:
+          description: The current version of the product
+          type: number
+        created_at:
+          description: The timestamp of when the product was created in milliseconds since
+            epoch
+          type: number
+        items:
+          description: Array of product items that define the product's features and pricing
+          type: array
+          items:
+            $ref: "#/components/schemas/ProductItem"
+        free_trial:
+          description: Free trial configuration for this product, if available
+          anyOf:
+            - type: object
+              properties:
+                duration:
+                  description: The duration type of the free trial
+                  type: string
+                  enum:
+                    - day
+                    - month
+                    - year
+                length:
+                  description: The length of the duration type specified
+                  type: number
+                unique_fingerprint:
+                  description: Whether the free trial is limited to one per customer fingerprint
+                  type: boolean
+                card_required:
+                  description: Whether the free trial requires a card. If false, the customer can
+                    attach the product without going through a checkout flow or
+                    having a card on file.
+                  type: boolean
+                trial_available:
+                  description: Used in customer context. Whether the free trial is available for
+                    the customer if they were to attach the product.
+                  default: true
+                  anyOf:
+                    - type: boolean
+                    - type: "null"
+              required:
+                - duration
+                - length
+                - unique_fingerprint
+                - card_required
+                - trial_available
+              additionalProperties: false
+            - type: "null"
+        base_variant_id:
+          description: ID of the base variant this product is derived from
+          anyOf:
+            - type: string
+            - type: "null"
+        scenario:
+          description: Scenario for when this product is used in attach flows
+          type: string
+          enum:
+            - scheduled
+            - active
+            - new
+            - renew
+            - upgrade
+            - downgrade
+            - cancel
+            - expired
+            - past_due
+      required:
+        - id
+        - name
+        - group
+        - env
+        - is_add_on
+        - is_default
+        - archived
+        - version
+        - created_at
+        - items
+        - free_trial
+        - base_variant_id
+      additionalProperties: false
+    Feature:
+      examples:
+        - id: tokens
+          name: Tokens
+          type: single_use
+          display:
+            singular: token
+            plural: tokens
+          credit_schema: null
+          archived: false
+      type: object
+      properties:
+        id:
+          description: The ID of the feature, used to refer to it in other API calls like
+            /track or /check.
+          type: string
+        name:
+          description: The name of the feature.
+          anyOf:
+            - type: string
+            - type: "null"
+        type:
+          type: string
+          enum:
+            - boolean
+            - single_use
+            - continuous_use
+            - credit_system
+        display:
+          description: Singular and plural display names for the feature.
+          anyOf:
+            - type: object
+              properties:
+                singular:
+                  description: The singular display name for the feature.
+                  type: string
+                plural:
+                  description: The plural display name for the feature.
+                  type: string
+              required:
+                - singular
+                - plural
+              additionalProperties: false
+            - type: "null"
+        credit_schema:
+          description: Credit cost schema for credit system features.
+          anyOf:
+            - type: array
+              items:
+                type: object
+                properties:
+                  metered_feature_id:
+                    description: The ID of the metered feature (should be a single_use feature).
+                    type: string
+                  credit_cost:
+                    description: The credit cost of the metered feature.
+                    type: number
+                required:
+                  - metered_feature_id
+                  - credit_cost
+                additionalProperties: false
+            - type: "null"
+        archived:
+          description: Whether or not the feature is archived.
+          anyOf:
+            - type: boolean
+            - type: "null"
+      required:
+        - id
+        - type
+      additionalProperties: false
+    EntityData:
+      description: Entity data for creating an entity
+      type: object
+      properties:
+        feature_id:
+          description: The feature ID that this entity is associated with
+          example: seats
+          type: string
+        name:
+          description: Name of the entity
+          example: Team Alpha
+          type: string
+      required:
+        - feature_id
+      additionalProperties: false
     CustomerFeature:
       description: Customer feature object returned by the API
       type: object
@@ -1778,76 +2630,6 @@ components:
                   - balance
                   - expires_at
                 additionalProperties: false
-            - type: "null"
-      required:
-        - id
-        - type
-      additionalProperties: false
-    Feature:
-      description: Feature object returned by the API
-      type: object
-      properties:
-        id:
-          description: The unique identifier of the feature
-          example: <string>
-          type: string
-        name:
-          description: The name of the feature
-          example: <string>
-          anyOf:
-            - type: string
-            - type: "null"
-        type:
-          description: The type of the feature
-          example: <string>
-          type: string
-          enum:
-            - static
-            - boolean
-            - single_use
-            - continuous_use
-            - credit_system
-        display:
-          description: Display names for the feature
-          example:
-            singular: <string>
-            plural: <string>
-          anyOf:
-            - type: object
-              properties:
-                singular:
-                  type: string
-                plural:
-                  type: string
-              required:
-                - singular
-                - plural
-              additionalProperties: false
-            - type: "null"
-        credit_schema:
-          description: Credit cost schema for credit system features
-          example:
-            - metered_feature_id: <string>
-              credit_cost: 123
-          anyOf:
-            - type: array
-              items:
-                type: object
-                properties:
-                  metered_feature_id:
-                    type: string
-                  credit_cost:
-                    type: number
-                required:
-                  - metered_feature_id
-                  - credit_cost
-                additionalProperties: false
-            - type: "null"
-        archived:
-          description: Whether or not the feature is archived
-          example: false
-          anyOf:
-            - type: boolean
             - type: "null"
       required:
         - id

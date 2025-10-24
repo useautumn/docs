@@ -120,11 +120,13 @@
 					{
 						"group": "Features",
 						"pages": [
-							"api-reference/features/get",
-							"api-reference/features/list",
-							"api-reference/features/update",
-							"api-reference/features/usage",
-							"api-reference/features/balances"
+							"api-reference/features/get-feature",
+							"api-reference/features/list-features",
+							"api-reference/features/create-feature",
+							"api-reference/features/update-feature",
+							"api-reference/features/delete-feature",
+							"api-reference/features/set-feature-usage",
+							"api-reference/features/set-feature-balances"
 						]
 					},
 					{
