@@ -130,17 +130,18 @@
 					{
 						"group": "Products",
 						"pages": [
-							"api-reference/products/post",
-							"api-reference/products/get",
-							"api-reference/products/put",
-							"api-reference/products/delete"
+							"api-reference/products/get-product",
+							"api-reference/products/list-products",
+							"api-reference/products/create-product",
+							"api-reference/products/update-product",
+							"api-reference/products/delete-product"
 						]
 					},
 					{
 						"group": "Referrals",
 						"pages": [
-							"api-reference/products/referral-code",
-							"api-reference/products/referral-redeem"
+							"api-reference/referrals/referral-code",
+							"api-reference/referrals/referral-redeem"
 						]
 					},
 					{
