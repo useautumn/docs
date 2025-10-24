@@ -12,7 +12,7 @@
 		"strict": false
 	},
 	"contextual": {
-		"options": ["copy", "view", "chatgpt", "claude", "perplexity", "mcp"]
+		"options": ["copy", "view", "chatgpt", "claude", "perplexity", "mcp", "cursor"]
 	},
 	"favicon": "/favicon.png",
 	"navigation": {
@@ -167,7 +167,7 @@
 			"display": "interactive"
 		},
 		"examples": {
-			"languages": ["typescript", "bash", "python"]
+			"languages": ["typescript", "bash", "python", "javascript"]
 		}
 	},
 	"background": {
