@@ -3,7 +3,7 @@ info:
   title: Autumn API
   version: 1.2.0
 servers:
-  - url: https://api.useautumn.com
+  - url: https://api.useautumn.com/v1
     description: Production server
 security:
   - secretKey: []
