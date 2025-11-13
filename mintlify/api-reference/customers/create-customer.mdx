@@ -1,6 +1,6 @@
 ---
 title: "Create Customer"
-openapi: "customers POST /customers"
+openapi: "openapi-1.2.0 POST /customers"
 ---
 
 <Info>
@@ -9,3 +9,7 @@ openapi: "customers POST /customers"
   in the [attach](/api-reference/attach/), [check](/api-reference/check) or [track](/api-reference/track/)
   endpoints.{" "}
 </Info>
+
+<Note>
+  If the customer already exists and you try to create it again, you will simply be returned the customer object (rather than an error being thrown).
+</Note>

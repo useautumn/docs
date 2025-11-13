@@ -12,7 +12,7 @@
 		"strict": false
 	},
 	"contextual": {
-		"options": ["copy", "view", "chatgpt", "claude", "perplexity", "mcp", "cursor"]
+		"options": ["copy", "cursor", "view"]
 	},
 	"favicon": "/favicon.png",
 	"navigation": {
@@ -30,7 +30,12 @@
 						"pages": [
 							{
 								"group": "Integrate",
-								"pages": ["setup", "setup/backend", "setup/convex", "setup/ai-builders"]
+								"pages": [
+									"setup",
+									"setup/backend",
+									"setup/convex",
+									"setup/ai-builders"
+								]
 							},
 							{
 								"group": "Components",
@@ -101,12 +106,12 @@
 					{
 						"group": "Customers",
 						"pages": [
-							"api-reference/customers/get",
-							"api-reference/customers/list",
-							"api-reference/customers/post",
-							"api-reference/customers/update",
-							"api-reference/customers/billing-portal",
-							"api-reference/customers/delete"
+							"api-reference/customers/get-customer",
+							"api-reference/customers/list-customers",
+							"api-reference/customers/create-customer",
+							"api-reference/customers/update-customer",
+							"api-reference/customers/delete-customer",
+							"api-reference/customers/open-billing-portal"
 						]
 					},
 					{
