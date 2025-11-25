@@ -89,8 +89,8 @@ Create your [Autumn account](https://app.useautumn.com/), and the Free and Pro p
 <AccordionGroup>
 
   <Accordion title="Free Product">
-    Click on the **+ Product** button and name the product "Free". 
-    
+    Click on the **+ Product** button and name the product "Free".
+
     Toggle on the **Default** switch so that it is enabled for customers automatically when they're created.
     <Frame>
       <img
@@ -299,8 +299,11 @@ const handler = autumnHandler({
   },
 });
 
-export const APIRoute = createAPIFileRoute("/api/autumn/$")(handler);
-```
+export const Route = createFileRoute("/api/autumn/$")({
+	server: {
+		handlers: handler,
+	},
+});```
 
 ```typescript Hono
 //index.ts
@@ -511,8 +514,8 @@ export default function RootLayout({
 <Info>
   The Provider component can also take in a `getBearerToken` function, which should be used
   for auth frameworks with separate backend and frontend, eg using Clerk with
-  Express. 
-  
+  Express.
+
   This will pass the auth token in the `Authorization` header from the request to the
   backend, which can be used in the `autumnHandler` identify function.
 
