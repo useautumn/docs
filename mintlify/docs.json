@@ -1,9 +1,9 @@
 {
 	"$schema": "https://mintlify.com/docs.json",
-	"theme": "palm",
+	"theme": "aspen",
 	"name": "Autumn",
 	"colors": {
-		"primary": "#7C3EFF",
+		"primary": "#8838ff",
 		"light": "#f5f5f5",
 		"dark": "#7C3EFF"
 	},
@@ -16,9 +16,9 @@
 	},
 	"favicon": "/favicon.png",
 	"navigation": {
-		"anchors": [
+		"tabs": [
 			{
-				"anchor": "Docs",
+				"tab": "Documentation",
 				"icon": "folder-open",
 				"groups": [
 					{
@@ -26,25 +26,26 @@
 						"pages": ["welcome"]
 					},
 					{
-						"group": "Setup",
+						"group": "Getting Started",
 						"pages": [
 							{
-								"group": "Integrate",
+								"group": "Setup and Payments",
 								"pages": [
-									"setup",
-									"setup/backend",
-									"setup/convex",
-									"setup/ai-builders"
+									"getting-started/sdk",
+									"getting-started/react",
+									"getting-started/convex"
 								]
 							},
+							"getting-started/gating",
+							"getting-started/display-billing",
 							{
-								"group": "Components",
-								"pages": ["setup/shadcn", "setup/roll"]
+								"group": "Component Library",
+								"pages": ["getting-started/shadcn", "getting-started/roll"]
 							}
 						]
 					},
 					{
-						"group": "Products",
+						"group": "Plan",
 						"pages": [
 							"products/create-product",
 							"products/product-items",
@@ -69,15 +70,21 @@
 							"customers/creating-customers",
 							"customers/managing-customers"
 						]
-					},
+					}
+				]
+			},
+			{
+				"tab": "Cookbooks",
+				"icon": "book",
+				"groups": [
 					{
-						"group": "Pricing Guides",
+						"group": "Cookbooks",
 						"pages": ["guides/credits", "guides/prepaid"]
 					}
 				]
 			},
 			{
-				"anchor": "API Reference",
+				"tab": "API Reference",
 				"icon": "square-terminal",
 				"groups": [
 					{

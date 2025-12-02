@@ -1,58 +1,61 @@
 ---
-title: "Creating Products"
-description: "Learn about products in Autumn and how to create them"
+title: "Creating Plan"
+description: "Learn about plans in Autumn and how to create them"
 ---
 
-Products are the separate packages that define what your customers get and how much they should be billed for it. Each product you create is a distinct combination of these features and prices.
+Plans are the separate packages that define what your customers get and how much they should be billed for it. Each plan you create is a distinct combination of these features and prices.
 
-For example, you can define a separate product for all the pricing tiers (eg free plan, team plan, enterprise tier) you offer, or all your different price variations (annual billing, monthly billing, usage-based billing)
+For example, you can define a separate plan for all the pricing tiers (eg free plan, team plan, enterprise tier) you offer, or all your different price variations (annual billing, monthly billing, usage-based billing)
 
-## Creating a product
+## Plan Price
+When you create a plan, you can set its price:
+- **Free** - no price, free to use
+- **Paid, one-off** - a fixed amount a user will be charged. This is often used for one-time topups.
+- **Paid, recurring** - a fixed amount a user will be charged per unit of time. This is often used for subscriptions.
+- **Variable** - there is no fixed price for this plan. The plan is priced purely based on feature usage or quantity purchased.
 
-Navigate to products section and click create product
+{/* ## Creating a Plan
 
-1. Fill in a name. This will be used to create a product in Stripe and show up on your checkout pages.
-2. Fill in an ID. You'll use this when using Autumn's APIs or SDKs to refer to this product.
-3. Click "Create Product". You'll be taken to the product editing page.
+Navigate to plans page and click create plan
 
-You also have the option to duplicate a product. You can choose whether to copy it into Sandbox or the live environment. Hit the Elipses menu on the right of the product table and select "Copy".
+1. Fill in a name. This will be used to create a plan in Stripe and show up on your checkout pages.
+2. Fill in an ID. You'll use this when using Autumn's APIs or SDKs to refer to this plan.
+3. Click "Create Plan". You'll be taken to the plan editing page.
 
-Once the product is created, you'll be taken to the product editing page. Here you can add product items, as well as set the properties of the product.
+You also have the option to duplicate a plan. You can choose whether to copy it into Sandbox or the live environment. Hit the Elipses menu on the right of the plan table and select "Copy".
 
-## Product items
+Once the plan is created, you'll be taken to the plan editing page. Here you can add plan items, as well as set the properties of the plan. */}
 
-Products are made up of product items. These can be:
+## Plan Features
 
-- **Features** - define the features that your customers get access to with this product
-- **Prices** - how much customers should pay for this tier. These can be one off prices or subscriptions
-- **Feature Prices** - for charging based on usage of a feature, you can add both a feature and price together
+Plans are made up of a list of features. These can be:
 
-## Product Properties
+- **Included Features** - features that come with the plan for no additional cost. These can be boolean flags, or metered features with a limit.
+- **Priced Features** - features that are billable based on usage of a feature. These can also have an included amount, and a prepaid or usage-based price.
 
-#### Default Product
+When a plan is enabled for a customer, they will be granted access to the features defined in the plan.
 
-Set this is the product should be automatically applied to a customer when they're created. This is typically for free products that give customers access to a limited set of features without paying.
+## Plan Properties
 
-<Note>
-  If you set a product to be default, and it has a price, Autumn will still
-  apply it to the customer. However, since there are no payment details for the
-  customer by default, Autumn will send an invoice the customer's email.
-</Note>
+**Auto-enable**
 
-#### Add on Product
+Set this is the plan should be automatically applied to a customer when they're created. This is typically for free plans that give customers access to a limited set of features without paying.
 
-Set this if the product is an add on. This will mean it can be purchased together with other products
 
-#### Product Groups
+**Add ons**
 
-If you have multiple groups of subscriptions, and customers can have a product from each of these subscription groups live at the same time, use this field. All product tiers from the same group should have the same value.
+Set this if the plan is an add on. This will mean it can be purchased together with other plans. If this flag is not set, then enabling a plan will replace the existing plan.
+
+**Plan Groups**
+
+If you have multiple groups of plans, and customers can have an active plan from each of these subscription groups at the same time, group the plans together. All plan tiers from the same group should have the same value.
 
 <Info>
 **Example**
 
 Let's say you have two different types of chatbots - one for customer support and one for sales. You want customers to be able to have both types of chatbots at the same time, but only one tier from each type.
 
-You would create two product groups:
+You would create two plan groups:
 
 1. "Customer Support Chatbots" (group: "support")
 
@@ -71,153 +74,11 @@ This way, a customer could have both the "Advanced Support" chatbot and the "Sta
 
 ## Free Trials
 
-You can set a free trial for a product with prices. This will give customers a set amount of days to try the product for free.
+Under plan settings, you can set a free trial for a plan. This will give customers a set amount of days to try the plan for free.
 
-To enable a free trial:
-
-1. Go to the [product page](https://app.useautumn.com/products)
-2. In the sidebar, you'll see a "Free Trials" section. Click on the + icon to add a new free trial
-3. In the popup, fill in the how many days the trial should last.
-4. Click "Update Product"
+You can set whether a card is required for the free trial. If a card is not required, you can `attach` the plan to a customer without them having to go through a checkout flow or have a card on file. It will be automatically expired after the free trial period.
 
 <Note>
   If you're using the customer `fingerprint` field, you can also choose to limit
   the free trial to one per customer.
 </Note>
-
-## Using the CLI
-
-<Note>
-  The schema for our `product` and `feature` builders follows the same schema as
-  our [API](/api-reference/products/post).
-</Note>
-
-<Accordion title="Example autumn.config.ts">
-```typescript autumn.config.ts
-import {
-	feature,
-	product,
-	featureItem,
-	pricedFeatureItem,
-	priceItem,
-} from 'atmn';
-
-
-// Features
-export const canUseTokens = feature({
-id: 'can_use_tokens',
-name: 'Can Use Tokens',
-type: 'boolean',
-})
-
-export const message = feature({
-  id: "message",
-  name: "Messages",
-  type: "metered",
-});
-
-export const taskRuns = feature({
-  id: "task_runs",
-  name: "Task Runs",
-  type: "metered",
-});
-
-// Products
-export const freePlan = product({
-id: 'free',
-name: 'Free',
-items: [
-featureItem({
-feature_id: message.id,
-included_usage: 200,
-interval: 'month',
-}),
-]
-})
-
-export const ultraPlan = product({
-  id: "ultra",
-  name: "Ultra",
-  items: [
-    priceItem({
-      price: 300,
-      interval: "year",
-    }),
-
-    pricedFeatureItem({
-      feature_id: message.id,
-      price: 200,
-      interval: "month",
-      included_usage: 80,
-      billing_units: 100,
-      usage_model: "pay_per_use",
-    }),
-
-    featureItem({
-      feature_id: message.id,
-      included_usage: 900,
-      interval: "year",
-    }),
-
-    featureItem({
-      feature_id: taskRuns.id,
-      included_usage: 900,
-      interval: "year",
-    }),
-  ],
-});
-
-export const proPlan = product({
-  id: "pro",
-  name: "Pro",
-  items: [
-    priceItem({
-      price: 200,
-      interval: "year",
-    }),
-
-    pricedFeatureItem({
-      feature_id: canUseTokens.id,
-      price: 200,
-      interval: "month",
-      included_usage: 1,
-      billing_units: 1,
-      usage_model: "prepaid",
-    }),
-
-    pricedFeatureItem({
-      feature_id: message.id,
-      price: 200,
-      interval: "month",
-      included_usage: 30,
-      billing_units: 100,
-      usage_model: "pay_per_use",
-    }),
-
-    featureItem({
-      feature_id: message.id,
-      included_usage: 650,
-      interval: "year",
-    }),
-
-    featureItem({
-      feature_id: taskRuns.id,
-      included_usage: 650,
-      interval: "year",
-    }),
-  ],
-});
-
-// Remember to update this when you make changes!
-export default {
-products: [freePlan, ultraPlan, proPlan],
-features: [canUseTokens, message, taskRuns]
-}
-
-```
-</Accordion>
-
-First, run `npx atmn auth` to authenticate yourself with the CLI.
-
-Then run `npx atmn push` to push your changes to Autumn's sandbox environment.
-```
