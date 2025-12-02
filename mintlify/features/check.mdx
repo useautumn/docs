@@ -1,11 +1,11 @@
 ---
 title: "Checking Access"
-description: "Learn how to check feature access with the `check` route"
+description: "Learn how to check feature access with the `check` endpoint"
 ---
 
-When you create a product in Autumn, you define what features your customers on that product get access to.
+When you create a plan in Autumn, you define what features your customers on that plan get access to.
 
-The `check` method returns the `allowed` property to check if a customer should have access to a feature, so you can block access or prompt them to upgrade.
+The `check` method returns the `allowed` field in real-time to check if a customer should have access to a feature. You can use this to block access, or prompt them to upgrade.
 
 ## Checking Metered Features
 
@@ -21,18 +21,6 @@ If they still have messages remaining, they'll be allowed to send an AI message.
 </Info>
 <CodeGroup>
 
-```tsx React
-import { useCustomer } from "autumn-js/react";
-
-const { allowed, check } = useCustomer();
-
-// check the customer state object locally (no API call)
-const canSendMessage = allowed({ featureId: "messages" });
-
-// alternatively, call Autumn's API to get the latest state
-const { data } = await check({ featureId: "messages" });
-```
-
 ```javascript Node.js
 import { Autumn as autumn } from "autumn-js";
 
@@ -40,6 +28,15 @@ const { data } = await autumn.check({
   customer_id: "user-123",
   feature_id: "messages",
 });
+```
+
+```tsx React
+import { useCustomer } from "autumn-js/react";
+
+const { check } = useCustomer();
+
+// check the customer state object locally (no API call)
+const { data } = check({ featureId: "messages" });
 ```
 
 ```python Python
@@ -91,7 +88,7 @@ If the [product status](/products/enabling-product/#product-statuses) is `past_d
 
 </Tip>
 
-#### Checking for a Required Quantity
+## Checking for a Required Quantity
 
 If you know the quantity a user will consume in advance, you can specify it with the `required_quantity` parameter. This means you can prevent a user from starting a process that would consume more than their allowance.
 
@@ -99,22 +96,22 @@ By default, `required_quantity` is 1, so not passing this parameter will return 
 
 <CodeGroup>
 
-```tsx React
-const { allowed, check } = useCustomer();
-
-const canSendMessage = allowed({ featureId: "messages", requiredQuantity: 3 });
-
-const { data } = await check({ featureId: "messages", requiredQuantity: 3 });
-```
-
 ```javascript Node.js {10}
 import { Autumn as autumn } from "autumn-js";
 
 const { data } = await autumn.check({
   customer_id: "user-123",
   feature_id: "ai-messages",
-  required_quantity: 3,
+  required_balance: 3,
 });
+```
+
+```tsx React
+import { useCustomer } from "autumn-js/react";
+
+const { check } = useCustomer();
+
+const { data } = check({ featureId: "messages", requiredBalance: 3 });
 ```
 
 ```python Python
@@ -127,7 +124,7 @@ async def main():
   check = await autumn.check(
     customer_id="user-123",
     feature_id="ai-messages",
-    required_quantity=3
+    required_balance=3
   )
   allowed = check.allowed
 
@@ -141,27 +138,17 @@ curl -X POST "https://api.useautumn.com/v1/check" \
   -d '{
     "customer_id": "user-123",
     "feature_id": "ai-messages",
-    "required_quantity": 3
+    "required_balance": 3
   }'
 ```
 
 </CodeGroup>
 
-#### Checking Feature Access and Recording Usage together
+## Checking and Reserving Usage
 
-In a typical workflow, you'll want to check if a customer has access to a feature and then [record the usage](/features/tracking-usage/) as separate steps.
-
-However, you can check entitlement and record usage in a single API call using the `send_event` field. The usage value will be the `required_quantity` parameter.
+You can check access and record usage in a single, atomic API call using the `send_event` field. The usage value deducted from the balance will be the `required_balance` parameter. This is useful for concurrent events.
 
 <CodeGroup>
-
-```tsx React
-const { allowed, check } = useCustomer();
-
-const canSendMessage = allowed({ featureId: "messages", requiredQuantity: 3 });
-
-const { data } = await check({ featureId: "messages", requiredQuantity: 3 });
-```
 
 ```javascript Node.js
 import { Autumn as autumn } from "autumn-js";
@@ -169,7 +156,7 @@ import { Autumn as autumn } from "autumn-js";
 const { data } = await autumn.check({
   customer_id: "user-123",
   feature_id: "api_calls",
-  required_quantity: 3,
+  required_balance: 3,
   send_event: true,
 });
 ```
@@ -184,7 +171,7 @@ async def main():
   check = await autumn.check(
       customer_id="user-123",
       feature_id="api_calls",
-      required_quantity=3,
+      required_balance=3,
       send_event=True,
   )
   allowed = check.allowed
@@ -199,29 +186,67 @@ curl -X POST "https://api.useautumn.com/v1/check" \
   -d '{
     "customer_id": "user-123",
     "feature_id": "ai-messages",
-    "required_quantity": 3,
+    "required_balance": 3,
     "send_event": true
   }'
 ```
 
 </CodeGroup>
 
-<Warning>
-  We recommend doing these as separate steps in your application logic, so usage is only counted if the event is successful.
+If the operation fails, you can then "refund" the usage with a negative usage `value` in the `track` endpoint.
 
-Alternatively, you can "refund" usage with a negative usage `value` if the event fails.
+<CodeGroup>
 
-</Warning>
+```javascript Node.js
+import { Autumn } from "autumn-js";
+
+const autumn = new Autumn({
+  secretKey: process.env.AUTUMN_SECRET_KEY,
+});
+
+const { data } = await autumn.track({
+  customer_id: "user_or_org_id_from_auth",
+  feature_id: "api_calls",
+  value: -3,
+});
+```
+
+```python Python
+import asyncio
+from autumn import Autumn
+
+autumn = Autumn(process.env.AUTUMN_SECRET_KEY)
+
+async def main():
+  await autumn.track(
+    customer_id="user_or_org_id_from_auth",
+    feature_id="api_calls",
+    value=-3,
+  )
+```
+
+```bash cURL
+curl -X POST "https://api.useautumn.com/v1/track" \
+  -H "Authorization: Bearer <AUTUMN_SECRET_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "customer_id": "user_or_org_id_from_auth",
+    "feature_id": "api_calls",
+    "value": -3
+  }'
+```
+</CodeGroup>
+
 ## Checking Boolean Features
 
 For simple on/off features, use the endpoint to determine if a customer has access. Alternatively you can just check if they have access to a certain product.
 
 ```tsx React
-const { allowed } = useCustomer();
+const { check } = useCustomer();
 
 // check if the customer has access to a product
-const isPremium = allowed({ productId: "premium" });
+const isPremium = check({ productId: "premium" });
 
 // check if the customer has access to a feature
-const dashboardAccess = allowed({ featureId: "premium-dashboard" });
+const dashboardAccess = check({ featureId: "premium-dashboard" });
 ```
