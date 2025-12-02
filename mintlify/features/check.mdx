@@ -96,11 +96,15 @@ By default, `required_quantity` is 1, so not passing this parameter will return 
 
 <CodeGroup>
 
-```javascript Node.js {10}
-import { Autumn as autumn } from "autumn-js";
+```javascript Node.js
+import { Autumn } from "autumn-js";
+
+const autumn = new Autumn({
+  secretKey: process.env.AUTUMN_SECRET_KEY,
+});
 
 const { data } = await autumn.check({
-  customer_id: "user-123",
+  customer_id: "user_or_org_id_from_auth",
   feature_id: "ai-messages",
   required_balance: 3,
 });
@@ -118,11 +122,11 @@ const { data } = check({ featureId: "messages", requiredBalance: 3 });
 import asyncio
 from autumn import Autumn
 
-autumn = Autumn("secret_key")
+autumn = Autumn(process.env.AUTUMN_SECRET_KEY)
 
 async def main():
   check = await autumn.check(
-    customer_id="user-123",
+    customer_id="user_or_org_id_from_auth",
     feature_id="ai-messages",
     required_balance=3
   )
@@ -133,10 +137,10 @@ asyncio.run(main())
 
 ```bash cURL {7}
 curl -X POST "https://api.useautumn.com/v1/check" \
-  -H "Authorization: Bearer am_sk_1234567890" \
+  -H "Authorization: Bearer <AUTUMN_SECRET_KEY>" \
   -H "Content-Type: application/json" \
   -d '{
-    "customer_id": "user-123",
+    "customer_id": "user_or_org_id_from_auth",
     "feature_id": "ai-messages",
     "required_balance": 3
   }'
@@ -151,10 +155,14 @@ You can check access and record usage in a single, atomic API call using the `se
 <CodeGroup>
 
 ```javascript Node.js
-import { Autumn as autumn } from "autumn-js";
+import { Autumn } from "autumn-js";
+
+const autumn = new Autumn({
+  secretKey: process.env.AUTUMN_SECRET_KEY,
+});
 
 const { data } = await autumn.check({
-  customer_id: "user-123",
+  customer_id: "user_or_org_id_from_auth",
   feature_id: "api_calls",
   required_balance: 3,
   send_event: true,
@@ -165,11 +173,11 @@ const { data } = await autumn.check({
 import asyncio
 from autumn import Autumn
 
-autumn = Autumn("secret_key")
+autumn = Autumn(process.env.AUTUMN_SECRET_KEY)
 
 async def main():
   check = await autumn.check(
-      customer_id="user-123",
+      customer_id="user_or_org_id_from_auth",
       feature_id="api_calls",
       required_balance=3,
       send_event=True,
@@ -181,10 +189,10 @@ asyncio.run(main())
 
 ```bash cURL {7-8}
 curl -X POST "https://api.useautumn.com/v1/check" \
-  -H "Authorization: Bearer am_sk_1234567890" \
+  -H "Authorization: Bearer <AUTUMN_SECRET_KEY>" \
   -H "Content-Type: application/json" \
   -d '{
-    "customer_id": "user-123",
+    "customer_id": "user_or_org_id_from_auth",
     "feature_id": "ai-messages",
     "required_balance": 3,
     "send_event": true
