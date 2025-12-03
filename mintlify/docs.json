@@ -31,17 +31,13 @@
 							{
 								"group": "Setup and Payments",
 								"pages": [
-									"getting-started/sdk",
-									"getting-started/react",
-									"getting-started/convex"
+									"getting-started/setup/react",
+									"getting-started/setup/sdk",
+									"getting-started/setup/convex"
 								]
 							},
 							"getting-started/gating",
-							"getting-started/display-billing",
-							{
-								"group": "Component Library",
-								"pages": ["getting-started/shadcn", "getting-started/roll"]
-							}
+							"getting-started/display-billing"
 						]
 					},
 					{
@@ -75,7 +71,7 @@
 			},
 			{
 				"tab": "Cookbooks",
-				"icon": "book",
+				"icon": "graduation-cap",
 				"groups": [
 					{
 						"group": "Cookbooks",
@@ -84,11 +80,11 @@
 				]
 			},
 			{
-				"tab": "API Reference",
-				"icon": "square-terminal",
+				"tab": "Client Libraries",
+				"icon": "palette",
 				"groups": [
 					{
-						"group": "Hooks",
+						"group": "React Hooks",
 						"pages": [
 							"api-reference/hooks/useCustomer",
 							"api-reference/hooks/useEntity",
@@ -96,9 +92,19 @@
 						]
 					},
 					{
-						"group": "CLI",
-						"pages": ["api-reference/cli/config"]
-					},
+						"group": "Component Library",
+						"pages": [
+							"getting-started/components/pricing-table",
+							"getting-started/components/checkout-dialog",
+							"getting-started/components/paywall-dialog"
+						]
+					}
+				]
+			},
+			{
+				"tab": "API Reference",
+				"icon": "square-terminal",
+				"groups": [
 					{
 						"group": "Core",
 						"pages": [
@@ -157,6 +163,10 @@
 							"api-reference/referrals/referral-code",
 							"api-reference/referrals/referral-redeem"
 						]
+					},
+					{
+						"group": "CLI",
+						"pages": ["api-reference/cli/config"]
 					},
 					{
 						"group": "Platform (Beta)",

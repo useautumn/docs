@@ -53,7 +53,7 @@ pip install autumn-py
 
 ## 3. Create an Autumn customer
 
-When the customer signs up, create an Autumn customer for them. Autumn will automatically enable the Free plan, since you marked it with the `auto-enable` flag.
+When the customer signs up, create an Autumn customer for them. Autumn will automatically enable the <Badge color="green">Free</Badge> plan, since you marked it with the `auto-enable` flag.
 
 <CodeGroup dropdown>
 
@@ -138,7 +138,7 @@ graph TD
 
 #### Checkout
 
-Call the `checkout` function to get Stripe checkout page when the customer wants to purchase the Pro plan, and pass it to your frontend.
+Call the `checkout` function to get Stripe checkout page when the customer wants to purchase the <Badge color="blue">Pro</Badge> plan, and pass it to your frontend.
 
 If their payment details are already on file, a Checkout URL will **not** be returned. Instead, checkout preview data (eg, prices) will be returned, which you can use to display to the user. 
 
@@ -249,7 +249,7 @@ curl -X POST 'https://api.useautumn.com/v1/attach' \
 
 <Check>
 
-No matter what scenario: new subscriptions, upgrades, downgrades, renewals, you can always follow this 2 step process.
+No matter what scenario: new subscriptions, upgrades, downgrades, renewals, one-off payments, always follow this 2 step process.
 
 Upgrades will happen immediately, and downgrades will be scheduled for the next billing cycle.
 

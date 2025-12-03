@@ -4,10 +4,10 @@ description: "Implement your React + Node.js app's payments and pricing model"
 ---
 import CreatePlans from '/snippets/create-plans.mdx';
 
-You can use Autumn's React hooks and components to replace frontend/backend glue code and setup billing even faster.
+Autumn's client-side [hooks](/api-reference/hooks/useCustomer) and [UI components](/getting-started/components/pricing-table) allow you to handle billing directly from your frontend.
 
 <Info>
-  React hooks and components are supported for apps with a frontend and backend in Typescript. Please use our [Server-side SDK](/getting-started/sdk) for other frameworks and languages.
+  Client libraries are supported for React and Node.js apps. Please use our [Server-side SDK](/getting-started/sdk) for other frameworks and languages.
 </Info>
 
 In this example we'll create the pricing for a premium AI chatbot. We're going to have:
@@ -56,7 +56,7 @@ yarn add autumn-js
 
 #### Add Endpoints Server-side
 
-Server-side, mount the Autumn handler. This will create endpoints in the `/api/autumn/*` path, which will be called by Autumn's frontend React [hooks](/api-reference/hooks/useCustomer). These endpoints in turn call Autumn's API.
+Server-side, mount the Autumn handler. This will create endpoints in the `/api/autumn/*` path, which will be called by Autumn's frontend React hooks. These endpoints in turn call Autumn's API.
 
 The handler takes in an `identify` function where you should pass in the user ID or organization ID from your auth provider.
 
@@ -278,7 +278,7 @@ Deno.serve(async (req: Request) => {
 
 </CodeGroup>
 <Check>
-  Autumn will automatically create a customer if the customer ID is new.
+  Autumn will automatically create a customer if the customer ID is new, and enable the <Badge color="green">Free</Badge> plan for them.
 </Check>
 
 Once you login to your app, you will see your user under the [customers](https://app.useautumn.com/customers) page.
@@ -345,9 +345,9 @@ export default function RootLayout({ children }: {
 
 ## 3. Stripe Payment Flow
 
-Call `checkout` to redirect the customer to a Stripe checkout page when they want to purchase the Pro plan. Once they've paid, Autumn will grant them access to the "messages" defined in Step 1.
+Call `checkout` to redirect the customer to a Stripe checkout page when they want to purchase the <Badge color="blue">Pro</Badge> plan. Once they've paid, Autumn will grant access to "100 messages per month" defined in Step 1.
 
-If their payment details are already on file, no Checkout URL is required. [CheckoutDialog](/setup/shadcn#checkout-dialog) will open instead to let your customer confirm their plan switch.
+For subsequent payments, no Checkout URL is required. You can pass in Autumn's [&#60;CheckoutDialog /&#62;](/getting-started/components/checkout-dialog) component to the function, which will automatically open instead if there's no checkout URL returned.
 
 <Note>
 Use Stripe's test card `4242 4242 4242 4242` to make a purchase in sandbox. You can enter any Expiry and CVV.
@@ -374,6 +374,8 @@ export default function PurchaseButton() {
 }
 ```
 
+This dialog will let users confirm their payment, and supports any scenario (eg upgrades, downgrades, topups).
+
 
 <Expandable title="Checkout Dialog">
     <Frame>
@@ -386,14 +388,15 @@ export default function PurchaseButton() {
 </Expandable>
 
 <Tip>
-  Alternatively, you can use the [PricingTable](/setup/shadcn#pricing-table)
-  component, or [roll your own](/setup/roll) plan switching flows with our SDK.
+  Autumn also has a prebuilt [&#60;PricingTable /&#62;](/getting-started/components/pricing-table) UI component, which you can drop in to dynamically display plans and upgrade states.
+  
+  
+  Alternatively, you can [build your own](/getting-started/components/pricing-table#build-your-own) components and flows using our underlying API for full configurability.
 </Tip>
 
-
-
 ---
-**Next steps**
+
+**Next step: Gating and Usage Limits**
 
 Now that the plan is enabled and you've handled payments, you can now make sure that customers have the correct access and limits based on their plan.
 

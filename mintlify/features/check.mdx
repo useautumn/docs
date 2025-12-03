@@ -88,11 +88,11 @@ If the [product status](/products/enabling-product/#product-statuses) is `past_d
 
 </Tip>
 
-## Checking for a Required Quantity
+## Checking for a Required Balance
 
-If you know the quantity a user will consume in advance, you can specify it with the `required_quantity` parameter. This means you can prevent a user from starting a process that would consume more than their allowance.
+If you know the balance a user will consume in advance, you can specify it with the `required_balance` parameter. This means you can prevent a user from starting a process that would consume more than their allowance.
 
-By default, `required_quantity` is 1, so not passing this parameter will return `allowed: true` as long as the customer has a feature balance of 1 or more.
+By default, `required_balance` is 1, so not passing this parameter will return `allowed: true` as long as the customer has a feature balance of 1 or more.
 
 <CodeGroup>
 
