@@ -56,7 +56,7 @@ yarn add autumn-js
 
 #### Add Endpoints Server-side
 
-Server-side, mount the Autumn handler. This will create endpoints in the `/api/autumn/*` path, which will be called by Autumn's frontend React [library](/api-reference/hooks/useCustomer). These endpoints in turn call Autumn's API.
+Server-side, mount the Autumn handler. This will create endpoints in the `/api/autumn/*` path, which will be called by Autumn's frontend React [hooks](/api-reference/hooks/useCustomer). These endpoints in turn call Autumn's API.
 
 The handler takes in an `identify` function where you should pass in the user ID or organization ID from your auth provider.
 
@@ -345,14 +345,13 @@ export default function RootLayout({ children }: {
 
 ## 3. Stripe Payment Flow
 
-Call `checkout` to redirect the customer to a Stripe checkout page when they want to purchase the Pro plan, or switch to another plan. Once they've paid, Autumn will grant them access to the features we defined.
+Call `checkout` to redirect the customer to a Stripe checkout page when they want to purchase the Pro plan. Once they've paid, Autumn will grant them access to the "messages" defined in Step 1.
 
-If their payment details are already on file, [`CheckoutDialog`](/setup/shadcn#checkout-dialog) will open instead to let the customer confirm their upgrade, downgrade or new purchase, then handle the payment.
+If their payment details are already on file, no Checkout URL is required. [CheckoutDialog](/setup/shadcn#checkout-dialog) will open instead to let your customer confirm their plan switch.
 
-<Tip>
-  You can alternatively use our [PricingTable](/setup/shadcn#pricing-table)
-  component, or [roll your own](/setup/roll) flows using our API.
-</Tip>
+<Note>
+Use Stripe's test card `4242 4242 4242 4242` to make a purchase in sandbox. You can enter any Expiry and CVV.
+</Note>
 
 ```jsx React
 import { useCustomer, CheckoutDialog } from "autumn-js/react";
@@ -375,9 +374,6 @@ export default function PurchaseButton() {
 }
 ```
 
-<Note>
-Use Stripe's test card `4242 4242 4242 4242` to make a purchase in sandbox. You can enter any Expiry and CVV.
-</Note>
 
 <Expandable title="Checkout Dialog">
     <Frame>
@@ -388,6 +384,13 @@ Use Stripe's test card `4242 4242 4242 4242` to make a purchase in sandbox. You 
     </Frame>
 
 </Expandable>
+
+<Tip>
+  Alternatively, you can use the [PricingTable](/setup/shadcn#pricing-table)
+  component, or [roll your own](/setup/roll) plan switching flows with our SDK.
+</Tip>
+
+
 
 ---
 **Next steps**

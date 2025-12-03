@@ -45,7 +45,7 @@
 						]
 					},
 					{
-						"group": "Plan",
+						"group": "Plans",
 						"pages": [
 							"products/create-product",
 							"products/product-items",

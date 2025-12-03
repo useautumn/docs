@@ -4,88 +4,49 @@ Create your [Autumn account](https://app.useautumn.com/), and the Free and Pro p
 <AccordionGroup>
 
   <Accordion title="Free Plan">
-    Click on the **+ Product** button and name the product "Free".
+   - On the [Plans](https://app.useautumn.com/products) page, click **Create Plan**.
+   - Name the plan (eg, "Free") and select plan type `Free`
+   - Toggle the `auto-enable` flag, so that the plan is assigned whenever customers are created
+   - In the plan editor, click **Add Feature to Plan**, and create a `Metered`, `Consumable` feature for "messages"
+   - Configure the plan to grant `5` messages, and set the interval to `per month`
+   - Click **Save**
 
-    Toggle on the **Default** switch so that it is enabled for customers automatically when they're created.
-    <Frame>
-      <img
-        src="/assets/quickstart/create-free.png"
 
-      />
-    </Frame>
+   <Frame
+   hint="Your Free plan should look like this"
+   >
+    <img
+      className="block dark:hidden"
+      src="/assets/getting-started/free-plan-light.png"
+    />
+    <img
+      className="hidden dark:block"
+      src="/assets/getting-started/free-plan-dark.png"
+    />
 
-    Click on the **+ Feature** button and create a single-use "Messages" feature.
-
-    <Frame>
-      <img
-        src="/assets/quickstart/create-feature.png"
-
-      />
-    </Frame>
-
-    Add a limit of 5 messages per month.
-
-    <Frame>
-      <img
-        src="/assets/quickstart/free-messages.png"
-
-      />
-    </Frame>
-
-    Click on the **Add Item** button, then on the **Create Product** button.
-
-    <Frame>
-      <img
-        src="/assets/quickstart/free-product.png"
-
-      />
-    </Frame>
+  </Frame>
 
   </Accordion>
 
   <Accordion title="Pro Plan">
-  Back on the products page, click on the **+ Product** button and name it "Pro".
+  - On the [Plans](https://app.useautumn.com/products) page, click **Create Plan**.
+  - Name the plan (eg, "Pro") and select plan type `Paid`, `Recurring`, and set the price to `$20` per month
+  - In the plan editor, click **Add Feature to Plan**, and add the `messages` feature that you created in the Free plan
+  - Configure the plan to grant `100` messages, and set the interval to `per month`
+  - Click **Save**
 
-  <Frame>
-    <img
-      src="/assets/quickstart/create-pro.png"
-
-    />
-
+  <Frame
+  hint="Your Pro plan should look like this"
+  >
+  <img
+    className="block dark:hidden"
+    src="/assets/getting-started/pro-plan-light.png"
+  />
+  <img
+    className="hidden dark:block"
+    src="/assets/getting-started/pro-plan-dark.png"
+  />
   </Frame>
-
-Click on the **+ Feature** button and select the "Messages" feature that we created for the Free product.
-
-Add a limit of 100 messages per month.
-
-  <Frame>
-    <img
-      src="/assets/quickstart/pro-messages.png"
-
-    />
-
-  </Frame>
-
-Click on the **+ Price** button and add a price of $20 per month.
-
-  <Frame>
-    <img
-      src="/assets/quickstart/pro-price.png"
-
-    />
-
-  </Frame>
-
-Click on the **Create Product** button.
-
-  <Frame>
-    <img
-      src="/assets/quickstart/pro-product.png"
-
-    />
-
-  </Frame>
-
   </Accordion>
 </AccordionGroup>
 </Tab>
