@@ -1,5 +1,5 @@
 ---
-title: "Using React Hooks"
+title: "Using React hooks"
 description: "Implement your React + Node.js app's payments and pricing model"
 ---
 import CreatePlans from '/snippets/create-plans.mdx';
@@ -17,7 +17,7 @@ In this example we'll create the pricing for a premium AI chatbot. We're going t
 
 ## 1. Create your pricing plans
 
-Create a product for each plan that your app offers. In our example we'll create a "Free" and "Pro" plan.
+Create a plan for each pricing tier that your app offers. In our example we'll create a "Free" and "Pro" plan, and assign them features.
 
 <CreatePlans />
 
@@ -396,12 +396,12 @@ This dialog will let users confirm their payment, and supports any scenario (eg 
 
 ---
 
-**Next step: Gating and Usage Limits**
+**Next step: feature gating**
 
 Now that the plan is enabled and you've handled payments, you can now make sure that customers have the correct access and limits based on their plan.
 
 <Card
-  title="Gating Features"
+  title="Usage tracking and limiting"
   href='/getting-started/gating'
  >
 Enforce usage limits and feature permissions using Autumn's `check` and `track` functions

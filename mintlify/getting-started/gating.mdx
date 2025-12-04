@@ -1,11 +1,11 @@
 ---
-title: "Gating and Limits"
-description: "How to gate features and track usage limits"
+title: "Usage tracking and limits"
+description: "Limit features based on a customer's plan and usage"
 ---
 
-Different users should have access to different features and usage limits, depending on how much they're paying.
+Typically, your users should get access to different features and usage limits, depending on their plan.
 
-Autumn tracks what plan people are paying for, and assigns them the features defined in your plan configuration. There are 2 key functions you need to make sure users have the correct permissions:
+Autumn handles your customer's payments and grants them the features defined in your plan configuration. There are 2 functions you need to enforce limits and gating:
 
 - `check` for feature access, before allowing a user to do something
 - `track` the usage in Autumn afterwards (if needed)
@@ -20,9 +20,29 @@ This guide shows an asynchronous approach to checking and tracking. You can also
 
 Check if a user has enough remaining balance of messages, before executing the action.
 
-<CodeGroup dropdown>
+<CodeGroup>
 
-```typescript
+```jsx React wrap
+import { useCustomer } from "autumn-js/react";
+
+export default function SendChatMessage() {
+  const { check, refetch } = useCustomer();
+
+  const handleSendMessage = () => {
+          const { data } = check({ featureId: "messages" });
+
+          if (!data?.allowed) {
+            alert("You're out of messages");
+          } else {
+            //send chatbot message
+            //then refresh customer usage data
+            await refetch();
+          }
+        }
+}
+```
+
+```typescript Node.js
 import { Autumn } from "autumn-js";
 
 const autumn = new Autumn({
@@ -42,7 +62,7 @@ if (!data.allowed) {
 }
 ```
 
-```python
+```python Python
 import asyncio
 from autumn import Autumn
 
@@ -60,7 +80,7 @@ async def main():
 asyncio.run(main())
 ```
 
-```bash
+```bash cURL
 # check feature access
 curl -X POST 'https://api.useautumn.com/v1/check' \
 -H 'Authorization: Bearer am_sk_1234567890' \
@@ -78,35 +98,9 @@ The `feature_id` used here is defined by you when you create the feature in Autu
 
 <Accordion title="Using React hooks to check access client-side">
 
-When using [React hooks](/getting-started/react), you have access to the `customer` state, which contains all the billing data for your user (subscription status, feature permissions, usage balances, etc).
+When using [React hooks](/getting-started/react), you have access to the [`customer`](/api-reference/hooks/useCustomer#customer) state object, which you can use to [display billing data](/getting-started/display-billing) to your users (subscription status, feature permissions, usage balances, etc). 
 
 You can use the client-side `check` function to gate features and show paywalls. Permissions are determined by reading the local `customer` state, so no call to Autumn's API is made. The "true" state should always be fetched server-side.
-
-```jsx send-chat-message.tsx wrap
-import { useCustomer } from "autumn-js/react";
-
-export default function SendChatMessage() {
-  const { customer, check, refetch } = useCustomer();
-
-  return (
-      <button
-        onClick={async () => {
-          const { data } = check({ featureId: "messages" });
-
-          if (!data?.allowed) {
-            alert("You're out of messages");
-          } else {
-            //send chatbot message server-side
-            //then refresh customer object and usage
-            await refetch();
-          }
-        }}
-      >
-        Send AI Message
-      </button>
-  );
-}
-```
 
 </Accordion>
 

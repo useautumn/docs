@@ -15,6 +15,9 @@
 		"options": ["copy", "cursor", "view"]
 	},
 	"favicon": "/favicon.png",
+	"interaction": {
+		"drilldown": true
+	},
 	"navigation": {
 		"tabs": [
 			{
@@ -29,7 +32,7 @@
 						"group": "Getting Started",
 						"pages": [
 							{
-								"group": "Setup and Payments",
+								"group": "Setup and payments",
 								"pages": [
 									"getting-started/setup/react",
 									"getting-started/setup/sdk",
