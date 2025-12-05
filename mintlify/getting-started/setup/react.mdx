@@ -1,6 +1,5 @@
 ---
 title: "Using React hooks"
-mode: "center"
 description: "Implement your React + Node.js app's payments and pricing model"
 ---
 import CreatePlans from '/snippets/create-plans.mdx';
@@ -17,7 +16,8 @@ In this example we'll create the pricing for a premium AI chatbot. We're going t
 - A <Badge color="blue">Pro</Badge> plan that gives users 100 chat messages per month for $20 per month.
 
 <Steps>
-<Step title="Create your pricing plans" titleSize="h3">
+<Step>
+### Create your pricing plans
 
 Create a plan for each pricing tier that your app offers. In our example we'll create a "Free" and "Pro" plan, and assign them features.
 
@@ -25,7 +25,8 @@ Create a plan for each pricing tier that your app offers. In our example we'll c
 
 </Step>
 
-<Step title="Installation" titleSize="h3">
+<Step>
+### Installation
 
 [Create an Autumn Secret key](https://app.useautumn.com/sandbox/dev?tab=api_keys), and paste it in your `.env` variables. Then, install the Autumn SDK.
 
@@ -60,7 +61,8 @@ yarn add autumn-js
 
 </Step>
 
-<Step title="Add Endpoints Server-side" titleSize="h3">
+<Step>
+### Add Endpoints Server-side
 
 Server-side, mount the Autumn handler. This will create endpoints in the `/api/autumn/*` path, which will be called by Autumn's frontend React hooks. These endpoints in turn call Autumn's API.
 
@@ -286,7 +288,8 @@ Deno.serve(async (req: Request) => {
 
 </Step>
 
-<Step title="Add Provider Client-side" titleSize="h3">
+<Step>
+### Add Provider Client-side
 
 Client side, wrap your application with the `<AutumnProvider>` component.
 
@@ -342,7 +345,8 @@ If needed, you can use the `getBearerToken` or `headers` [props](/api-reference/
 
 </Step>
 
-<Step title="Create an Autumn customer" titleSize="h3">
+<Step>
+### Create an Autumn customer
 
 From a frontend component, use the [`useCustomer()` hook](/api-reference/hooks/useCustomer). This will automatically create an Autumn customer if they're a new user and enable the <Badge color="green">Free</Badge> plan for them, or get the customer's state for existing users.
 
@@ -432,7 +436,8 @@ You will see your user under the [customers](https://app.useautumn.com/customers
 
 </Step>
 
-<Step title="Stripe Payment Flow" titleSize="h3">
+<Step>
+### Stripe Payment Flow
 
 Call `checkout` to redirect the customer to a Stripe checkout page when they want to purchase the <Badge color="blue">Pro</Badge> plan. Once they've paid, Autumn will grant access to "100 messages per month" defined in Step 1.
 
@@ -489,9 +494,8 @@ Upgrades will happen immediately, and downgrades will be scheduled for the next 
 </Step>
 </Steps>
 
----
 
-**Next step: Track and limit usage**
+**Next: Track and limit usage**
 
 Now that the plan is enabled and you've handled payments, you can now make sure that customers have the access to the right features and limits based on their plan.
 

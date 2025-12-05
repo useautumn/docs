@@ -10,16 +10,18 @@ In this example we'll create the pricing for a premium AI chatbot. We're going t
 - A <Badge color="green">Free</Badge> plan that gives users 5 chat messages per month for free
 - A <Badge color="blue">Pro</Badge> plan that gives users 100 chat messages per month for $20 per month.
 
-
-## 1. Create your pricing plans
+<Steps>
+<Step>
+### Create your pricing plans
 
 Create a plan for each tier that your app offers. In our example we'll create a "Free" and "Pro" plan.
 
 <CreatePlans />
 
+</Step>
 
-
-## 2. Installation
+<Step>
+### Installation
 
 [Create an Autumn Secret key](https://app.useautumn.com/sandbox/dev?tab=api_keys), and paste it in your `.env` variables. Then, install the Autumn SDK.
 
@@ -51,7 +53,10 @@ pip install autumn-py
 
 </CodeGroup>
 
-## 3. Create an Autumn customer
+</Step>
+
+<Step>
+### Create an Autumn customer
 
 When the customer signs up, create an Autumn customer for them. Autumn will automatically enable the <Badge color="green">Free</Badge> plan, since you marked it with the `auto-enable` flag.
 
@@ -107,7 +112,11 @@ Autumn's customer ID is the same as your internal user or org ID generated from 
 
 In the Autumn dashboard, you will see your user under the [customers](https://app.useautumn.com/customers) page.
 
-## 4. Stripe Payment Flow
+</Step>
+
+<Step>
+### Stripe Payment Flow
+
 
 Handling payments and enabling plans is a 2-step process:
 - `checkout` to get "checkout" information (either a Checkout URL, or purchase confirmation data)
@@ -136,7 +145,7 @@ graph TD
 
 
 
-#### Checkout
+**Checkout**
 
 Call the `checkout` function to get Stripe checkout page when the customer wants to purchase the <Badge color="blue">Pro</Badge> plan, and pass it to your frontend.
 
@@ -198,7 +207,7 @@ Use Stripe's test card `4242 4242 4242 4242` to make a purchase in sandbox. You 
 </Note>
 
 
-#### Attach
+**Attach**
 
 If the payment details are on file and the customer has confirmed their upgrade, use the `attach` function to charge their card and enable the plan.
 
@@ -254,9 +263,10 @@ This 2-step process can be used for any plan changes scenario (upgrades, downgra
 Upgrades will happen immediately, and downgrades will be scheduled for the next billing cycle.
 </Check>
 
+</Step>
+</Steps>
 
----
-**Next step: Track and limit usage**
+**Next: Track and limit usage**
 
 Now that the plan is enabled and you've handled payments, you can now make sure that customers have the correct access and limits based on their plan.
 
