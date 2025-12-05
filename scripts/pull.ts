@@ -26,6 +26,9 @@ const SNIPPET_REMOVALS: Record<string, string[]> = {
 	"POST /features": ["TypeScript", "Python"],
 	"UPDATE /features/{feature_id}": ["TypeScript", "Python"],
 	"DELETE /features/{feature_id}": ["TypeScript", "Python"],
+
+	"POST /usage": ["Python"],
+	"POST /customers/{customer_id}/balances": ["Python"],
 };
 
 /**
