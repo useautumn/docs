@@ -3,7 +3,7 @@ info:
   title: Autumn API
   version: 1.2.0
 servers:
-  - url: https://api.useautumn.com
+  - url: https://api.useautumn.com/v1
     description: Production server
 security:
   - secretKey: []
@@ -82,7 +82,108 @@ paths:
                     pricing
                   type: array
                   items:
-                    $ref: "#/components/schemas/CreateProductItemParams"
+                    type: object
+                    properties:
+                      type:
+                        description: The type of the product item.
+                        anyOf:
+                          - type: string
+                            enum:
+                              - feature
+                              - priced_feature
+                              - price
+                          - type: "null"
+                      feature_id:
+                        description: The feature ID of the product item. Should be null for fixed price
+                          items.
+                        anyOf:
+                          - type: string
+                          - type: "null"
+                      included_usage:
+                        description: The amount of usage included for this feature (per interval).
+                        anyOf:
+                          - anyOf:
+                              - type: number
+                              - type: string
+                                const: inf
+                          - type: "null"
+                      interval:
+                        description: The reset or billing interval of the product item. If null, feature
+                          will have no reset date, and if there's a price, it
+                          will be billed one-off.
+                        anyOf:
+                          - type: string
+                            enum:
+                              - minute
+                              - hour
+                              - day
+                              - week
+                              - month
+                              - quarter
+                              - semi_annual
+                              - year
+                          - type: "null"
+                      interval_count:
+                        description: Interval count of the feature.
+                        anyOf:
+                          - type: number
+                          - type: "null"
+                      entity_feature_id:
+                        description: The feature ID of the entity (like seats) to track sub-balances
+                          for.
+                        anyOf:
+                          - type: string
+                          - type: "null"
+                      usage_model:
+                        description: Whether the feature should be prepaid upfront or billed for how
+                          much they use end of billing period.
+                        anyOf:
+                          - type: string
+                            enum:
+                              - prepaid
+                              - pay_per_use
+                          - type: "null"
+                      price:
+                        description: The price of the product item. Should be null if tiered pricing is
+                          set.
+                        anyOf:
+                          - type: number
+                          - type: "null"
+                      tiers:
+                        description: Tiered pricing for the product item. Not applicable for fixed price
+                          items.
+                        anyOf:
+                          - type: array
+                            items:
+                              type: object
+                              properties:
+                                to:
+                                  description: The maximum amount of usage for this tier.
+                                  example: 100
+                                  anyOf:
+                                    - type: number
+                                    - type: string
+                                      const: inf
+                                amount:
+                                  description: The price of the product item for this tier.
+                                  example: 10
+                                  type: number
+                              required:
+                                - to
+                                - amount
+                          - type: "null"
+                      billing_units:
+                        description: The billing units of the product item (eg $1 for 30 credits).
+                        anyOf:
+                          - type: number
+                          - type: "null"
+                      reset_usage_when_enabled:
+                        description: Whether the usage should be reset when the product is enabled.
+                        anyOf:
+                          - type: boolean
+                          - type: "null"
+                    required:
+                      - interval
                 free_trial:
                   description: Free trial configuration for this product, if available
                   anyOf:
@@ -130,20 +231,24 @@ paths:
             const { data, error } = await autumn.products.create({ id: 'id',
             name: 'name' });
         - lang: Python
-          source: |-
+          source: >-
             import asyncio
+
+            import os
+
             from autumn import Autumn
 
-            autumn = Autumn("am_sk_1234567890")
 
-            async def main():
-                product = await autumn.products.create(
-                    id="id",
-                    name="name",
-                )
-                print(product.id)
+            client = Autumn(
+                secret_key=os.environ.get("AUTUMN_SECRET_KEY"),  # This is the default and can be omitted
+            )
 
-            asyncio.run(main())
+            product = autumn.products.create(
+                id="id",
+                name="name",
+            )
+
+            print(product.id)
   /products/{product_id}:
     get:
       summary: Get Product
@@ -171,19 +276,23 @@ paths:
 
             const { data, error } = await autumn.products.get('product_id');
         - lang: Python
-          source: |-
+          source: >-
             import asyncio
+
+            import os
+
             from autumn import Autumn
 
-            autumn = Autumn("am_sk_1234567890")
 
-            async def main():
-                product = await autumn.products.get(
-                    "product_id",
-                )
-                print(product.id)
+            client = Autumn(
+                secret_key=os.environ.get("AUTUMN_SECRET_KEY"),  # This is the default and can be omitted
+            )
 
-            asyncio.run(main())
+            product = autumn.products.get(
+                "product_id",
+            )
+
+            print(product.id)
     post:
       summary: Update Product
       tags:
@@ -236,7 +345,108 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: "#/components/schemas/CreateProductItemParams"
+                    type: object
+                    properties:
+                      type:
+                        description: The type of the product item.
+                        anyOf:
+                          - type: string
+                            enum:
+                              - feature
+                              - priced_feature
+                              - price
+                          - type: "null"
+                      feature_id:
+                        description: The feature ID of the product item. Should be null for fixed price
+                          items.
+                        anyOf:
+                          - type: string
+                          - type: "null"
+                      included_usage:
+                        description: The amount of usage included for this feature (per interval).
+                        anyOf:
+                          - anyOf:
+                              - type: number
+                              - type: string
+                                const: inf
+                          - type: "null"
+                      interval:
+                        description: The reset or billing interval of the product item. If null, feature
+                          will have no reset date, and if there's a price, it
+                          will be billed one-off.
+                        anyOf:
+                          - type: string
+                            enum:
+                              - minute
+                              - hour
+                              - day
+                              - week
+                              - month
+                              - quarter
+                              - semi_annual
+                              - year
+                          - type: "null"
+                      interval_count:
+                        description: Interval count of the feature.
+                        anyOf:
+                          - type: number
+                          - type: "null"
+                      entity_feature_id:
+                        description: The feature ID of the entity (like seats) to track sub-balances
+                          for.
+                        anyOf:
+                          - type: string
+                          - type: "null"
+                      usage_model:
+                        description: Whether the feature should be prepaid upfront or billed for how
+                          much they use end of billing period.
+                        anyOf:
+                          - type: string
+                            enum:
+                              - prepaid
+                              - pay_per_use
+                          - type: "null"
+                      price:
+                        description: The price of the product item. Should be null if tiered pricing is
+                          set.
+                        anyOf:
+                          - type: number
+                          - type: "null"
+                      tiers:
+                        description: Tiered pricing for the product item. Not applicable for fixed price
+                          items.
+                        anyOf:
+                          - type: array
+                            items:
+                              type: object
+                              properties:
+                                to:
+                                  description: The maximum amount of usage for this tier.
+                                  example: 100
+                                  anyOf:
+                                    - type: number
+                                    - type: string
+                                      const: inf
+                                amount:
+                                  description: The price of the product item for this tier.
+                                  example: 10
+                                  type: number
+                              required:
+                                - to
+                                - amount
+                          - type: "null"
+                      billing_units:
+                        description: The billing units of the product item (eg $1 for 30 credits).
+                        anyOf:
+                          - type: number
+                          - type: "null"
+                      reset_usage_when_enabled:
+                        description: Whether the usage should be reset when the product is enabled.
+                        anyOf:
+                          - type: boolean
+                          - type: "null"
+                    required:
+                      - interval
                 free_trial:
                   description: Free trial configuration for this product, if available
                   anyOf:
@@ -305,19 +515,23 @@ paths:
 
             const { data, error } = await autumn.products.delete('product_id');
         - lang: Python
-          source: |-
+          source: >-
             import asyncio
+
+            import os
+
             from autumn import Autumn
 
-            autumn = Autumn("am_sk_1234567890")
 
-            async def main():
-                product = await autumn.products.delete(
-                    product_id="product_id",
-                )
-                print(product.success)
+            client = Autumn(
+                secret_key=os.environ.get("AUTUMN_SECRET_KEY"),  # This is the default and can be omitted
+            )
 
-            asyncio.run(main())
+            product = autumn.products.delete(
+                product_id="product_id",
+            )
+
+            print(product.success)
   /features:
     get:
       summary: List Features
@@ -623,19 +837,23 @@ paths:
 
             const { data, error } = await autumn.track({ customer_id: 'x' });
         - lang: Python
-          source: |-
+          source: >-
             import asyncio
+
+            import os
+
             from autumn import Autumn
 
-            autumn = Autumn("am_sk_1234567890")
 
-            async def main():
-                response = await autumn.track(
-                    customer_id="x",
-                )
-                print(response.id)
+            client = Autumn(
+                secret_key=os.environ.get("AUTUMN_SECRET_KEY"),  # This is the default and can be omitted
+            )
 
-            asyncio.run(main())
+            response = autumn.track(
+                customer_id="x",
+            )
+
+            print(response.id)
   /check:
     post:
       summary: Check Feature Access
@@ -872,20 +1090,24 @@ paths:
             const { data, error } = await autumn.check({ customer_id:
             'customer_id', feature_id: 'feature_id' });
         - lang: Python
-          source: |-
+          source: >-
             import asyncio
+
+            import os
+
             from autumn import Autumn
 
-            autumn = Autumn("am_sk_1234567890")
 
-            async def main():
-                response = await autumn.check(
-                    customer_id="customer_id",
-                    feature_id="feature_id",
-                )
-                print(response.customer_id)
+            client = Autumn(
+                secret_key=os.environ.get("AUTUMN_SECRET_KEY"),  # This is the default and can be omitted
+            )
 
-            asyncio.run(main())
+            response = autumn.check(
+                customer_id="customer_id",
+                feature_id="feature_id",
+            )
+
+            print(response.customer_id)
   /usage:
     post:
       summary: Set Usage
@@ -930,6 +1152,17 @@ paths:
                 required:
                   - success
                 additionalProperties: false
+      x-codeSamples:
+        - lang: TypeScript
+          source: >-
+            import { Autumn } from 'autumn-js';
+
+
+            const autumn = new Autumn();
+
+
+            const { data, error } = await autumn.usage({ customer_id: 'x',
+            feature_id: 'feature_id', value: 0 });
   /customers:
     get:
       summary: List Customers
@@ -986,17 +1219,21 @@ paths:
 
             const { data, error } = await autumn.customers.list();
         - lang: Python
-          source: |-
+          source: >-
             import asyncio
+
+            import os
+
             from autumn import Autumn
 
-            autumn = Autumn("am_sk_1234567890")
 
-            async def main():
-                customers = await autumn.customers.list()
-                print(customers.limit)
+            client = Autumn(
+                secret_key=os.environ.get("AUTUMN_SECRET_KEY"),  # This is the default and can be omitted
+            )
 
-            asyncio.run(main())
+            customers = autumn.customers.list()
+
+            print(customers.limit)
     post:
       summary: Create Customer
       tags:
@@ -1015,7 +1252,6 @@ paths:
                 - entities
                 - referrals
                 - payment_method
-                - upcoming_invoice
       requestBody:
         content:
           application/json:
@@ -1072,19 +1308,23 @@ paths:
 
             const { data, error } = await autumn.customers.create({ id: 'id' });
         - lang: Python
-          source: |-
+          source: >-
             import asyncio
+
+            import os
+
             from autumn import Autumn
 
-            autumn = Autumn("am_sk_1234567890")
 
-            async def main():
-                customer = await autumn.customers.create(
-                    id="id",
-                )
-                print(customer.id)
+            client = Autumn(
+                secret_key=os.environ.get("AUTUMN_SECRET_KEY"),  # This is the default and can be omitted
+            )
 
-            asyncio.run(main())
+            customer = autumn.customers.create(
+                id="id",
+            )
+
+            print(customer.id)
   /customers/{customer_id}:
     get:
       summary: Get Customer
@@ -1111,7 +1351,6 @@ paths:
                 - entities
                 - referrals
                 - payment_method
-                - upcoming_invoice
       responses:
         "200":
           description: ""
@@ -1128,19 +1367,23 @@ paths:
 
             const { data, error } = await autumn.customers.get('customer_id');
         - lang: Python
-          source: |-
+          source: >-
             import asyncio
+
+            import os
+
             from autumn import Autumn
 
-            autumn = Autumn("am_sk_1234567890")
 
-            async def main():
-                customer = await autumn.customers.get(
-                    customer_id="customer_id",
-                )
-                print(customer.id)
+            client = Autumn(
+                secret_key=os.environ.get("AUTUMN_SECRET_KEY"),  # This is the default and can be omitted
+            )
 
-            asyncio.run(main())
+            customer = autumn.customers.get(
+                customer_id="customer_id",
+            )
+
+            print(customer.id)
     post:
       summary: Update Customer
       tags:
@@ -1166,14 +1409,11 @@ paths:
                     - type: string
                     - type: "null"
                 email:
-                  description: The customer's email address.
+                  description: Customer's email address
                   anyOf:
-                    - anyOf:
-                        - type: string
-                          format: email
-                          pattern: ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
-                        - type: string
-                          const: ""
+                    - type: string
+                      format: email
+                      pattern: ^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
                     - type: "null"
                 fingerprint:
                   description: Unique identifier (eg, serial number) to detect duplicate
@@ -1213,19 +1453,23 @@ paths:
             const { data, error } = await
             autumn.customers.update('customer_id');
         - lang: Python
-          source: |-
+          source: >-
             import asyncio
+
+            import os
+
             from autumn import Autumn
 
-            autumn = Autumn("am_sk_1234567890")
 
-            async def main():
-                customer = await autumn.customers.update(
-                    customer_id="customer_id",
-                )
-                print(customer.id)
+            client = Autumn(
+                secret_key=os.environ.get("AUTUMN_SECRET_KEY"),  # This is the default and can be omitted
+            )
 
-            asyncio.run(main())
+            customer = autumn.customers.update(
+                customer_id="customer_id",
+            )
+
+            print(customer.id)
     delete:
       summary: Delete Customer
       tags:
@@ -1270,19 +1514,23 @@ paths:
             const { data, error } = await
             autumn.customers.delete('customer_id');
         - lang: Python
-          source: |-
+          source: >-
             import asyncio
+
+            import os
+
             from autumn import Autumn
 
-            autumn = Autumn("am_sk_1234567890")
 
-            async def main():
-                customer = await autumn.customers.delete(
-                    customer_id="customer_id",
-                )
-                print(customer.success)
+            client = Autumn(
+                secret_key=os.environ.get("AUTUMN_SECRET_KEY"),  # This is the default and can be omitted
+            )
 
-            asyncio.run(main())
+            customer = autumn.customers.delete(
+                customer_id="customer_id",
+            )
+
+            print(customer.success)
   /customers/{customer_id}/billing_portal:
     post:
       summary: Get Billing Portal URL
@@ -1334,19 +1582,23 @@ paths:
             const { data, error } = await
             autumn.customers.billingPortal('customer_id');
         - lang: Python
-          source: |-
+          source: >-
             import asyncio
+
+            import os
+
             from autumn import Autumn
 
-            autumn = Autumn("am_sk_1234567890")
 
-            async def main():
-                response = await autumn.customers.billing_portal(
-                    customer_id="customer_id",
-                )
-                print(response.customer_id)
+            client = Autumn(
+                secret_key=os.environ.get("AUTUMN_SECRET_KEY"),  # This is the default and can be omitted
+            )
 
-            asyncio.run(main())
+            response = autumn.customers.billing_portal(
+                customer_id="customer_id",
+            )
+
+            print(response.customer_id)
   /customers/{customer_id}/balances:
     post:
       summary: Set Feature Balances
@@ -1363,10 +1615,6 @@ paths:
         content:
           application/json:
             schema:
-              example:
-                balances:
-                  - feature_id: tokens
-                    balance: 1000
               type: object
               properties:
                 balances:
@@ -1398,6 +1646,19 @@ paths:
                 required:
                   - success
                 additionalProperties: false
+      x-codeSamples:
+        - lang: TypeScript
+          source: >-
+            import { Autumn } from 'autumn-js';
+
+
+            const autumn = new Autumn();
+
+
+            const { data, error } = await
+            autumn.customers.updateBalances('customer_id', {
+              balances: [{ balance: 0, feature_id: 'feature_id' }],
+            });
   /customers/{customer_id}/entities:
     post:
       summary: Create Entity
@@ -1452,21 +1713,25 @@ paths:
             const { data, error } = await autumn.entities.create('customer_id',
             { id: 'id', feature_id: 'feature_id' });
         - lang: Python
-          source: |-
+          source: >-
             import asyncio
+
+            import os
+
             from autumn import Autumn
 
-            autumn = Autumn("am_sk_1234567890")
 
-            async def main():
-                entity = await autumn.entities.create(
-                    customer_id="customer_id",
-                    id="id",
-                    feature_id="feature_id",
-                )
-                print(entity.id)
+            client = Autumn(
+                secret_key=os.environ.get("AUTUMN_SECRET_KEY"),  # This is the default and can be omitted
+            )
 
-            asyncio.run(main())
+            entity = autumn.entities.create(
+                customer_id="customer_id",
+                id="id",
+                feature_id="feature_id",
+            )
+
+            print(entity.id)
   /customers/{customer_id}/entities/{entity_id}:
     get:
       summary: Get Entity
@@ -1510,20 +1775,24 @@ paths:
             const { data, error } = await autumn.entities.get("entity_id",
             "customer_id");
         - lang: Python
-          source: |-
+          source: >-
             import asyncio
+
+            import os
+
             from autumn import Autumn
 
-            autumn = Autumn("am_sk_1234567890")
 
-            async def main():
-                entity = await autumn.entities.get(
-                    entity_id="entity_id",
-                    customer_id="customer_id",
-                )
-                print(entity.id)
+            client = Autumn(
+                secret_key=os.environ.get("AUTUMN_SECRET_KEY"),  # This is the default and can be omitted
+            )
 
-            asyncio.run(main())
+            entity = autumn.entities.get(
+                entity_id="entity_id",
+                customer_id="customer_id",
+            )
+
+            print(entity.id)
     delete:
       summary: Delete Entity
       tags:
@@ -1564,119 +1833,29 @@ paths:
             const { data, error } = await autumn.entities.delete("entity_id",
             "customer_id");
         - lang: Python
-          source: |-
+          source: >-
             import asyncio
+
+            import os
+
             from autumn import Autumn
 
-            autumn = Autumn("am_sk_1234567890")
 
-            async def main():
-                entity = await autumn.entities.delete(
-                    entity_id="entity_id",
-                    customer_id="customer_id",
-                )
-                print(entity.success)
+            client = Autumn(
+                secret_key=os.environ.get("AUTUMN_SECRET_KEY"),  # This is the default and can be omitted
+            )
 
-            asyncio.run(main())
+            entity = autumn.entities.delete(
+                entity_id="entity_id",
+                customer_id="customer_id",
+            )
+
+            print(entity.success)
 components:
   schemas:
-    CreateProductItemParams:
-      description: Product item defining features and pricing within a product
-      type: object
-      properties:
-        feature_id:
-          description: The feature ID of the product item. Should be null for fixed price
-            items.
-          anyOf:
-            - type: string
-            - type: "null"
-        included_usage:
-          description: The amount of usage included for this feature (per interval).
-          anyOf:
-            - anyOf:
-                - type: number
-                - type: string
-                  const: inf
-            - type: "null"
-        interval:
-          description: The reset or billing interval of the product item. If null, feature
-            will have no reset date, and if there's a price, it will be billed
-            one-off.
-          anyOf:
-            - type: string
-              enum:
-                - minute
-                - hour
-                - day
-                - week
-                - month
-                - quarter
-                - semi_annual
-                - year
-            - type: "null"
-        interval_count:
-          description: Interval count of the feature.
-          anyOf:
-            - type: number
-            - type: "null"
-        entity_feature_id:
-          description: The feature ID of the entity (like seats) to track sub-balances for.
-          anyOf:
-            - type: string
-            - type: "null"
-        usage_model:
-          description: Whether the feature should be prepaid upfront or billed for how
-            much they use end of billing period.
-          anyOf:
-            - type: string
-              enum:
-                - prepaid
-                - pay_per_use
-            - type: "null"
-        price:
-          description: The price of the product item. Should be null if tiered pricing is
-            set.
-          anyOf:
-            - type: number
-            - type: "null"
-        tiers:
-          description: Tiered pricing for the product item. Not applicable for fixed price
-            items.
-          anyOf:
-            - type: array
-              items:
-                type: object
-                properties:
-                  to:
-                    description: The maximum amount of usage for this tier.
-                    example: 100
-                    anyOf:
-                      - type: number
-                      - type: string
-                        const: inf
-                  amount:
-                    description: The price of the product item for this tier.
-                    example: 10
-                    type: number
-                required:
-                  - to
-                  - amount
-            - type: "null"
-        billing_units:
-          description: The billing units of the product item (eg $1 for 30 credits).
-          anyOf:
-            - type: number
-            - type: "null"
-        reset_usage_when_enabled:
-          description: Whether the usage should be reset when the product is enabled.
-          anyOf:
-            - type: boolean
-            - type: "null"
-      required:
-        - interval
     CustomerData:
-      description: Used to add customer details like name or email when auto-creating
-        a customer.
+      description: Unique identifier (eg, serial number) to detect duplicate customers
+        and prevent free trial abuse
       type: object
       properties:
         name:
