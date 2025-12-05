@@ -1,34 +1,36 @@
 ---
-title: "Checking Access"
+title: "Checking access"
 description: "Learn how to check feature access with the `check` endpoint"
 ---
 
 When you create a plan in Autumn, you define what features your customers on that plan get access to.
 
-The `check` method returns the `allowed` field in real-time to check if a customer should have access to a feature. You can use this to block access, or prompt them to upgrade.
+The `check` method returns the `allowed` field in real-time to check if a customer should have access to a feature. You can use this to block access and prompt an upsell.
 
-## Checking Metered Features
+## The `allowed` field
+
+The `allowed` field will return `true` for a given feature if:
+- The customer has an active plan with this feature
+- The customer has an active plan with a `credit_system` that grants this feature
+- The plan feature is <Badge>included</Badge> or <Badge>prepaid</Badge>, and the current balance is greater than the `required_balance` parameter
+- The plan feature is <Badge>usage-based</Badge>, and the user has not exceeded their max spend limit
+- The plan feature is <Badge>unlimited</Badge> or a <Badge>boolean</Badge> feature
+
+Under these conditions, you should allow your customer to use the feature. You can then [record the usage event](/features/tracking-usage/) so Autumn can update the `allowed` field as necessary.
+
+## Checking metered features
 
 Before your customer uses a feature, you can check if the customer is allowed to use it and their current usage.
 
 <Info>
 **Example**
 
-Let's imagine you have a free product that allows 100 AI messages per month. Before your customer sends an AI message, you can check if they have any remaining messages.
+Let's imagine you have a free plan for a chatbot that allows 5 messages per month. Before your customer sends an AI message, you can check if they have any left.
 
-If they still have messages remaining, they'll be allowed to send an AI message. You can then [record the usage event](/features/tracking-usage/) so Autumn can keep track of the balance.
+If they still have messages remaining, they'll be allowed to send an AI message.
 
 </Info>
 <CodeGroup>
-
-```javascript Node.js
-import { Autumn as autumn } from "autumn-js";
-
-const { data } = await autumn.check({
-  customer_id: "user-123",
-  feature_id: "messages",
-});
-```
 
 ```tsx React
 import { useCustomer } from "autumn-js/react";
@@ -37,6 +39,15 @@ const { check } = useCustomer();
 
 // check the customer state object locally (no API call)
 const { data } = check({ featureId: "messages" });
+```
+
+```javascript Node.js
+import { Autumn as autumn } from "autumn-js";
+
+const { data } = await autumn.check({
+  customer_id: "user-123",
+  feature_id: "messages",
+});
 ```
 
 ```python Python
@@ -64,37 +75,44 @@ curl -X POST "https://api.useautumn.com/v1/check" \
 
 </CodeGroup>
 
+<Expandable title="check response">
 ```json [expandable]
 {
-  "allowed": true,
-  "customer_id": "123",
-  "feature_id": "messages",
-  "required_balance": 1,
-  "code": "feature_found",
-  "interval": "month",
-  "unlimited": false,
-  "balance": 100,
-  "usage": 0,
-  "included_usage": 100,
-  "next_reset_at": 1754421255055,
-  "overage_allowed": false
+    "allowed": true,
+    "feature_id": "messages",
+    "customer_id": "user_123",
+    "required_balance": 1,
+    "unlimited": false,
+    "interval": "month",
+    "balance": 5,
+    "usage": 0,
+    "included_usage": 5,
+    "next_reset_at": 1767610960519,
+    "overage_allowed": false
 }
 ```
+</Expandable>
 
 <Tip>
-Even if your product doesn't have usage limits (ie your product is purely usage-based), you can still use the above method to prevent excessive usage if a customer's payment fails.
-
-If the [product status](/products/enabling-product/#product-statuses) is `past_due`, by default, Autumn will block access to the feature.
+Even if your product doesn't have usage limits (ie your feature is purely usage-based), you can still use the above method to prevent usage if a customer's payment fails.
 
 </Tip>
 
-## Checking for a Required Balance
+## Checking for a required balance
 
-If you know the balance a user will consume in advance, you can specify it with the `required_balance` parameter. This means you can prevent a user from starting a process that would consume more than their allowance.
+If you know the balance a user will consume in advance, you can specify it with the `required_balance` parameter. This means you can prevent a user from starting a process that would consume more than their current balance.
 
 By default, `required_balance` is 1, so not passing this parameter will return `allowed: true` as long as the customer has a feature balance of 1 or more.
 
 <CodeGroup>
+
+```tsx React
+import { useCustomer } from "autumn-js/react";
+
+const { check } = useCustomer();
+
+const { data } = check({ featureId: "messages", requiredBalance: 3 });
+```
 
 ```javascript Node.js
 import { Autumn } from "autumn-js";
@@ -108,14 +126,6 @@ const { data } = await autumn.check({
   feature_id: "ai-messages",
   required_balance: 3,
 });
-```
-
-```tsx React
-import { useCustomer } from "autumn-js/react";
-
-const { check } = useCustomer();
-
-const { data } = check({ featureId: "messages", requiredBalance: 3 });
 ```
 
 ```python Python
@@ -148,7 +158,7 @@ curl -X POST "https://api.useautumn.com/v1/check" \
 
 </CodeGroup>
 
-## Checking and Reserving Usage
+## Checking and reserving usage
 
 You can check access and record usage in a single, atomic API call using the `send_event` field. The usage value deducted from the balance will be the `required_balance` parameter. This is useful for concurrent events.
 
@@ -245,7 +255,7 @@ curl -X POST "https://api.useautumn.com/v1/track" \
 ```
 </CodeGroup>
 
-## Checking Boolean Features
+## Checking boolean features
 
 For simple on/off features, use the endpoint to determine if a customer has access. Alternatively you can just check if they have access to a certain plan.
 

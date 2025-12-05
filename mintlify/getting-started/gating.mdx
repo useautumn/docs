@@ -25,20 +25,20 @@ Check if a user has enough remaining balance of messages, before executing the a
 ```jsx React wrap
 import { useCustomer } from "autumn-js/react";
 
-export default function SendChatMessage() {
-  const { check, refetch } = useCustomer();
+export function SendChatMessage() {
+	const { check, refetch } = useCustomer();
 
-  const handleSendMessage = () => {
-          const { data } = check({ featureId: "messages" });
+	const handleSendMessage = async () => {
+		const { data } = check({ featureId: "messages" });
 
-          if (!data?.allowed) {
-            alert("You're out of messages");
-          } else {
-            //send chatbot message
-            //then refresh customer usage data
-            await refetch();
-          }
-        }
+		if (!data?.allowed) {
+			alert("You're out of messages");
+		} else {
+			//send chatbot message
+			//then, refresh customer usage data
+			await refetch();
+		}
+	};
 }
 ```
 
@@ -110,9 +110,9 @@ You can also use `check` to [gate boolean features](/features/check#checking-boo
 
 After the user has successfully used a chatbot message, you can record the usage in Autumn. This will decrement the user's message balance.
 
-<CodeGroup dropdown>
+<CodeGroup>
 
-```typescript
+```typescript Node.js
 //Your own function to send the chat message
 
 //then record 1 message used
@@ -123,7 +123,7 @@ await autumn.track({
 });
 ```
 
-```python
+```python Python
 import asyncio
 #Your own function to send the chat message
 
@@ -138,7 +138,7 @@ async def main():
 asyncio.run(main())
 ```
 
-```bash
+```bash cURL
 #Your own function to send the chat message
 
 #then record 1 message used

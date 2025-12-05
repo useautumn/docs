@@ -3,7 +3,7 @@ title: "Display billing data"
 description: "Display usage and billing data in your app for your users"
 ---
 
-When you have paying users, you should display a billing page in your app. This typically allows them to change plan, cancel subscription and view their usage.
+Software applications typically ship with a billing page. This allows customers to change plan, cancel subscription and view their usage.
 
 The `customer` endpoint will return the current state of the customer, including their active plans, feature usage and remaining balances.
 
@@ -14,6 +14,18 @@ Display the plan the user is currently on. You can also display price informatio
 As users can have multiple active plans (eg, add ons), this is an array.
 
 <CodeGroup>
+```jsx React wrap
+import { useCustomer } from "autumn-js/react";
+
+const { customer } = useCustomer();
+
+const activeProducts = customer?.products.filter(
+	(product) => product.status === "active",
+);
+
+console.log(`Users active plans are: ${activeProducts?.map((product) => product.name).join(", ")}`);
+
+```
 
 ```typescript Node.js wrap
 import { Autumn } from "autumn-js";
@@ -33,19 +45,6 @@ console.log(
 	`Users active plans are: 
 	${activeProducts?.map((product) => product.name).join(", ")}`,
 );
-```
-
-```jsx React wrap
-import { useCustomer } from "autumn-js/react";
-
-const { customer } = useCustomer();
-
-const activeProducts = customer?.products.filter(
-	(product) => product.status === "active",
-);
-
-console.log(`Users active plans are: ${activeProducts?.map((product) => product.name).join(", ")}`);
-
 ```
 
 
@@ -79,6 +78,16 @@ Metered features have a `balance`, `usage` and `included_usage` field. You can u
 
 <CodeGroup>
 
+```jsx React wrap
+import { useCustomer } from "autumn-js/react";
+
+const { customer } = useCustomer();
+
+const messages = customer?.features.messages;
+
+console.log(`Users messages balance is: ${messages?.balance} / ${messages?.included_usage}`);
+```
+
 ```typescript Node.js wrap
 import { Autumn } from "autumn-js";
 
@@ -89,16 +98,6 @@ const autumn = new Autumn({
 const { data } = await autumn.customers.get("user_or_org_id_from_auth");
 
 const messages = data?.features.messages
-
-console.log(`Users messages balance is: ${messages?.balance} / ${messages?.included_usage}`);
-```
-
-```jsx React wrap
-import { useCustomer } from "autumn-js/react";
-
-const { customer } = useCustomer();
-
-const messages = customer?.features.messages;
 
 console.log(`Users messages balance is: ${messages?.balance} / ${messages?.included_usage}`);
 ```
@@ -135,6 +134,27 @@ Switching plans follows the same Stripe payment flow as [previously described](/
 
 <CodeGroup>
 
+```jsx React wrap expandable
+import { useCustomer, CheckoutDialog } from "autumn-js/react";
+
+export default function PurchaseButton() {
+  const { checkout } = useCustomer();
+
+  return (
+    <button
+      onClick={async () => {
+        await checkout({
+          productId: "pro",
+          dialog: CheckoutDialog,
+        });
+      }}
+    >
+      Upgrade to Pro
+    </button>
+  );
+}
+```
+
 ```typescript Node.js wrap expandable
 import { Autumn } from "autumn-js";
 
@@ -158,27 +178,6 @@ const { data } = await autumn.attach({
   customer_id: "user_or_org_id_from_auth",
   product_id: "pro",
 });
-```
-
-```jsx React wrap expandable
-import { useCustomer, CheckoutDialog } from "autumn-js/react";
-
-export default function PurchaseButton() {
-  const { checkout } = useCustomer();
-
-  return (
-    <button
-      onClick={async () => {
-        await checkout({
-          productId: "pro",
-          dialog: CheckoutDialog,
-        });
-      }}
-    >
-      Upgrade to Pro
-    </button>
-  );
-}
 ```
 
 ```python Python wrap expandable
@@ -236,6 +235,14 @@ You can cancel a plan immediately by passing `cancel_immediately: true`.
 
 <CodeGroup>
 
+```jsx React wrap
+import { useCustomer } from "autumn-js/react";
+
+const { cancel } = useCustomer();
+
+await cancel({ productId: "pro" });
+```
+
 ```typescript Node.js wrap
 import { Autumn } from "autumn-js";
 
@@ -247,14 +254,6 @@ await autumn.cancel({
   customer_id: "user_or_org_id_from_auth",
   product_id: "pro",
 });
-```
-
-```jsx React wrap
-import { useCustomer } from "autumn-js/react";
-
-const { cancel } = useCustomer();
-
-await cancel({ productId: "pro" });
 ```
 
 ```python Python wrap
@@ -292,6 +291,14 @@ To use the Stripe billing portal, you'll need to enable it in your [Stripe setti
 
 <CodeGroup>
 
+```jsx React wrap
+import { useCustomer } from "autumn-js/react";
+
+const { openBillingPortal } = useCustomer();
+
+await openBillingPortal({ returnUrl: "https://your-app.com/billing" });
+```
+
 ```typescript Node.js wrap
 import { Autumn } from "autumn-js";
 
@@ -304,14 +311,6 @@ await autumn.customers.billingPortal('customer_id',
     return_url: "https://your-app.com/billing"
   }
 );
-```
-
-```jsx React wrap
-import { useCustomer } from "autumn-js/react";
-
-const { openBillingPortal } = useCustomer();
-
-await openBillingPortal({ returnUrl: "https://your-app.com/billing" });
 ```
 
 ```python Python wrap
@@ -346,6 +345,15 @@ Autumn replicates your usage data to Clickhouse, so you can retrieve aggregate t
 
 <CodeGroup>
 
+```jsx React wrap
+import { useAnalytics } from "autumn-js/react";
+
+const { data } = useAnalytics({
+  featureId: 'messages',
+  range: '30d'
+})
+```
+
 ```typescript Node.js wrap
 import { Autumn } from "autumn-js";
 
@@ -356,15 +364,6 @@ const autumn = new Autumn({
 const { data } = await autumn.query({
   customer_id: 'user_or_org_id_from_auth',
   feature_id: 'messages',
-  range: '30d'
-})
-```
-
-```jsx React wrap
-import { useAnalytics } from "autumn-js/react";
-
-const { data } = useAnalytics({
-  featureId: 'messages',
   range: '30d'
 })
 ```

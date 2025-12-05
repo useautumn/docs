@@ -1,19 +1,16 @@
 ---
 title: Welcome to Autumn
 sidebarTitle: Introduction 
-mode: "wide"
 description: "Open-source infrastructure to manage billing, credits and usage limits."
 ---
 
 ## What is Autumn?
 
-Autumn handles your customer's payments, and tells your app in real-time what they can use. 
+Autumn handles your customer's payments and makes sure they have the access to the right features and limits. 
 
-It sits between your server and Stripe billing, acting as the database for subscription status, usage metering and credit balances.  
+It sits between your server and Stripe billing, acting as the database for subscription status, usage metering and credit balances.
 
-This means the painful parts of billing are handled for you: listening to webhooks, plan switching logic, failed payments, monthly usage limits, pricing migrations and custom plans.  
-
-1000s of founders and fast-growing SaaS and AI startups use Autumn to make billing easier and more reliable.
+1000s of founders and fast-growing startups use Autumn to make billing easier and more reliable. No webhooks needed!
 
 {/* <img src="/assets/screenshots/hero.png" /> */}
 
@@ -37,12 +34,12 @@ This gives you flexibility to make pricing changes, or define custom plans for i
 ## How it works
 
 <Steps>
-<Step title="Model your pricing">
+<Step title="Model your pricing in Autumn">
 Model your pricing plans in the Autumn UI, or through a config file. Define your free, paid and any add-on pricing tiers.
 
 You can link features to these plans and define their usage limits: both recurring (monthly, yearly) and one-time grants.
 </Step>
-<Step title="Accept payments">
+<Step title="Handle payments">
 The `checkout` function will return a Stripe checkout URL, or confirmation data for an upgrade/downgrade for the plans you defined in step 1.
 
 Once paid, the Autumn will grant access to the features on their plan.

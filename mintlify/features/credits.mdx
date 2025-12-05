@@ -5,7 +5,7 @@ description: Learn how to create a credit system in Autumn
 
 {/* Creating credits, how it works with entitlements, that you should use the features not credits. monetary credits. */}
 
-Credit systems allow you to track and limit the usage of multiple different features from a shared balance. This can simplift billing when you have many different usage-based features, and they all cost different amounts.
+Credit systems allow you to track usage of multiple features with different credit costs from a shared balance pool.
 
 ## Creating a credit system
 
@@ -28,28 +28,25 @@ If each `audio-transcription-minute` is worth 3 credits, then using 6 minutes of
 
 </Info>
 
-Now you can add these credits as a [product item](/products/product-items.mdx) within a product. Such as 50 credits per month or $1 per credit.
+Now you can add these credits as a [feature](/products/product-items) within a plan. Such as 50 credits per month or $1 per credit.
 
-## Using credits via the API
+## Tracking credit usage
 
 When implementing a credit system into your application, you should interact with the underlying features (not the credit system itself).
 
-<CodeGroup>
-```bash cURL
-curl -X POST "https://api.useautumn.com/v1/check" \
-  -H "Authorization: Bearer am_sk_1234567890" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "customer_id": "user-123",
-    "feature_id": "audio-transcription-minutes",
-  }'
-```
+Autumn will multiple the track `value` by the credit cost you defined, and decrement the credit balance accordingly.
 
-```javascript Typescript
-import { Autumn as autumn } from "autumn-js";
+<CodeGroup>
+
+```javascript Node.js
+import { Autumn } from "autumn-js";
+
+const autumn = new Autumn({
+  secretKey: process.env.AUTUMN_SECRET_KEY,
+});
 
 const { data } = await autumn.check({
-  customer_id: "user-123",
+  customer_id: "user_or_org_id_from_auth",
   feature_id: "audio-transcription-minutes",
 });
 ```
@@ -68,6 +65,16 @@ async def main():
     allowed = check.allowed
 
 asyncio.run(main())
+```
+
+```bash cURL
+curl -X POST "https://api.useautumn.com/v1/check" \
+  -H "Authorization: Bearer am_sk_1234567890" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "customer_id": "user-123",
+    "feature_id": "audio-transcription-minutes",
+  }'
 ```
 
 </CodeGroup>

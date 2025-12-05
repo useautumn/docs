@@ -333,7 +333,7 @@ export default function RootLayout({ children }: {
 If needed, you can use the `getBearerToken` or `headers` [props](/api-reference/hooks/autumn-provider) in the provider to pass the auth token or headers to the handler.
 </Info>
 
-#### Create an Autumn customer
+## 3. Create an Autumn customer
 
 From a frontend component, use the [`useCustomer()` hook](/api-reference/hooks/useCustomer). This will automatically create an Autumn customer if they're a new user and enable the <Badge color="green">Free</Badge> plan for them, or get the customer's state for existing users.
 
@@ -421,7 +421,7 @@ const App = () => {
 
 You will see your user under the [customers](https://app.useautumn.com/customers) page in the Autumn dashboard.
 
-## 3. Stripe Payment Flow
+## 4. Stripe Payment Flow
 
 Call `checkout` to redirect the customer to a Stripe checkout page when they want to purchase the <Badge color="blue">Pro</Badge> plan. Once they've paid, Autumn will grant access to "100 messages per month" defined in Step 1.
 

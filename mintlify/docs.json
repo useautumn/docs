@@ -44,16 +44,6 @@
 						]
 					},
 					{
-						"group": "Plans",
-						"pages": [
-							"products/create-product",
-							"products/product-items",
-							"products/enabling-product",
-							"products/changing-product",
-							"products/rewards"
-						]
-					},
-					{
 						"group": "Features",
 						"pages": [
 							"features/check",
@@ -61,6 +51,16 @@
 							"features/balances",
 							"features/credits",
 							"features/feature-entities"
+						]
+					},
+					{
+						"group": "Plans",
+						"pages": [
+							"products/create-product",
+							"products/product-items",
+							"products/enabling-product",
+							"products/changing-product",
+							"products/rewards"
 						]
 					},
 					{
