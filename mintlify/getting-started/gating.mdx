@@ -1,6 +1,6 @@
 ---
-title: "Usage tracking and limits"
-description: "Limit features based on a customer's plan and usage"
+title: "Track and limit usage"
+description: "Give customers access to the right features and limits based on their plan"
 ---
 
 Typically, your users should get access to different features and usage limits, depending on their plan.
@@ -18,7 +18,7 @@ This guide shows an asynchronous approach to checking and tracking. You can also
 
 #### Checking feature access
 
-Check if a user has enough remaining balance of messages, before executing the action.
+Check if a user has enough remaining balance of messages, before executing the action. The `feature_id` used here is defined by you when you create the feature in Autumn.
 
 <CodeGroup>
 
@@ -94,8 +94,6 @@ curl -X POST 'https://api.useautumn.com/v1/check' \
 
 </CodeGroup>
 
-The `feature_id` used here is defined by you when you create the feature in Autumn.
-
 <Accordion title="Using React hooks to check access client-side">
 
 When using [React hooks](/getting-started/react), you have access to the [`customer`](/api-reference/hooks/useCustomer#customer) state object, which you can use to [display billing data](/getting-started/display-billing) to your users (subscription status, feature permissions, usage balances, etc). 
@@ -103,6 +101,10 @@ When using [React hooks](/getting-started/react), you have access to the [`custo
 You can use the client-side `check` function to gate features and show paywalls. Permissions are determined by reading the local `customer` state, so no call to Autumn's API is made. The "true" state should always be fetched server-side.
 
 </Accordion>
+
+<Tip>
+You can also use `check` to [gate boolean features](/features/check#checking-boolean-features) (non-metered features), such as access to "premium AI models".
+</Tip>
 
 #### Recording usage
 

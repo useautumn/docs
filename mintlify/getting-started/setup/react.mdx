@@ -277,17 +277,13 @@ Deno.serve(async (req: Request) => {
 ```
 
 </CodeGroup>
-<Check>
-  Autumn will automatically create a customer if the customer ID is new, and enable the <Badge color="green">Free</Badge> plan for them.
-</Check>
 
-Once you login to your app, you will see your user under the [customers](https://app.useautumn.com/customers) page.
 
 #### Add Provider Client-side
 
 Client side, wrap your application with the `<AutumnProvider>` component.
 
-If your backend is hosted on a separate URL (eg, when using Vite), pass it into the `backendUrl` prop.
+If your backend is hosted on a separate URL (eg, when using Vite), pass it into the `backendUrl` prop. This directs the requests from your frontend to the handler in the previous step.
 
 <CodeGroup>
 ```jsx Next.js
@@ -334,20 +330,102 @@ export default function RootLayout({ children }: {
 </CodeGroup>
 
 <Info>
-  The Provider component can also take in a `getBearerToken` function, which should be used
-  for auth frameworks with separate backend and frontend, eg using Clerk with
-  Express.
-
-  This will pass the auth token in the `Authorization` header from the request to the
-  backend, which can be used in the `autumnHandler` identify function.
-
+If needed, you can use the `getBearerToken` or `headers` [props](/api-reference/hooks/autumn-provider) in the provider to pass the auth token or headers to the handler.
 </Info>
+
+#### Create an Autumn customer
+
+From a frontend component, use the [`useCustomer()` hook](/api-reference/hooks/useCustomer). This will automatically create an Autumn customer if they're a new user and enable the <Badge color="green">Free</Badge> plan for them, or get the customer's state for existing users.
+
+```jsx React
+import { useCustomer } from 'autumn-js/react'
+
+const App = () => {
+  const { customer } = useCustomer();
+
+  console.log("Autumn customer:", customer)
+
+  return <h1>My very profitable app</h1>
+}
+```
+
+<Expandable title="customer object">
+
+```json expandable
+{
+    "id": "user_123",
+    "created_at": 1764932560414,
+    "name": "My First Customer",
+    "email": null,
+    "fingerprint": null,
+    "stripe_id": null,
+    "env": "sandbox",
+    "metadata": {},
+    "products": [
+        {
+            "id": "free",
+            "name": "Free",
+            "group": null,
+            "status": "active",
+            "canceled_at": null,
+            "started_at": 1764932560519,
+            "is_default": true,
+            "is_add_on": false,
+            "version": 5,
+            "current_period_start": null,
+            "current_period_end": null,
+            "items": [
+                {
+                    "type": "feature",
+                    "feature_id": "chat_messages",
+                    "feature_type": "single_use",
+                    "feature": {
+                        "id": "chat_messages",
+                        "name": "Chat Messages",
+                        "type": "single_use",
+                        "display": {
+                            "singular": "chat message",
+                            "plural": "chat messages"
+                        }
+                    },
+                    "included_usage": 5,
+                    "interval": "month",
+                    "reset_usage_when_enabled": true,
+                    "entity_feature_id": null,
+                    "display": {
+                        "primary_text": "5 chat messages"
+                    }
+                }
+            ],
+            "quantity": 1
+        }
+    ],
+    "features": {
+        "chat_messages": {
+            "id": "chat_messages",
+            "type": "single_use",
+            "name": "Chat Messages",
+            "interval": "month",
+            "interval_count": 1,
+            "unlimited": false,
+            "balance": 5,
+            "usage": 0,
+            "included_usage": 5,
+            "next_reset_at": 1767610960519,
+            "overage_allowed": false
+        }
+    }
+}
+```
+</Expandable>
+
+You will see your user under the [customers](https://app.useautumn.com/customers) page in the Autumn dashboard.
 
 ## 3. Stripe Payment Flow
 
 Call `checkout` to redirect the customer to a Stripe checkout page when they want to purchase the <Badge color="blue">Pro</Badge> plan. Once they've paid, Autumn will grant access to "100 messages per month" defined in Step 1.
 
-For subsequent payments, no Checkout URL is required. You can pass in Autumn's [&#60;CheckoutDialog /&#62;](/getting-started/components/checkout-dialog) component to the function, which will automatically open instead if there's no checkout URL returned.
+For subsequent payments, no payment details are required, so a Checkout URL is not returned. You can pass in Autumn's [&#60;CheckoutDialog /&#62;](/getting-started/components/checkout-dialog) component, which will automatically open instead to let the user confirm their payment.
 
 <Note>
 Use Stripe's test card `4242 4242 4242 4242` to make a purchase in sandbox. You can enter any Expiry and CVV.
@@ -368,14 +446,11 @@ export default function PurchaseButton() {
         });
       }}
     >
-      Upgrade to Pro
+      Select Pro Plan
     </button>
   );
 }
 ```
-
-This dialog will let users confirm their payment, and supports any scenario (eg upgrades, downgrades, topups).
-
 
 <Expandable title="Checkout Dialog">
     <Frame>
@@ -387,21 +462,27 @@ This dialog will let users confirm their payment, and supports any scenario (eg 
 
 </Expandable>
 
+<Check>
+This will handle any plan changes scenario (upgrades, downgrades, one-time topups, renewals, etc).
+
+Upgrades will happen immediately, and downgrades will be scheduled for the next billing cycle.
+</Check>
+
 <Tip>
   Autumn also has a prebuilt [&#60;PricingTable /&#62;](/getting-started/components/pricing-table) UI component, which you can drop in to dynamically display plans and upgrade states.
   
   
-  Alternatively, you can [build your own](/getting-started/components/pricing-table#build-your-own) components and flows using our underlying API for full configurability.
+  Alternatively, you can [build your own](/getting-started/components/pricing-table#build-your-own) components and flows using Autumn's headless API for full control.
 </Tip>
 
 ---
 
-**Next step: feature gating**
+**Next step: Track and limit usage**
 
-Now that the plan is enabled and you've handled payments, you can now make sure that customers have the correct access and limits based on their plan.
+Now that the plan is enabled and you've handled payments, you can now make sure that customers have the access to the right features and limits based on their plan.
 
 <Card
-  title="Usage tracking and limiting"
+  title="Track and limit usage"
   href='/getting-started/gating'
  >
 Enforce usage limits and feature permissions using Autumn's `check` and `track` functions

@@ -91,7 +91,8 @@
 						"pages": [
 							"api-reference/hooks/useCustomer",
 							"api-reference/hooks/useEntity",
-							"api-reference/hooks/useAnalytics"
+							"api-reference/hooks/useAnalytics",
+							"api-reference/hooks/autumn-provider"
 						]
 					},
 					{

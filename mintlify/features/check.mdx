@@ -247,12 +247,12 @@ curl -X POST "https://api.useautumn.com/v1/track" \
 
 ## Checking Boolean Features
 
-For simple on/off features, use the endpoint to determine if a customer has access. Alternatively you can just check if they have access to a certain product.
+For simple on/off features, use the endpoint to determine if a customer has access. Alternatively you can just check if they have access to a certain plan.
 
 ```tsx React
 const { check } = useCustomer();
 
-// check if the customer has access to a product
+// check if the customer has access to a plan
 const isPremium = check({ productId: "premium" });
 
 // check if the customer has access to a feature
