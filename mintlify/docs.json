@@ -4,8 +4,8 @@
 	"name": "Autumn",
 	"colors": {
 		"primary": "#8838ff",
-		"light": "#f5f5f5",
-		"dark": "#7C3EFF"
+		"light": "#8838ff",
+		"dark": "#8838ff"
 	},
 	"appearance": {
 		"default": "system",
