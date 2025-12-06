@@ -84,7 +84,7 @@
 			},
 			{
 				"tab": "Client Libraries",
-				"icon": "palette",
+				"icon": "window",
 				"groups": [
 					{
 						"group": "React Hooks",
@@ -107,7 +107,7 @@
 			},
 			{
 				"tab": "API Reference",
-				"icon": "square-terminal",
+				"icon": "rectangle-terminal",
 				"groups": [
 					{
 						"group": "Core",

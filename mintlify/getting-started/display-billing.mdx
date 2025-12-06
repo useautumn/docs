@@ -7,7 +7,7 @@ Software applications typically ship with a billing page. This allows customers 
 
 The `customer` endpoint will return the current state of the customer, including their active plans, feature usage and remaining balances.
 
-## Active plans
+### Active plans
 
 Display the plan the user is currently on. You can also display price information and features granted with that plan.
 
@@ -72,7 +72,7 @@ curl --request GET \
 ```
 </CodeGroup>
 
-## Usage balances
+### Usage balances
 
 Metered features have a `balance`, `usage` and `included_usage` field. You can use these to display the current usage and remaining balance to the user.
 
@@ -126,7 +126,7 @@ curl --request GET \
 ```
 </CodeGroup>
 
-## Switching or cancelling plans
+### Switching or cancelling plans
 
 Switching plans follows the same Stripe payment flow as [previously described](/getting-started/sdk). 
 
@@ -281,7 +281,7 @@ curl -X POST 'https://api.useautumn.com/v1/cancel' \
 
 </CodeGroup>
 
-## Stripe billing portal
+### Stripe billing portal
 
 The Stripe billing portal is a convenient way to allow users to manage their payment method, see past invoices and also cancel their current plan. You can also set up "churn offers" to encourage users to stay with you.
 
@@ -339,7 +339,7 @@ curl -X POST 'https://api.useautumn.com/v1/openBillingPortal' \
 </CodeGroup>
 
 
-## Usage history chart
+### Usage history chart
 
 Autumn replicates your usage data to Clickhouse, so you can retrieve aggregate time series usage data for your customers. The response can be passed into a charting library like Recharts to display a usage history graph.
 

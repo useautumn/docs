@@ -16,7 +16,7 @@ This example will continue from before: a 2-tier pricing model for a chatbot.
 This guide shows an asynchronous approach to checking and tracking. You can also [check and reserve](/features/check#checking-and-reserving-usage) balance in a single, atomic API call for concurrent events.
 </Note>
 
-#### Checking feature access
+### Checking feature access
 
 Check if a user has enough remaining balance of messages, before executing the action. The `feature_id` used here is defined by you when you create the feature in Autumn.
 
@@ -106,7 +106,7 @@ You can use the client-side `check` function to gate features and show paywalls.
 You can also use `check` to [gate boolean features](/features/check#checking-boolean-features) (non-metered features), such as access to "premium AI models".
 </Tip>
 
-#### Recording usage
+### Tracking usage
 
 After the user has successfully used a chatbot message, you can record the usage in Autumn. This will decrement the user's message balance.
 
