@@ -44,28 +44,24 @@
 						]
 					},
 					{
-						"group": "Features",
+						"group": "Configure Pricing",
+						"pages": [
+							"pricing/plans",
+							"pricing/features",
+							"pricing/plan-features",
+							"pricing/credits",
+							"pricing/versioning",
+							"pricing/rewards"
+						]
+					},
+					{
+						"group": "Manage Customers",
 						"pages": [
 							"features/check",
 							"features/tracking-usage",
 							"features/balances",
-							"features/credits",
-							"features/feature-entities"
-						]
-					},
-					{
-						"group": "Plans",
-						"pages": [
-							"products/create-product",
-							"products/product-items",
+							"features/feature-entities",
 							"products/enabling-product",
-							"products/changing-product",
-							"products/rewards"
-						]
-					},
-					{
-						"group": "Customers",
-						"pages": [
 							"customers/creating-customers",
 							"customers/managing-customers"
 						]

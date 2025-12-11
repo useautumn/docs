@@ -6,30 +6,13 @@ description: "Open-source infrastructure to manage billing, credits and usage li
 
 ## What is Autumn?
 
-Autumn handles your customer's payments and makes sure they have the access to the right features and limits. 
+Autumn handles your billing flows and makes sure your customers have the access to the right features and limits. 
 
-It sits between your server and Stripe billing, acting as the database for subscription status, usage metering and credit balances.
+It sits between your server and Stripe billing, and acts as your managed database for subscription status, usage metering and credit balances.
 
 1000s of founders and fast-growing startups use Autumn to make billing easier and more reliable. No webhooks needed!
 
 {/* <img src="/assets/screenshots/hero.png" /> */}
-
-
-
-## Why use Autumn?
-
-Reliable billing is hard to setup and maintain. When integrating Stripe directly, you are responsible for:
-
-- **Syncing subscription state**: active, overdue payments, cancelling, 5-10 webhooks
-- **Plan switching**: upgrades, scheduled downgrades, add ons
-- **Usage limits**: monthly recurring limits, one-time limits, spend limits, credits
-- **Custom plans**: and plan versioning, pricing migrations
-
-The problem gets worse as your codebase and pricing changes. Billing code becomes a sprawling mess of edge cases, race conditions and takes time away from building your product.
-
-Autumn is a managed service that replaces this logic. Your server makes queries to Autumn, and it tells you if a customer can "do something" (eg, send a chatbot message, access premium features, etc), based on your pricing plan configuration.
-
-This gives you flexibility to make pricing changes, or define custom plans for important customers without touching any code.
 
 ## How it works
 
@@ -60,6 +43,23 @@ If Autumn tells you they're `allowed` access, let them use the feature. Afterwar
 </Steps>
 
 Autumn also provides APIs to easily get customer billing data (to display on a billing page), open Stripe billing portal, display usage analytics, handle org billing, setup referral programs and more.
+
+
+## Why use Autumn?
+
+Reliable billing is hard to setup and maintain. When integrating Stripe directly, you are responsible for:
+
+- **Syncing subscription state**: active, overdue payments, cancelling, 5-10 webhooks
+- **Plan switching**: upgrades, scheduled downgrades, add ons
+- **Usage limits**: monthly recurring limits, one-time limits, spend limits, credits
+- **Custom plans**: and plan versioning, pricing migrations
+
+The problem gets worse as your codebase and pricing changes. Billing code becomes a sprawling mess of edge cases, race conditions and takes time away from building your product.
+
+Autumn is a managed service that replaces this logic. Your server makes queries to Autumn, and it tells you if a customer can "do something" (eg, send a chatbot message, access premium features, etc), based on your pricing plan configuration.
+
+This gives you flexibility to make pricing changes, or define custom plans for important customers without touching any code.
+
 
 ## What Autumn is not
 
