@@ -89,8 +89,7 @@ RevenueCat integration allows you to use Autumn alongside RevenueCat for managin
         Any existing Autumn customers (that have purchased a plan via Stripe / Web) can still access their balances and features as normal on mobile. They will have an active plan in their `customer` object.
         
         <Warning>
-            You should internally handle blocking existing Autumn users from initiating subscriptions with RevenueCat. Autumn will block this if it detects it,
-            however you should still prevent this in your UI.
+            You should handle blocking existing Autumn customers from initiating subscriptions with RevenueCat on mobile, by checking for an active plan in their `customer` object.
         </Warning>
 
         When integrating RevenueCat and initiating your `Purchases` instance, you must use the `appUserID` parameter to pass in the customer ID from your auth system.
