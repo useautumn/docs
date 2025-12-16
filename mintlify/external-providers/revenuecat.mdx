@@ -3,8 +3,6 @@ title: "RevenueCat"
 description: "Integrate Autumn with RevenueCat for mobile app billing"
 ---
 
-## Overview
-
 RevenueCat integration allows you to use Autumn alongside RevenueCat for managing mobile app subscriptions and billing.
 
 <Note>
@@ -12,9 +10,9 @@ RevenueCat integration allows you to use Autumn alongside RevenueCat for managin
 </Note>
 
 <Steps>
-    <Step
-        title="Connecting RevenueCat to Autumn"
-    >
+    <Step>
+    ### Connect RevenueCat to Autumn
+    
         To connect RevenueCat to Autumn, you'll need:
         - A RevenueCat project ID
         - A RevenueCat API key
@@ -44,11 +42,11 @@ RevenueCat integration allows you to use Autumn alongside RevenueCat for managin
         </Frame>
     </Step>
 
-    <Step
-        title="Mapping your RevenueCat products to Autumn products"
-    >
+    <Step>
+    ### Map your RevenueCat products to Autumn products
+    
         <Warning>
-            Autumn currently does not support mapping RevenueCat products to Autumn products with the following attributes:
+            RevenueCat does not support products with the following price types:
             - Prepaid items
             - Usage-based pricing
 
@@ -64,9 +62,9 @@ RevenueCat integration allows you to use Autumn alongside RevenueCat for managin
         </Frame>
     </Step>
 
-    <Step
-        title="Setting up the webhook integration"
-    >
+    <Step>
+    ### Set up the webhook integration
+
         For Autumn to recieve updates from RevenueCat, you'll need to set up a webhook integration.
 
         In RevenueCat, visit "Integrations > Webhooks", and click "Add new configuration". Use the following configuration:
@@ -81,22 +79,25 @@ RevenueCat integration allows you to use Autumn alongside RevenueCat for managin
         </Frame>
     </Step>
 
-    <Step
-        title="Setting up your code"
-    >
-        Now you can start using Autumn with RevenueCat. There is only one difference between using Autumn with RevenueCat and using Autumn with Stripe,
-        you cannot call `attach()` or `checkout()` with RevenueCat. Instead you should either use RevenueCat's SDK or RevenueCat's paywalls. Both will
-        automatically sync into Autumn. However once you have purchased a product or an add-on, you may then continue using `check()` or `track()` to manage your features.
-        Any existing Autumn users can still access their balances and features as normal via the `check()` and `track()` functions.
+    <Step>
+    ### Integration
+    
+        **You should not call Autumn's `attach()` or `checkout()` functions. Instead you should either use RevenueCat's SDK or RevenueCat's paywalls.**
+        
+        When the user pays via mobile, the plan will automatically sync into Autumn. Once you have purchased a product or an add-on, you may then continue using `check()` or `track()` to manage your features.
+        
+        Any existing Autumn customers (that have purchased a plan via Stripe / Web) can still access their balances and features as normal on mobile. They will have an active plan in their `customer` object.
         
         <Warning>
-            You should internally handle blocking existing Autumn users from initiating subscriptions with RevenueCat. Autumn will try its best to block this if it detects it,
-            however you should still gate this in your UI.
+            You should internally handle blocking existing Autumn users from initiating subscriptions with RevenueCat. Autumn will block this if it detects it,
+            however you should still prevent this in your UI.
         </Warning>
 
-        When initiating your `Purchases` instance, you must use the `appUserID` parameter to pass in the customer ID from your auth system.
+        When integrating RevenueCat and initiating your `Purchases` instance, you must use the `appUserID` parameter to pass in the customer ID from your auth system.
         This will allow you to sync the customer ID into Autumn, whether its a new user or an existing user from Stripe.
-        Additionally if you are using [Expo](https://expo.dev/), you can also use our [React hooks](/api-reference/hooks/useCustomer) too!
+        <Tip>
+        if you are using [Expo](https://expo.dev/), you can use Autumn's [React hooks](/api-reference/hooks/useCustomer) too
+        </Tip>
 
         <CodeGroup>
             ```typescript RevenueCatProvider.tsx
@@ -216,9 +217,8 @@ RevenueCat integration allows you to use Autumn alongside RevenueCat for managin
         </CodeGroup>
     </Step>
 
-    <Step
-        title="Congratulations!"
-    >
+    <Step>
+    ### Congratulations!
         You have now successfully integrated Autumn with RevenueCat.
 
         You can now use the `check()` and `track()` functions to manage your features as usual.
