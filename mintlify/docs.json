@@ -180,6 +180,11 @@
 						]
 					}
 				]
+			},
+			{
+				"tab": "Changelog",
+				"icon": "list-ol",
+				"pages": ["changelog/changelog"]
 			}
 		]
 	},

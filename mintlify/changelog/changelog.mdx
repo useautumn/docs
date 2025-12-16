@@ -1,0 +1,100 @@
+---
+title: "Changelog"
+mode: "center"
+description: "Some new things we've shipped"
+---
+
+
+<Update
+  label="December 16th 2025"
+>
+  ## Stripe customer portal link within the customer page
+
+  You can now open a customer's Stripe customer portal directly from the customer page. You can quickly preview this and send to customers that want to manage their payment methods or see past invoices.
+
+  <Frame style={{ width: "400px" }}>
+    <img src="/assets/changelog/customer-portal.png" alt="Stripe customer portal" />
+  </Frame>
+  <br />
+
+  <Accordion title="Minor updates this week">
+
+    ### 🎨 Frontend/UI
+    - Customer page restyle (multiple PRs)
+    - V2 component migrations (DropdownMenu, customer filter)
+    - Balance Edit Sheet improvements
+    - Toast styling fixes
+    - Plan editor enhancements
+
+    ### 🔧 Backend/Billing
+    - New billing subscription tests and improvements
+    - Quantity upgrade handling from zero
+    - Add-on checkout scenario fixes
+    - 3DS handling for merged subscriptions
+    - Proration and invoice improvements
+
+    ### 🐛 Bug Fixes
+    - Checkout race conditions
+    - Credit system archives
+    - Entity webhooks
+    - Rollover issues
+    - Customer ID null issues
+    - Subscription status handling
+
+    ### ✨ New Features
+    - Granted balance update endpoint
+    - Dynamic usage columns in customer list
+    - User profile editing in settings
+    - Leave org functionality
+    - Customer portal improvements
+
+  </Accordion>
+
+</Update>
+
+
+
+
+<Update
+  label="December 10th 2025"
+>
+  ## Usage columns in your customer list
+
+  Preview a customer's current credit balances straight from the customer list. Now you can see who's worth peeking into! 
+
+  <Frame style={{ width: "400px" }}>
+    <img src="/assets/changelog/usage-columns.png" alt="Usage columns" />
+  </Frame>
+
+</Update>
+
+
+<Update
+  label="December 5th 2025"
+>
+  ## Autumn is live in us-east
+
+  Autumn is live on US-East! Previously all requests were hitting our us-west DB.
+
+  Now, we're reading and writing from multiple Redis caches, so both checking feature balances and tracking usage events are faster and more reliable.
+
+  More regions coming soon!
+
+  <Frame style={{ width: "400px" }}>
+    <img src="/assets/changelog/us-east.png" alt="US-East region" />
+  </Frame>
+</Update>
+
+<Update
+  label="December 1st 2025"
+>
+  ## Dark mode
+
+  Dark mode is here. No need to say more. We know you guys are all night owls. 
+
+  We also shipped an entirely new design for the plan editor and customer pages, to make managing your plans and customers easier.
+
+  <Frame style={{ width: "400px" }}>
+    <img src="/assets/changelog/dark-mode.png" alt="Dark mode" />
+  </Frame>
+</Update>
