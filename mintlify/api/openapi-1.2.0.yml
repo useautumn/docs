@@ -2300,9 +2300,10 @@ paths:
             schema:
               type: object
               properties:
-                starting_after:
-                  description: Cursor for pagination. Use next_cursor from previous response.
-                  type: string
+                offset:
+                  description: Number of items to skip
+                  default: 0
+                  type: integer
                 limit:
                   description: Number of items to return. Default 100, max 1000.
                   default: 100
@@ -2317,7 +2318,7 @@ paths:
                     - type: array
                       items:
                         type: string
-                time_range:
+                custom_range:
                   description: Filter events by time range
                   type: object
                   properties:
@@ -2350,8 +2351,10 @@ paths:
                       customer_id: 0pCIbS4AMAFDB1iBMNhARWZt2gDtVwQx
                       value: 49
                       properties: {}
-                  has_more: true
-                  next_cursor: MXwxNzY1NzM3MTYzNzg3fGV2dF8zNnFiaDJMeWRFUW5QS0dOVVlvT2R4endhUTE
+                  total: 2
+                  has_more: false
+                  offset: 0
+                  limit: 100
                 type: object
                 properties:
                   list:
@@ -2391,15 +2394,21 @@ paths:
                   has_more:
                     description: Whether more results exist after this page
                     type: boolean
-                  next_cursor:
-                    description: Opaque cursor for next page. Null if no more results.
-                    anyOf:
-                      - type: string
-                      - type: "null"
+                  offset:
+                    description: Current offset position
+                    type: number
+                  limit:
+                    description: Limit passed in the request
+                    type: number
+                  total:
+                    description: Total number of items returned in the current page
+                    type: number
                 required:
                   - list
                   - has_more
-                  - next_cursor
+                  - offset
+                  - limit
+                  - total
                 additionalProperties: false
       x-codeSamples:
         - lang: TypeScript
