@@ -74,7 +74,7 @@
 				"groups": [
 					{
 						"group": "Cookbooks",
-						"pages": ["guides/credits", "guides/prepaid"]
+						"pages": ["cookbooks/credits", "cookbooks/prepaid"]
 					}
 				]
 			},
