@@ -127,6 +127,13 @@
 						]
 					},
 					{
+						"group": "Events",
+						"pages": [
+							"api-reference/events/list-events",
+							"api-reference/events/aggregate-events"
+						]
+					},
+					{
 						"group": "Entities",
 						"pages": [
 							"api-reference/entities/get-entity",
@@ -163,13 +170,7 @@
 							"api-reference/referrals/referral-redeem"
 						]
 					},
-					{
-						"group": "Events",
-						"pages": [
-							"api-reference/events/list-events",
-							"api-reference/events/aggregate-events"
-						]
-					},
+
 					{
 						"group": "CLI",
 						"pages": ["api-reference/cli/config"]
