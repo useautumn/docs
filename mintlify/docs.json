@@ -112,8 +112,7 @@
 							"api-reference/core/attach",
 							"api-reference/core/check",
 							"api-reference/core/track",
-							"api-reference/core/cancel",
-							"api-reference/core/query"
+							"api-reference/core/cancel"
 						]
 					},
 					{
@@ -162,6 +161,13 @@
 						"pages": [
 							"api-reference/referrals/referral-code",
 							"api-reference/referrals/referral-redeem"
+						]
+					},
+					{
+						"group": "Events",
+						"pages": [
+							"api-reference/events/list-events",
+							"api-reference/events/aggregate-events"
 						]
 					},
 					{
