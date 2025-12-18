@@ -85,10 +85,11 @@
 					{
 						"group": "React Hooks",
 						"pages": [
+							"api-reference/hooks/autumn-provider",
 							"api-reference/hooks/useCustomer",
 							"api-reference/hooks/useEntity",
-							"api-reference/hooks/useAnalytics",
-							"api-reference/hooks/autumn-provider"
+							"api-reference/hooks/useListEvents",
+							"api-reference/hooks/useAggregateEvents"
 						]
 					},
 					{

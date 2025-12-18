@@ -3,6 +3,8 @@ title: "useCustomer"
 description: "Access a customer's state and use it to display information in your React app"
 ---
 
+import SWRConfigParam from '/snippets/swr-config-param.mdx';
+
 The `useCustomer` hook provides access to customer data and related operations. You can use it from your frontend to retrieve customer information, manage loading states, and create entities.
 
 <Note>
@@ -19,7 +21,15 @@ The `useCustomer` hook provides access to customer data and related operations. 
   `invoices`, `rewards`, `trials_used`, `entities`, `referrals`, `payment_method`.
 </ParamField>
 
-## `customer`
+<ParamField body="errorOnNotFound" type="boolean">
+  Whether to throw an error if the customer is not found. Defaults to `false`.
+</ParamField>
+
+<SWRConfigParam />
+
+## Returns
+
+### `customer`
 
 The customer object containing all customer data.
 
@@ -40,7 +50,7 @@ export default function CustomerProfile() {
 }
 ```
 
-## `checkout()`
+### `checkout()`
 
 Opens a checkout URL for the user to make a payment.
 
@@ -120,7 +130,7 @@ export default function PurchaseButton() {
   Whether to open the checkout URL in a new tab.
 </ParamField>
 
-## `attach()`
+### `attach()`
 
 Enables a product for a customer and handles a payment. Typically used after the `checkout` function.
 
@@ -190,7 +200,7 @@ export default function ConfirmationButton() {
   Whether to open the checkout URL in a new tab.
 </ParamField>
 
-## `check()`
+### `check()`
 
 Check if a user has access to a specific feature or product.
 
@@ -254,7 +264,7 @@ export default function FeatureGate({ children }) {
   upgrade/downgrade data.
 </ParamField>
 
-## `track()`
+### `track()`
 
 Track usage events for features or analytics.
 
@@ -307,7 +317,7 @@ export default function ApiCallButton() {
   Unique key to prevent duplicate tracking events.
 </ParamField>
 
-## `openBillingPortal()`
+### `openBillingPortal()`
 
 Open the billing portal for customers to manage their subscriptions, payment methods, and billing information.
 
@@ -337,7 +347,35 @@ export default function BillingSettings() {
   URL to redirect to when the customer exits the billing portal.
 </ParamField>
 
-## `cancel()`
+### `setupPayment()`
+
+Setup a payment method for a customer.
+
+```jsx
+import { useCustomer } from "autumn-js/react";
+
+export default function SetupPayment() {
+  const { setupPayment } = useCustomer();
+}
+```
+
+**Parameters**
+
+<ParamField body="successUrl" type="string">
+  Optional URL to redirect to after successful setup. If not provided, the default return URL will be used.
+</ParamField>
+
+<ParamField body="checkoutSessionParams" type="object">
+  Optional parameters to pass to the Checkout session. Accepts an object with string keys and any values.
+</ParamField>
+
+<ParamField body="openInNewTab" type="boolean">
+  If true, will open the payment session in a new tab. Defaults to false.
+</ParamField>
+
+
+
+### `cancel()`
 
 Cancel a product or subscription for a user/entity.
 
@@ -374,7 +412,7 @@ export default function CancelSubscription() {
   The ID of the entity (customer/user) to cancel the product for.
 </ParamField>
 
-## `refetch`
+### `refetch()`
 
 Function to manually refetch the `customer` data, eg when updating a customer's usage or balance to display.
 
@@ -394,7 +432,7 @@ export default function CustomerWithRefresh() {
 }
 ```
 
-## `createEntity`
+### `createEntity()`
 
 Function to create one or more [entities](/features/feature-entities) for the customer.
 
@@ -432,7 +470,7 @@ return <button onClick={handleCreateSeat}>Create User Seat</button>;
   feature.
 </ParamField>
 
-## `isLoading`
+### `isLoading`
 
 Boolean indicating whether the customer data is currently being fetched.
 
@@ -450,7 +488,7 @@ export default function CustomerLoader() {
 }
 ```
 
-## `error`
+### `error`
 
 Any error that occurred while fetching customer data.
 
