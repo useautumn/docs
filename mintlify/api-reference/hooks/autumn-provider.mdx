@@ -11,6 +11,10 @@ The `AutumnProvider` component is used to wrap your React application and provid
 
 ## Properties
 
+<ParamField body="suppressLogs" type="boolean" optional>
+  If true, suppresses all console warnings and logs from Autumn hooks and provider. Useful for reducing noise in production environments.
+</ParamField>
+
 <ParamField body="getBearerToken" type="() =&gt; Promise&lt;string | null&gt;" optional>
   Optional function that returns a bearer token for authenticated requests. Use this when you need to pass the user's auth token in the <code>Authorization</code> header to your backend (e.g., Clerk, Supabase).
 </ParamField>
