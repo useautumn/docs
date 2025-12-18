@@ -20,7 +20,9 @@ The `useEntity` hook provides access to [entity data](/features/feature-entities
   `invoices`.
 </ParamField>
 
-## `entity`
+## Returns
+
+### `entity`
 
 The entity object containing all entity data.
 
@@ -40,7 +42,7 @@ export default function EntityProfile() {
 }
 ```
 
-## `refetch`
+### `refetch()`
 
 Function to manually refetch the entity data, eg when updating an entity's state or metadata to display.
 
@@ -60,7 +62,7 @@ export default function EntityWithRefresh() {
 }
 ```
 
-## `isLoading`
+### `isLoading`
 
 Boolean indicating whether the entity data is currently being fetched.
 
@@ -78,7 +80,7 @@ export default function EntityLoader() {
 }
 ```
 
-## `error`
+### `error`
 
 Any error that occurred while fetching entity data.
 
