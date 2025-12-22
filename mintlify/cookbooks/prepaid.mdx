@@ -1,173 +1,461 @@
 ---
 title: Prepaid top-ups
-description: How to let customers purchase prepaid packages or top-ups for your product.
+description: How to let customers purchase prepaid packages and top-ups.
 ---
 
-If a user hits a usage limit you granted them, they may be willing to purchase a "top-up".
+If a user hits a usage limit you granted them, they may be willing to purchase a top-up.
 
-These are typically one-time purchases that grant a fixed usage of a feature. However, they can also be recurring add-on packs, or 
+These are typically one-time purchases (or less commonly, recurring add-ons) that grant a fixed usage of a feature.
 
-This gives users a controlled purchase, and allows you to get paid upfront. For these reasons, it tends to be a more popular alternative to "pay-as-you-go" pricing.
-
-Popularized by companies like OpenAI, this has a number of advantages, like committing customers to a certain usage, and getting paid upfront for services.
+This gives users full spend control and allows your business to be paid upfront. For these reasons, it tends to be a more popular alternative to usage-based pricing -- eg, OpenAI uses this model for their API.
 
 ## Example case
 
-In this example, we have a video transcription service that offers
+In this example, we have an AI chatbot that offers:
 
-- 10 minutes of free transcription
-- Customers can purchase additional minutes in packages of **$10 per 60 minutes**.
-- The packages will have tiered pricing: if they purchase more than 300 minutes, the additional minutes will be **$5 per 60 minutes**.
+- 10 premium messages for free
+- An option for customers to top-up premium messages in packages of $10 per 100 messages.
 
-## Setup
+## Configure Pricing
 
-Let's create our products. We'll create our base free product and our prepaid package product.
+<Steps>
+<Step>
+#### Create Features
 
-#### Base Product
+Create a `metered` `consumable` feature for our premium messages, so we can track its balance.
 
-Included usage will be set to 10, for 10 minutes of free transcription. Since our free minutes don't refresh (eg, it's not 10 minutes per month), we set Reset Interval to "no reset".
+<Frame>
+<img src="/assets/guides/prepaid/features-light.png" className="block dark:hidden" />
+<img src="/assets/guides/prepaid/features-dark.png" className="hidden dark:block" />
+</Frame>
+</Step>
 
-<img src="/assets/guides/prepaid/base-item.png" />
-<img src="/assets/guides/prepaid/base-product.png" />
+<Step>
+#### Create Free and Top-up Plans
 
-#### Top-up minutes Product
+Create our free plan, and assign 10 premium messages to it. These are "one-off" credits, that will not reset periodically.
 
-Now we'll create our top-up minutes product. We'll set the included usage to 0, and again set Reset Interval to "no reset". We've added a tiered price for the top-up minutes and importantly **set the "usage is prepaid" flag**.
+<Tip>
+Make sure to set the `auto-enable` flag on the free plan, so that it is automatically assigned to new customers.
+</Tip>
+<Frame>
+<img src="/assets/guides/prepaid/free-light.png" className="block dark:hidden" />
+<img src="/assets/guides/prepaid/free-dark.png" className="hidden dark:block" />
+</Frame>
 
-This tells Autumn to expect a `quantity` to be sent in when a customer attaches this product.
+Now we'll create our top-up plan. We'll add a price to our premium messages feature, at $10 per 100 messages. These are "one-off" purchases, with a `prepaid` billing method.
 
-<img src="/assets/guides/prepaid/topup-item.png" />
-<img src="/assets/guides/prepaid/topup-product.png" />
+`prepaid` features require a `quantity` to be sent in when a customer attaches this product, so the customer can specify how many premium messages they want to top up with.
+
+<Frame>
+<img src="/assets/guides/prepaid/topup-light.png" className="block dark:hidden" />
+<img src="/assets/guides/prepaid/topup-dark.png" className="hidden dark:block" />
+</Frame>
+
+</Step>
+</Steps>
 
 ## Implementation
 
-#### Checking if they can transcribe
+<Steps>
+<Step>
+#### Create an Autumn Customer
 
-Whenever our user wants to transcribe a video, we'll first check if they have enough `transcription-minutes` left.
+When your user signs up, create an Autumn customer. This will automatically assign them the Free plan, and grant them 10 premium messages.
 
 <CodeGroup>
 
-```shell cURL
-curl -X POST "https://api.useautumn.com/v1/check" \
--H "Authorization: Bearer am_sk_1234567890" \
--H "Content-Type: application/json" \
--d '{
-  "customer_id": "john-yeo",
-  "feature_id": "transcription-minutes"
-}'
+```jsx React
+import { useCustomer } from "autumn-js/react";
+
+const App = () => {
+  const { customer } = useCustomer();
+
+  console.log("Autumn customer:", customer);
+
+  return <h1>Welcome, {customer?.name || "user"}!</h1>;
+};
 ```
 
-```javascript Typescript
-import { Autumn as autumn } from "autumn-js";
+```typescript Node.js
+import { Autumn } from "autumn-js";
 
-await autumn.check({
-  customer_id: "john-yeo",
-  feature_id: "transcription-minutes",
+const autumn = new Autumn({
+  secretKey: process.env.AUTUMN_SECRET_KEY,
 });
+
+const { data, error } = await autumn.customers.create({
+  id: "user_or_org_id_from_auth",
+  name: "John Yeo",
+  email: "john@example.com",
+});
+```
+
+```python Python
+import asyncio
+from autumn import Autumn
+
+autumn = Autumn(process.env.AUTUMN_SECRET_KEY)
+
+async def main():
+    customer = await autumn.customers.create(
+        id="user_or_org_id_from_auth",
+        name="John Yeo",
+        email="john@example.com",
+    )
+
+asyncio.run(main())
+```
+
+```bash cURL
+curl --request POST \
+  --url https://api.useautumn.com/customers \
+  --header 'Authorization: Bearer <AUTUMN_SECRET_KEY>' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "id": "user_or_org_id_from_auth",
+    "name": "John Yeo",
+    "email": "john@example.com"
+  }'
+```
+
+</CodeGroup>
+</Step>
+
+<Step>
+#### Checking for access
+
+Every time our user wants to send a premium message, we'll first check if they have enough premium messages remaining.
+
+<CodeGroup>
+
+```jsx React wrap
+import { useCustomer } from "autumn-js/react";
+
+export function CheckPremiumMessage() {
+  const { check, refetch } = useCustomer();
+
+  const handleCheckAccess = async () => {
+    const { data } = await check({ featureId: "premium-messages" });
+
+    if (!data?.allowed) {
+      alert("You've run out of premium messages");
+    } else {
+      // proceed with sending message
+      await refetch();
+    }
+  };
+}
+```
+
+```typescript Node.js
+import { Autumn } from "autumn-js";
+
+const autumn = new Autumn({
+  secretKey: process.env.AUTUMN_SECRET_KEY,
+});
+
+const { data } = await autumn.check({
+  customer_id: "user_or_org_id_from_auth",
+  feature_id: "premium_messages",
+});
+
+if (!data.allowed) {
+  console.log("User has run out of premium messages");
+  return;
+}
+```
+
+```python Python
+import asyncio
+from autumn import Autumn
+
+autumn = Autumn("am_sk_1234567890")
+
+async def main():
+    response = await autumn.check(
+        customer_id="user_or_org_id_from_auth",
+        feature_id="premium_messages",
+    )
+    
+    if not response.allowed:
+        print("User has run out of premium messages")
+        return
+
+asyncio.run(main())
+```
+
+```bash cURL
+curl -X POST "https://api.useautumn.com/v1/check" \
+  -H "Authorization: Bearer am_sk_1234567890" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "customer_id": "user_or_org_id_from_auth",
+    "feature_id": "premium_messages"
+  }'
 ```
 
 </CodeGroup>
 
+<Expandable title="check response">
 ```json
 {
-  "customer_id": "john-yeo",
-  "feature_id": "transcription-minutes",
+  "customer_id": "user_or_org_id_from_auth",
+  "feature_id": "premium_messages",
   "code": "feature_found",
   "allowed": true,
-  "balances": [
-    {
-      "feature_id": "transcription-minutes",
-      "required": 1,
-      "balance": 10
-    }
-  ]
+  "balance": 10,
+  "usage": 0,
+  "included_usage": 10,
+  "unlimited": false,
+  "interval": null,
+  "interval_count": 1,
+  "next_reset_at": null,
+  "overage_allowed": false
 }
 ```
+</Expandable>
+</Step>
 
-<Check>
-  Autumn automatically created our customer and assigned them the base product.
-</Check>
+<Step>
+#### Tracking premium messages
 
-#### Using up minutes
-
-Now let's implement our usage tracking and use up our minutes.
+Now let's implement our usage tracking and use up our premium messages. In this example, we're using 5 premium messages.
 
 <CodeGroup>
 
-```shell cURL
-curl -X POST "https://api.useautumn.com/v1/track" \
--H "Authorization: Bearer am_sk_1234567890" \
--H "Content-Type: application/json" \
--d '{
-  "customer_id": "john-yeo",
-  "feature_id": "transcription-minutes",
-  "value": 10
-}'
-```
+```typescript Node.js
+import { Autumn } from "autumn-js";
 
-```javascript Typescript
-import { Autumn as autumn } from "autumn-js";
+const autumn = new Autumn({
+  secretKey: process.env.AUTUMN_SECRET_KEY,
+});
 
 await autumn.track({
-  customer_id: "john-yeo",
-  feature_id: "transcription-minutes",
-  value: 10,
+  customer_id: "user_or_org_id_from_auth",
+  feature_id: "premium_messages",
+  value: 5,
 });
+```
+
+```python Python
+import asyncio
+from autumn import Autumn
+
+autumn = Autumn("am_sk_1234567890")
+
+async def main():
+    await autumn.track(
+        customer_id="user_or_org_id_from_auth",
+        feature_id="premium_messages",
+        value=5,
+    )
+
+asyncio.run(main())
+```
+
+```bash cURL
+curl -X POST "https://api.useautumn.com/v1/track" \
+  -H "Authorization: Bearer am_sk_1234567890" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "customer_id": "user_or_org_id_from_auth",
+    "feature_id": "premium_messages",
+    "value": 5
+  }'
 ```
 
 </CodeGroup>
 
+<Expandable title="track response">
 ```json
 {
-  "id": "evt_2w5dzidzFD1cESxOGnn9frVuVcm",
   "code": "event_received",
-  "customer_id": "john-yeo",
-  "feature_id": "transcription-minutes"
+  "customer_id": "user_or_org_id_from_auth",
+  "feature_id": "premium_messages"
 }
 ```
+</Expandable>
+</Step>
 
-Since we've used up all our minutes, if we call the `check` route again, we'll get `allowed: false`. We can use this to prompt our user to purchase a top-up.
+<Step>
+#### Purchasing top-ups
 
-#### Purchasing a top-up
-
-For our top-up flow, when a customer clicks "purchase" and chooses a quantity, we'll use the `attach` route to get a Stripe Checkout URL for them to make a payment.
+When users run out of premium messages, they can purchase additional messages using our top-up plan. In this example, the user is purchasing 200 premium messages, which will cost them $20.
 
 <CodeGroup>
 
-```shell cURL
-curl -X POST "https://api.useautumn.com/v1/attach" \
--H "Authorization: Bearer am_sk_1234567890" \
--H "Content-Type: application/json" \
--d '{
-  "customer_id": "john-yeo",
-  "product_id": "top-up-minutes",
-  "quantity": 420
-}'
+```jsx React
+import { useCustomer, CheckoutDialog } from "autumn-js/react";
+
+export default function TopUpButton() {
+  const { checkout } = useCustomer();
+
+  return (
+    <button
+      onClick={async () => {
+        await checkout({
+          productId: "top_up",
+          dialog: CheckoutDialog,
+          options: [{
+            featureId: "premium_messages",
+            quantity: 200,
+          }],
+        });
+      }}
+    >
+      Buy More Messages
+    </button>
+  );
+}
 ```
 
-```javascript Typescript
-import { Autumn as autumn } from "autumn-js";
+```typescript Node.js
+import { Autumn } from "autumn-js";
 
-await autumn.attach({
-  customer_id: "john-yeo",
-  product_id: "top-up-minutes",
-  quantity: 420,
+const autumn = new Autumn({
+  secretKey: process.env.AUTUMN_SECRET_KEY,
 });
+
+const { data } = await autumn.checkout({
+  customer_id: "user_or_org_id_from_auth",
+  product_id: "top_up",
+  options: [{
+    feature_id: "premium_messages",
+    quantity: 200,
+  }],
+});
+
+if (data.url) {
+  // Redirect user to Stripe checkout URL
+} else {
+  // Show purchase preview to user
+}
+```
+
+```python Python
+import asyncio
+from autumn import Autumn
+
+autumn = Autumn("am_sk_1234567890")
+
+async def main():
+    response = await autumn.checkout(
+        customer_id="user_or_org_id_from_auth",
+        product_id="top-up",
+        options=[{
+          "feature_id": "premium-messages",
+          "quantity": 200,
+        }],
+    )
+    
+    if response.url:
+        # Redirect user to Stripe checkout URL
+        pass
+    else:
+        # Show purchase preview to user
+        pass
+
+asyncio.run(main())
+```
+
+```bash cURL
+curl -X POST "https://api.useautumn.com/v1/checkout" \
+  -H "Authorization: Bearer am_sk_1234567890" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "customer_id": "user_or_org_id_from_auth",
+    "product_id": "top-up",
+    "options": [{
+      "feature_id": "premium-messages",
+      "quantity": 200
+    }]
+  }'
 ```
 
 </CodeGroup>
 
-In this case, the customer chose 420 minutes, so they should be charged:
+<Expandable title="checkout response">
+```json
+{
+  "customer_id": "user_or_org_id_from_auth",
+  "lines": [
+    {
+      "description": "Top-up - 200 premium messages",
+      "amount": 20,
+      "item": {
+        "type": "feature",
+        "feature_id": "premium-messages",
+        "feature_type": "prepaid",
+        "feature": {
+          "id": "premium-messages",
+          "name": "Premium messages",
+          "type": "metered",
+          "display": {
+            "singular": "premium message",
+            "plural": "premium messages"
+          }
+        },
+        "quantity": 200,
+        "price": 10,
+        "price_per": 100,
+        "display": {
+          "primary_text": "200 premium messages",
+          "secondary_text": "$10 per 100 messages"
+        }
+      }
+    }
+  ],
+  "product": {
+    "id": "top-up",
+    "name": "Top-up",
+    "group": null,
+    "env": "sandbox",
+    "is_add_on": false,
+    "is_default": false,
+    "archived": false,
+    "version": 1,
+    "created_at": 1766428038264,
+    "items": [
+      {
+        "type": "feature",
+        "feature_id": "premium-messages",
+        "feature_type": "prepaid",
+        "feature": {
+          "id": "premium-messages",
+          "name": "Premium messages",
+          "type": "metered",
+          "display": {
+            "singular": "premium message",
+            "plural": "premium messages"
+          }
+        },
+        "price": 10,
+        "price_per": 100,
+        "display": {
+          "primary_text": "$10 per 100 messages"
+        }
+      }
+    ],
+    "free_trial": null,
+    "base_variant_id": null,
+    "scenario": "attach",
+    "properties": {
+      "is_free": false,
+      "is_one_off": true,
+      "has_trial": false,
+      "updateable": false
+    }
+  },
+  "total": 20,
+  "currency": "usd",
+  "url": "https://checkout.stripe.com/c/pay/.......",
+  "has_prorations": false
+}
+```
+</Expandable>
 
-- 300 minutes at \$10 per 60 minutes = \$50
-- 120 minutes at \$5 per 60 minutes = \$10
+Once the customer completes the payment, they will have an additional 200 premium messages available to use. You can display to the user by getting balances from the `customer` method. 
 
-So the total charge is **\$60**.
-
-<img src="/assets/guides/prepaid/checkout.png" />
-
-Once our customer pays, we can see they have an additional 420 minutes available from the top-up product.
-
-<img src="/assets/guides/prepaid/customer-balance.png" />
-
-The customer can now use more transcription minutes, and top up again if they run out.
+</Step>
+</Steps>
