@@ -348,7 +348,7 @@ Autumn replicates your usage data to Clickhouse, so you can retrieve aggregate t
 ```jsx React wrap
 import { useAnalytics } from "autumn-js/react";
 
-const { data } = useAnalytics({
+const { list } = useAggregateEvents({
   featureId: 'messages',
   range: '30d'
 })
@@ -361,7 +361,7 @@ const autumn = new Autumn({
   secretKey: process.env.AUTUMN_SECRET_KEY,
 });
 
-const { data } = await autumn.query({
+const { data } = await autumn.events.aggregate({
   customer_id: 'user_or_org_id_from_auth',
   feature_id: 'messages',
   range: '30d'
@@ -372,10 +372,10 @@ const { data } = await autumn.query({
 import asyncio
 from autumn import Autumn
 
-autumn = Autumn("am_sk_1234567890")
+autumn = Autumn(process.env.AUTUMN_SECRET_KEY)
 
 async def main():
-    response = await autumn.query(
+    response = await autumn.events.aggregate(
         customer_id='user_or_org_id_from_auth',
         feature_id='messages',
         range='30d'
@@ -385,7 +385,7 @@ asyncio.run(main())
 ```
 
 ```bash cURL
-curl -X POST 'https://api.useautumn.com/v1/query' \
+curl -X POST 'https://api.useautumn.com/v1/events/aggregate' \
 -H 'Authorization: Bearer <AUTUMN_SECRET_KEY>' \
 -H 'Content-Type: application/json' \
 -d '{
