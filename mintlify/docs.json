@@ -65,6 +65,10 @@
 							"customers/creating-customers",
 							"customers/managing-customers"
 						]
+					},
+					{
+						"group": "Additional Resources",
+						"pages": ["external-providers/revenuecat"]
 					}
 				]
 			},
