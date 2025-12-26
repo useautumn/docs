@@ -1,6 +1,6 @@
 {
 	"$schema": "https://mintlify.com/docs.json",
-	"theme": "aspen",
+	"theme": "mint",
 	"name": "Autumn",
 	"colors": {
 		"primary": "#8838ff",
@@ -19,6 +19,25 @@
 		"drilldown": true
 	},
 	"navigation": {
+		"global": {
+			"anchors": [
+				{
+					"anchor": "Discord",
+					"icon": "discord",
+					"href": "https://discord.gg/STqxY92zuS"
+				},
+				{
+					"anchor": "GitHub",
+					"icon": "github",
+					"href": "https://github.com/useautumn/autumn"
+				},
+				{
+					"anchor": "Website",
+					"icon": "globe",
+					"href": "https://useautumn.com"
+				}
+			]
+		},
 		"tabs": [
 			{
 				"tab": "Documentation",
@@ -216,26 +235,10 @@
 	"background": {
 		"color": {
 			"light": "#FAFAFA",
-			"dark": "#1a1a1a"
+			"dark": "#121212"
 		}
 	},
 	"navbar": {
-		"links": [
-			{
-				"label": "Discord",
-				"icon": "discord",
-				"href": "https://discord.gg/STqxY92zuS"
-			},
-			{
-				"label": "GitHub",
-				"icon": "github",
-				"href": "https://github.com/useautumn/autumn"
-			},
-			{
-				"label": "Website",
-				"href": "https://useautumn.com"
-			}
-		],
 		"primary": {
 			"type": "button",
 			"label": "Dashboard",

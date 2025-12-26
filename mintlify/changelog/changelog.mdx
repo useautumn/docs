@@ -19,6 +19,40 @@ You can input a positive or negative value in this field.
   <Frame style={{ width: "400px" }}>
   <img src="/assets/changelog/add-to-balance.png" />
   </Frame>
+  <br />
+<AccordionGroup>
+    <Accordion title="Improvements">
+      - Balance management enhancements with atomic "Add to Balance" feature - [#503](https://github.com/useautumn/autumn/pull/503)
+      - Product copy workflow streamlined with direct environment selection - [#501](https://github.com/useautumn/autumn/pull/501)
+      - Plan feature sheet with discard/update actions and change detection - [#499](https://github.com/useautumn/autumn/pull/499)
+      - Base price display logic centralized into reusable utility - [#488](https://github.com/useautumn/autumn/pull/488)
+      - Stripe secret key authentication always available, improved UI - [#491](https://github.com/useautumn/autumn/pull/491)
+      - Console logs removed from production builds for cleaner output - [#487](https://github.com/useautumn/autumn/pull/487)
+      - Sign-in flow simplified by removing onboarding redirect logic - [#484](https://github.com/useautumn/autumn/pull/484)
+      - Enter key handler added for email sign-in and cache improvements - [#483](https://github.com/useautumn/autumn/pull/483)
+      - Plan editor UI enhanced with better pricing configuration - [#481](https://github.com/useautumn/autumn/pull/481)
+      - Hono dependency pinned to exact version for build consistency - [#494](https://github.com/useautumn/autumn/pull/494)
+      - UI refinements and number formatting improvements - [#500](https://github.com/useautumn/autumn/pull/500)
+    </Accordion>
+    
+    <Accordion title="Bug Fixes">
+      - Add-on products no longer carry usage from main products - [#502](https://github.com/useautumn/autumn/pull/502)
+      - Base price display component type handling fixed - [#496](https://github.com/useautumn/autumn/pull/496)
+      - Invoice checkout cache invalidation fixed for null customer IDs - [#490](https://github.com/useautumn/autumn/pull/490)
+      - One-off products properly handled during subscription upgrades - [#489](https://github.com/useautumn/autumn/pull/489)
+      - Sandbox redirect logic restored for non-deployed organizations - [#486](https://github.com/useautumn/autumn/pull/486)
+      - Dashboard checkout success URL fixed for production environments - [#485](https://github.com/useautumn/autumn/pull/485)
+      - Transfer endpoint cache clearing URL pattern corrected - [#482](https://github.com/useautumn/autumn/pull/482)
+      - Cache race condition in attach flow resolved with timestamp guards - [#479](https://github.com/useautumn/autumn/pull/479)
+    </Accordion>
+    
+    <Accordion title="API">
+      - RevenueCat payment processor integration added and reverted - [#497](https://github.com/useautumn/autumn/pull/497), [#495](https://github.com/useautumn/autumn/pull/495), [#435](https://github.com/useautumn/autumn/pull/435), [#493](https://github.com/useautumn/autumn/pull/493)
+      - Added manual secret key override to Hono `autumnHandler`
+      - Added `checkoutSessionParams` to `PricingTable` component from `autumn-js/react`
+      - Added `new_billing_subscription` to the `attach` endpoint, allowing you to create a new Stripe subscription instead of combining with an existing one
+    </Accordion>
+  </AccordionGroup>
 </Update>
 
 
@@ -77,39 +111,6 @@ You can use this to display a billing event log, and a timeseries chart of usage
     <img src="/assets/changelog/customer-portal.png" alt="Stripe customer portal" />
   </Frame>
   <br />
-
-  <Accordion title="Minor updates this week">
-
-    ### 🎨 Frontend/UI
-    - Customer page restyle (multiple PRs)
-    - V2 component migrations (DropdownMenu, customer filter)
-    - Balance Edit Sheet improvements
-    - Toast styling fixes
-    - Plan editor enhancements
-
-    ### 🔧 Backend/Billing
-    - New billing subscription tests and improvements
-    - Quantity upgrade handling from zero
-    - Add-on checkout scenario fixes
-    - 3DS handling for merged subscriptions
-    - Proration and invoice improvements
-
-    ### 🐛 Bug Fixes
-    - Checkout race conditions
-    - Credit system archives
-    - Entity webhooks
-    - Rollover issues
-    - Customer ID null issues
-    - Subscription status handling
-
-    ### ✨ New Features
-    - Granted balance update endpoint
-    - Dynamic usage columns in customer list
-    - User profile editing in settings
-    - Leave org functionality
-    - Customer portal improvements
-
-  </Accordion>
 
 </Update>
 
