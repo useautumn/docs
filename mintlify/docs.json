@@ -97,7 +97,11 @@
 				"groups": [
 					{
 						"group": "Cookbooks",
-						"pages": ["cookbooks/credits", "cookbooks/prepaid"]
+						"pages": [
+							"cookbooks/credits",
+							"cookbooks/prepaid",
+							"cookbooks/trials"
+						]
 					}
 				]
 			},

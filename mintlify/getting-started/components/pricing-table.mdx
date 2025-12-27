@@ -58,9 +58,12 @@ export const PricingTableExample = () => (
 );
 ```
 
-The component can take in `productDetails`, which can be used to pass in content that can override the default contents (which are generated from your Autumn products). The example below was used to render the screenshot above.
+<Check>
+The Pricing Table component calls the `products` endpoint, which does not require a `customer_id`. This means you can display the pricing table to unauthenticated users.
+</Check>
 
-You can choose which products should be displayed, and what items each card should have. The items array can either take an object with `primaryText` and `secondaryText` properties, or a string with the `featureId`, which will just take the item from Autumn's default contents.
+
+The component can take in `productDetails`, which can be used to pass in content that can override the default contents (which are generated from your Autumn products). The example below was used to render the screenshot above.
 
 ```tsx [expandable]
 const productDetails = [
@@ -98,6 +101,8 @@ const productDetails = [
   },
 ];
 ```
+
+You can choose which products should be displayed, and what items each card should have. The items array can either take an object with `primaryText` and `secondaryText` properties, or a string with the `featureId`, which will just take the item from Autumn's default contents.
 
 #### Scenarios
 
