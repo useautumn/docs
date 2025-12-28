@@ -20,6 +20,8 @@ It sits between your server and Stripe billing, and acts as your managed databas
 <Step title="Model your pricing in Autumn">
 Model your pricing plans in the Autumn UI, or through a config file. Define your free, paid and any add-on pricing tiers.
 
+A typical billing provider (eg, Stripe) would let you configure your pricing -- then send you webhooks to handle the rest. In Autumn, you define _both pricing and the features that customers get access to_.
+
 You can link features to these plans and define their usage limits: both recurring (monthly, yearly) and one-time grants.
 </Step>
 <Step title="Handle payments">
