@@ -66,7 +66,7 @@ When the customer signs up, create an Autumn customer for them. Autumn will auto
 import { Autumn } from "autumn-js";
 
 const autumn = new Autumn({
-	secretKey: process.env.AUTUMN_SECRET_KEY,
+	secretKey:'am_sk_42424242',
 });
 
 const { data, error } = await autumn.customers.create({
@@ -80,7 +80,7 @@ const { data, error } = await autumn.customers.create({
 import asyncio
 from autumn import Autumn
 
-autumn = Autumn(process.env.AUTUMN_SECRET_KEY)
+autumn = Autumn('am_sk_42424242')
 
 async def main():
     customer = await autumn.customers.create(
@@ -95,7 +95,7 @@ asyncio.run(main())
 ```bash
 curl --request POST \
   --url https://api.useautumn.com/customers \
-  --header 'Authorization: Bearer <AUTUMN_SECRET_KEY>' \
+  --header 'Authorization: Bearer am_sk_42424242' \
   --header 'Content-Type: application/json' \
   --data '{
   "id": "user_or_org_id_from_auth",
@@ -160,7 +160,7 @@ This lets them confirm their upgrade, downgrade or new purchase.
 import { Autumn } from "autumn-js";
 
 const autumn = new Autumn({ 
-  secretKey: process.env.AUTUMN_SECRET_KEY 
+  secretKey: 'am_sk_42424242' 
 });
 
 const { data } = await autumn.checkout({
@@ -179,7 +179,7 @@ if (data.url) {
 import asyncio
 from autumn import Autumn
 
-autumn = Autumn(process.env.AUTUMN_SECRET_KEY)
+autumn = Autumn('am_sk_42424242')
 
 async def main():
   response = await autumn.checkout(
@@ -192,7 +192,7 @@ asyncio.run(main())
 
 ```bash cURL
 curl -X POST 'https://api.useautumn.com/v1/checkout' \
--H 'Authorization: Bearer <AUTUMN_SECRET_KEY>' \
+-H 'Authorization: Bearer am_sk_42424242' \
 -H 'Content-Type: application/json' \
 -d '{
   "customer_id": "user_or_org_id_from_auth",
@@ -219,7 +219,7 @@ This call is only needed if there was no URL returned from the `checkout` step.
 import { Autumn } from "autumn-js";
 
 const autumn = new Autumn({ 
-  secretKey: process.env.AUTUMN_SECRET_KEY 
+  secretKey: 'am_sk_42424242' 
 });
 
 const { data } = await autumn.attach({
@@ -232,7 +232,7 @@ const { data } = await autumn.attach({
 import asyncio
 from autumn import Autumn
 
-autumn = Autumn(process.env.AUTUMN_SECRET_KEY)
+autumn = Autumn('am_sk_42424242')
 
 async def main():
   response = await autumn.attach(
@@ -245,7 +245,7 @@ asyncio.run(main())
 
 ```bash
 curl -X POST 'https://api.useautumn.com/v1/attach' \
--H 'Authorization: Bearer <AUTUMN_SECRET_KEY>' \
+-H 'Authorization: Bearer am_sk_42424242' \
 -H 'Content-Type: application/json' \
 -d '{
   "customer_id": "user_or_org_id_from_auth",

@@ -105,7 +105,7 @@ const App = () => {
 import { Autumn } from "autumn-js";
 
 const autumn = new Autumn({
-  secretKey: process.env.AUTUMN_SECRET_KEY,
+  secretKey: 'am_sk_42424242',
 });
 
 const { data, error } = await autumn.customers.create({
@@ -119,7 +119,7 @@ const { data, error } = await autumn.customers.create({
 import asyncio
 from autumn import Autumn
 
-autumn = Autumn(process.env.AUTUMN_SECRET_KEY)
+autumn = Autumn('am_sk_42424242')
 
 async def main():
     customer = await autumn.customers.create(
@@ -134,7 +134,7 @@ asyncio.run(main())
 ```bash cURL
 curl --request POST \
   --url https://api.useautumn.com/customers \
-  --header 'Authorization: Bearer <AUTUMN_SECRET_KEY>' \
+  --header 'Authorization: Bearer am_sk_42424242' \
   --header 'Content-Type: application/json' \
   --data '{
     "id": "user_or_org_id_from_auth",
@@ -183,7 +183,7 @@ export function CheckBasicMessage() {
 import { Autumn } from "autumn-js";
 
 const autumn = new Autumn({
-  secretKey: process.env.AUTUMN_SECRET_KEY,
+  secretKey: 'am_sk_42424242',
 });
 
 const { data } = await autumn.check({
@@ -202,7 +202,7 @@ if (!data.allowed) {
 import asyncio
 from autumn import Autumn
 
-autumn = Autumn("am_sk_1234567890")
+autumn = Autumn("am_sk_42424242")
 
 async def main():
     response = await autumn.check(
@@ -220,7 +220,7 @@ asyncio.run(main())
 
 ```bash cURL
 curl -X POST "https://api.useautumn.com/v1/check" \
-  -H "Authorization: Bearer am_sk_1234567890" \
+  -H "Authorization: Bearer am_sk_42424242" \
   -H "Content-Type: application/json" \
   -d '{
     "customer_id": "user_or_org_id_from_auth",
@@ -274,7 +274,7 @@ Now let's implement our usage tracking and use up our credits. In this example, 
 import { Autumn } from "autumn-js";
 
 const autumn = new Autumn({
-  secretKey: process.env.AUTUMN_SECRET_KEY,
+  secretKey: 'am_sk_42424242',
 });
 
 await autumn.track({
@@ -288,7 +288,7 @@ await autumn.track({
 import asyncio
 from autumn import Autumn
 
-autumn = Autumn("am_sk_1234567890")
+autumn = Autumn("am_sk_42424242")
 
 async def main():
     await autumn.track(
@@ -302,7 +302,7 @@ asyncio.run(main())
 
 ```bash cURL
 curl -X POST "https://api.useautumn.com/v1/track" \
-  -H "Authorization: Bearer am_sk_1234567890" \
+  -H "Authorization: Bearer am_sk_42424242" \
   -H "Content-Type: application/json" \
   -d '{
     "customer_id": "user_or_org_id_from_auth",
@@ -356,7 +356,7 @@ export default function UpgradeButton() {
 import { Autumn } from "autumn-js";
 
 const autumn = new Autumn({
-  secretKey: process.env.AUTUMN_SECRET_KEY,
+  secretKey: 'am_sk_42424242',
 });
 
 const { data } = await autumn.checkout({
@@ -375,7 +375,7 @@ if (data.url) {
 import asyncio
 from autumn import Autumn
 
-autumn = Autumn("am_sk_1234567890")
+autumn = Autumn("am_sk_42424242")
 
 async def main():
     response = await autumn.checkout(
@@ -395,7 +395,7 @@ asyncio.run(main())
 
 ```bash cURL
 curl -X POST "https://api.useautumn.com/v1/checkout" \
-  -H "Authorization: Bearer am_sk_1234567890" \
+  -H "Authorization: Bearer am_sk_42424242" \
   -H "Content-Type: application/json" \
   -d '{
     "customer_id": "user_or_org_id_from_auth",
@@ -595,7 +595,7 @@ export default function TopUpButton() {
 import { Autumn } from "autumn-js";
 
 const autumn = new Autumn({
-  secretKey: process.env.AUTUMN_SECRET_KEY,
+  secretKey: 'am_sk_42424242',
 });
 
 const { data } = await autumn.attach({
@@ -612,7 +612,7 @@ const { data } = await autumn.attach({
 import asyncio
 from autumn import Autumn
 
-autumn = Autumn("am_sk_1234567890")
+autumn = Autumn("am_sk_42424242")
 
 async def main():
     response = await autumn.attach(
@@ -629,7 +629,7 @@ asyncio.run(main())
 
 ```bash cURL
 curl -X POST "https://api.useautumn.com/v1/attach" \
-  -H "Authorization: Bearer am_sk_1234567890" \
+  -H "Authorization: Bearer am_sk_42424242" \
   -H "Content-Type: application/json" \
   -d '{
     "customer_id": "user_or_org_id_from_auth",

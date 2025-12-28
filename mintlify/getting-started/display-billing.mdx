@@ -31,7 +31,7 @@ console.log(`Users active plans are: ${activeProducts?.map((product) => product.
 import { Autumn } from "autumn-js";
 
 const autumn = new Autumn({
-	secretKey: process.env.AUTUMN_SECRET_KEY,
+	secretKey: 'am_sk_42424242',
 });
 
 const { data } = await autumn.customers.get("user_or_org_id_from_auth");
@@ -52,7 +52,7 @@ console.log(
 import asyncio
 from autumn import Autumn
 
-autumn = Autumn(process.env.AUTUMN_SECRET_KEY)
+autumn = Autumn('am_sk_42424242')
 
 async def main():
     customer = await autumn.customers.get("user_or_org_id_from_auth")
@@ -65,7 +65,7 @@ asyncio.run(main())
 ```bash cURL
 curl --request GET \
   --url https://api.useautumn.com/customers/user_or_org_id_from_auth \
-  --header 'Authorization: Bearer <AUTUMN_SECRET_KEY>' \
+  --header 'Authorization: Bearer am_sk_42424242' \
   --header 'Content-Type: application/json'
 
   # get products object from customer.products
@@ -92,7 +92,7 @@ console.log(`Users messages balance is: ${messages?.balance} / ${messages?.inclu
 import { Autumn } from "autumn-js";
 
 const autumn = new Autumn({
-	secretKey: process.env.AUTUMN_SECRET_KEY,
+	secretKey: 'am_sk_42424242',
 });
 
 const { data } = await autumn.customers.get("user_or_org_id_from_auth");
@@ -106,7 +106,7 @@ console.log(`Users messages balance is: ${messages?.balance} / ${messages?.inclu
 import asyncio
 from autumn import Autumn
 
-autumn = Autumn(process.env.AUTUMN_SECRET_KEY)
+autumn = Autumn('am_sk_42424242')
 
 async def main():
     customer = await autumn.customers.get("user_or_org_id_from_auth")
@@ -119,7 +119,7 @@ asyncio.run(main())
 ```bash cURL
 curl --request GET \
   --url https://api.useautumn.com/customers/user_or_org_id_from_auth \
-  --header 'Authorization: Bearer <AUTUMN_SECRET_KEY>' \
+  --header 'Authorization: Bearer am_sk_42424242' \
   --header 'Content-Type: application/json'
 
 # get features usage object from customer.features.[feature_id]
@@ -159,7 +159,7 @@ export default function PurchaseButton() {
 import { Autumn } from "autumn-js";
 
 const autumn = new Autumn({ 
-  secretKey: process.env.AUTUMN_SECRET_KEY 
+  secretKey: 'am_sk_42424242' 
 });
 
 const { data } = await autumn.checkout({
@@ -184,7 +184,7 @@ const { data } = await autumn.attach({
 import asyncio
 from autumn import Autumn
 
-autumn = Autumn(process.env.AUTUMN_SECRET_KEY)
+autumn = Autumn('am_sk_42424242')
 
 async def checkout():
   response = await autumn.checkout(
@@ -208,7 +208,7 @@ async def attach():
 
 ```bash cURL expandable
 curl -X POST 'https://api.useautumn.com/v1/checkout' \
--H 'Authorization: Bearer <AUTUMN_SECRET_KEY>' \
+-H 'Authorization: Bearer am_sk_42424242' \
 -H 'Content-Type: application/json' \
 -d '{
   "customer_id": "user_or_org_id_from_auth",
@@ -217,7 +217,7 @@ curl -X POST 'https://api.useautumn.com/v1/checkout' \
 
 # if user needs to confirm payment
 curl -X POST 'https://api.useautumn.com/v1/attach' \
--H 'Authorization: Bearer <AUTUMN_SECRET_KEY>' \
+-H 'Authorization: Bearer am_sk_42424242' \
 -H 'Content-Type: application/json' \
 -d '{
   "customer_id": "user_or_org_id_from_auth",
@@ -247,7 +247,7 @@ await cancel({ productId: "pro" });
 import { Autumn } from "autumn-js";
 
 const autumn = new Autumn({
-  secretKey: process.env.AUTUMN_SECRET_KEY,
+  secretKey: 'am_sk_42424242',
 });
 
 await autumn.cancel({
@@ -260,7 +260,7 @@ await autumn.cancel({
 import asyncio
 from autumn import Autumn
 
-autumn = Autumn(process.env.AUTUMN_SECRET_KEY)
+autumn = Autumn('am_sk_42424242')
 
 async def main():
   await autumn.cancel(
@@ -271,7 +271,7 @@ async def main():
 
 ```bash cURL
 curl -X POST 'https://api.useautumn.com/v1/cancel' \
--H 'Authorization: Bearer <AUTUMN_SECRET_KEY>' \
+-H 'Authorization: Bearer am_sk_42424242' \
 -H 'Content-Type: application/json' \
 -d '{
   "customer_id": "user_or_org_id_from_auth",
@@ -303,7 +303,7 @@ await openBillingPortal({ returnUrl: "https://your-app.com/billing" });
 import { Autumn } from "autumn-js";
 
 const autumn = new Autumn({
-  secretKey: process.env.AUTUMN_SECRET_KEY,
+  secretKey: 'am_sk_42424242',
 });
 
 await autumn.customers.billingPortal('customer_id', 
@@ -317,7 +317,7 @@ await autumn.customers.billingPortal('customer_id',
 import asyncio
 from autumn import Autumn
 
-autumn = Autumn(process.env.AUTUMN_SECRET_KEY)
+autumn = Autumn('am_sk_42424242')
 
 async def main():
   await autumn.openBillingPortal(
@@ -328,7 +328,7 @@ async def main():
 
 ```bash cURL
 curl -X POST 'https://api.useautumn.com/v1/openBillingPortal' \
--H 'Authorization: Bearer <AUTUMN_SECRET_KEY>' \
+-H 'Authorization: Bearer am_sk_42424242' \
 -H 'Content-Type: application/json' \
 -d '{
   "customer_id": "user_or_org_id_from_auth",
@@ -358,7 +358,7 @@ const { list } = useAggregateEvents({
 import { Autumn } from "autumn-js";
 
 const autumn = new Autumn({
-  secretKey: process.env.AUTUMN_SECRET_KEY,
+  secretKey: 'am_sk_42424242',
 });
 
 const { data } = await autumn.events.aggregate({
@@ -372,7 +372,7 @@ const { data } = await autumn.events.aggregate({
 import asyncio
 from autumn import Autumn
 
-autumn = Autumn(process.env.AUTUMN_SECRET_KEY)
+autumn = Autumn('am_sk_42424242')
 
 async def main():
     response = await autumn.events.aggregate(
@@ -386,7 +386,7 @@ asyncio.run(main())
 
 ```bash cURL
 curl -X POST 'https://api.useautumn.com/v1/events/aggregate' \
--H 'Authorization: Bearer <AUTUMN_SECRET_KEY>' \
+-H 'Authorization: Bearer am_sk_42424242' \
 -H 'Content-Type: application/json' \
 -d '{
   "customer_id": "user_or_org_id_from_auth",

@@ -92,23 +92,18 @@
 				]
 			},
 			{
-				"tab": "Cookbooks",
+				"tab": "Examples",
 				"icon": "graduation-cap",
-				"groups": [
-					{
-						"group": "Cookbooks",
-						"pages": [
-							"cookbooks/credits",
-							"cookbooks/prepaid",
-							"cookbooks/trial-card-required",
-							"cookbooks/trial-card-not-required"
-						]
-					}
+				"pages": [
+					"examples/credits",
+					"examples/prepaid",
+					"examples/trial-card-required",
+					"examples/trial-card-not-required"
 				]
 			},
 			{
 				"tab": "React",
-				"icon": "window",
+				"icon": "image",
 				"groups": [
 					{
 						"group": "React Hooks",

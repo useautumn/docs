@@ -59,7 +59,7 @@ import { components } from "./_generated/api";
 import { Autumn } from "@useautumn/convex";
 
 export const autumn = new Autumn(components.autumn, {
-	secretKey: process.env.AUTUMN_SECRET_KEY ?? "",
+	secretKey:'am_sk_42424242',
 	identify: async (ctx: any) => {
 		const user = await ctx.auth.getUserIdentity();
 		if (!user) return null;
@@ -103,7 +103,7 @@ import { components } from "./_generated/api";
 import { Autumn } from "@useautumn/convex";
 
 export const autumn = new Autumn(components.autumn, {
-	secretKey: process.env.AUTUMN_SECRET_KEY ?? "",
+	secretKey:'am_sk_42424242',
 	identify: async (ctx: any) => {
 		const user = await ctx.auth.getUserIdentity();
 		if (!user) return null
@@ -146,7 +146,7 @@ import { components } from "./_generated/api";
 import { Autumn } from "@useautumn/convex";
 
 export const autumn = new Autumn(components.autumn, {
-	secretKey: process.env.AUTUMN_SECRET_KEY ?? "",
+	secretKey:'am_sk_42424242',
 	identify: async (ctx: any) => {
 		const user = await ctx.auth.getUserIdentity();
 		if (!user) return null

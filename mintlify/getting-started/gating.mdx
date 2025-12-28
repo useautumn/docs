@@ -46,7 +46,7 @@ export function SendChatMessage() {
 import { Autumn } from "autumn-js";
 
 const autumn = new Autumn({
-  secretKey: process.env.AUTUMN_SECRET_KEY,
+  secretKey: 'am_sk_42424242',
 });
 
 //check if user can send 1 message
@@ -66,7 +66,7 @@ if (!data.allowed) {
 import asyncio
 from autumn import Autumn
 
-autumn = Autumn('am_sk_1234567890')
+autumn = Autumn('am_sk_42424242')
 
 async def main():
 
@@ -83,7 +83,7 @@ asyncio.run(main())
 ```bash cURL
 # check feature access
 curl -X POST 'https://api.useautumn.com/v1/check' \
--H 'Authorization: Bearer am_sk_1234567890' \
+-H 'Authorization: Bearer am_sk_42424242' \
 -H 'Content-Type: application/json' \
 -d '{
   "customer_id": "user_123",
@@ -143,7 +143,7 @@ asyncio.run(main())
 
 #then record 1 message used
 curl -X POST 'https://api.useautumn.com/v1/track' \
-  -H 'Authorization: Bearer <AUTUMN_SECRET_KEY>' \
+  -H 'Authorization: Bearer am_sk_42424242' \
   -H 'Content-Type: application/json' \
   -d '{
     "customer_id": "user_or_org_id_from_auth",
