@@ -61,13 +61,14 @@ This way, a customer could have both the "Advanced Support" chatbot and the "Sta
 
 </Info>
 
-## Free Trials
+## Trials
 
 Under plan settings, you can set a free trial for a plan. This will give customers a set amount of days to try the plan for free.
 
 You can set whether a card is required for the free trial. If a card is not required, you can `attach` the plan to a customer without them having to go through a checkout flow or have a card on file. It will be automatically expired after the free trial period.
 
-<Note>
-  If you're using the customer `fingerprint` field, you can also choose to limit
-  the free trial to one per customer.
-</Note>
+Each customer can only have access to a plan's trial **once**. If they try to attach the plan again, the trial will be ignored.
+
+<Tip>
+  When creating an Autumn customer, you can set the `customer.fingerprint` field (eg. device ID, browser fingerprint). This will limit the customer to one trial of the plan per fingerprint to prevent abuse.
+</Tip>

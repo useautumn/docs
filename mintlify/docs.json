@@ -100,7 +100,8 @@
 						"pages": [
 							"cookbooks/credits",
 							"cookbooks/prepaid",
-							"cookbooks/trials"
+							"cookbooks/trial-card-required",
+							"cookbooks/trial-card-not-required"
 						]
 					}
 				]

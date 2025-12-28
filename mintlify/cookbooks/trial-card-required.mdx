@@ -1,6 +1,6 @@
 ---
-title: Trials
-description: Enable a trial period of a plan for free. 
+title: Trial - Card Required
+description: Enable a trial period where users must provide payment information upfront.
 ---
 
 In a free trial, users begin with the full, paid version of the product automatically enabled. 
@@ -9,12 +9,12 @@ After a set period they must either subscribe or the premium features are withdr
 
 This is sometimes called a "reverse trial". Companies that use this model include Greptile, Granola and Miro.
 
-
 ## Configure Pricing
 
 Configure the type of trial you want to use in the Plan Settings section.
 
-#### Paid plan trial: card required
+### Paid plan trial: card required
+
 Set up a trial where users must provide payment information upfront. This will automatically transition to a paid plan subscription when the trial ends.
 
 <Frame style={{ width: "400px" }}>
@@ -22,35 +22,16 @@ Set up a trial where users must provide payment information upfront. This will a
 <img src="/assets/guides/trials/card-dark.png" className="hidden dark:block" />
 </Frame>
 
-#### Paid plan trial: card not required
-Configure a trial that allows users to experience premium features without a payment method. 
+### Adding a trial fee (optional)
 
-Users can optionally add a payment method to keep using the plan, which will automatically transition to a paid plan subscription when the trial ends.
-
-<Frame style={{ width: "400px" }}>
-<img src="/assets/guides/trials/no-card-light.png" className="block dark:hidden" />
-<img src="/assets/guides/trials/no-card-dark.png" className="hidden dark:block" />
-</Frame>
-
-#### Free plan trial
-Implement a limited-time trial of a Free plan. Users will lose access to the plan after the trial ends, and can upgrade to a paid plan at any time.
-
-<Frame style={{ width: "400px" }}>
-<img src="/assets/guides/trials/free-light.png" className="block dark:hidden" />
-<img src="/assets/guides/trials/free-dark.png" className="hidden dark:block" />
-</Frame>
-
-#### Adding a trial fee
 Charge a small upfront fee for trial access, often used to qualify leads and reduce trial abuse while maintaining low barrier to entry.
 
 You can create an add-on plan, with a one-time price. We will attach the plan with a free trial, and the trial-fee add on at the same time.
 
-
-
+## Trial Management
 
 - Limited time free trial (default)
 - Card required for trial
-- Card not required for trial (default)
 
 1. Enabling the trial
 2. Ending the trial period
