@@ -53,41 +53,41 @@
 							{
 								"group": "Setup and payments",
 								"pages": [
-									"getting-started/setup/react",
-									"getting-started/setup/sdk",
-									"getting-started/setup/convex"
+									"documentation/getting-started/setup/react",
+									"documentation/getting-started/setup/sdk",
+									"documentation/getting-started/setup/convex"
 								]
 							},
-							"getting-started/gating",
-							"getting-started/display-billing"
+							"documentation/getting-started/gating",
+							"documentation/getting-started/display-billing"
 						]
 					},
 					{
 						"group": "Configure Pricing",
 						"pages": [
-							"pricing/plans",
-							"pricing/features",
-							"pricing/plan-features",
-							"pricing/credits",
-							"pricing/versioning",
-							"pricing/rewards"
+							"documentation/pricing/plans",
+							"documentation/pricing/features",
+							"documentation/pricing/plan-features",
+							"documentation/pricing/credits",
+							"documentation/pricing/versioning",
+							"documentation/pricing/rewards"
 						]
 					},
 					{
 						"group": "Manage Customers",
 						"pages": [
-							"features/check",
-							"features/tracking-usage",
-							"features/balances",
-							"features/feature-entities",
-							"products/enabling-product",
-							"customers/creating-customers",
-							"customers/managing-customers"
+							"documentation/customers/check",
+							"documentation/customers/tracking-usage",
+							"documentation/customers/balances",
+							"documentation/customers/feature-entities",
+							"documentation/customers/enabling-product",
+							"documentation/customers/creating-customers",
+							"documentation/customers/managing-customers"
 						]
 					},
 					{
 						"group": "Additional Resources",
-						"pages": ["external-providers/revenuecat"]
+						"pages": ["documentation/external-providers/revenuecat"]
 					}
 				]
 			},

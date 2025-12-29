@@ -3,15 +3,18 @@ title: "RevenueCat"
 description: "Integrate Autumn with RevenueCat for mobile app billing"
 ---
 
-RevenueCat integration allows you to use Autumn alongside RevenueCat for managing mobile app subscriptions and billing.
+RevenueCat integration allows you to use Autumn alongside RevenueCat for managing mobile app subscriptions and billing. This is a _read-only_ integration, which means that you will handle billing through RevenueCat. 
+
+Autumn will receive webhook updates from RevenueCat to update the customer's plan and features. You keep the benefits of RevenueCat's paywalls, AB testing and SDK.
 
 <Note>
  This is currently in beta, please reach out to us on [Discord](https://discord.gg/STqxY92zuS) or email us at support@useautumn.com to get access.
 </Note>
 
+## Setup Guide
 <Steps>
     <Step>
-    ### Connect RevenueCat to Autumn
+    #### Connect RevenueCat to Autumn
     
         To connect RevenueCat to Autumn, you'll need:
         - A RevenueCat project ID
@@ -43,14 +46,15 @@ RevenueCat integration allows you to use Autumn alongside RevenueCat for managin
     </Step>
 
     <Step>
-    ### Map your RevenueCat products to Autumn products
+    #### Map your RevenueCat products to Autumn products
+
+    When a RevenueCat product is purchased, define which Autumn product should be enabled for the customer. 
     
         <Warning>
-            RevenueCat does not support products with the following price types:
-            - Prepaid items
-            - Usage-based pricing
+        RevenueCat is managing billing, so any plan prices in Autumn will be ignored. 
+        
+        Since RevenueCat does not support usage-based or quantity-based pricing, any Autumn plans with these price types will not display in the mapping screen for safety. 
 
-            We suggest using flat fee add-ons instead.
         </Warning>
 
         RevenueCat products are mapped at the store-level into Autumn. This means instead of mapping a Package or an Offering, you will be mapping Products from Google Play, Apple Store, Roku or etc... instead. 
@@ -63,7 +67,7 @@ RevenueCat integration allows you to use Autumn alongside RevenueCat for managin
     </Step>
 
     <Step>
-    ### Set up the webhook integration
+    #### Set up the webhook integration
 
         For Autumn to recieve updates from RevenueCat, you'll need to set up a webhook integration.
 
@@ -80,7 +84,7 @@ RevenueCat integration allows you to use Autumn alongside RevenueCat for managin
     </Step>
 
     <Step>
-    ### Integration
+    #### Integration
     
         **You should not call Autumn's `attach()` or `checkout()` functions. Instead you should either use RevenueCat's SDK or RevenueCat's paywalls.**
         
@@ -217,7 +221,7 @@ RevenueCat integration allows you to use Autumn alongside RevenueCat for managin
     </Step>
 
     <Step>
-    ### Congratulations!
+    #### Congratulations!
         You have now successfully integrated Autumn with RevenueCat.
 
         You can now use the `check()` and `track()` functions to manage your features as usual.
@@ -249,3 +253,11 @@ RevenueCat integration allows you to use Autumn alongside RevenueCat for managin
     </Step>
 
 </Steps>
+
+## Versioning Plans
+
+Autumn's [plan versioning](/documentation/pricing/versioning) feature allows you to update your pricing and migrate customers between versions. However, since mobile billing has specific limitations and is handled by RevenueCat, you should keep the following in mind:
+
+- Whenever a RevenueCat product is purchased, the latest version of the Autumn plan will be enabled for the customer.
+- Any price set in Autumn is ignored: only the price set in RevenueCat will be used
+- If you migrate a customer from one plan version to another, the plan features will be immediately updated -- just as with the standard migration process. Prices will **not** be updated. You should handle this in [RevenueCat](https://www.revenuecat.com/docs/subscription-guidance/price-changes) <Icon icon="external-link" size={12} className="ml-1 mr-1 mb-1" color="#8838ff" /> (your customers may need to opt-in to the new pricing).
