@@ -4,10 +4,10 @@ description: "Implement your React + Node.js app's payments and pricing model"
 ---
 import CreatePlans from '/snippets/create-plans.mdx';
 
-Autumn's client-side [hooks](/api-reference/hooks/useCustomer) and [UI components](/getting-started/components/pricing-table) allow you to handle billing directly from your frontend.
+Autumn's client-side [hooks](/react/hooks/useCustomer) and [UI components](/react/components/pricing-table) allow you to handle billing directly from your frontend.
 
 <Info>
-  Client libraries are supported for React and Node.js apps. Please use our [Server-side SDK](/getting-started/sdk) for other frameworks and languages.
+  Client libraries are supported for React and Node.js apps. Please use our [Server-side SDK](/documentation/getting-started/setup/sdk) for other frameworks and languages.
 </Info>
 
 In this example we'll create the pricing for a premium AI chatbot. We're going to have:
@@ -340,7 +340,7 @@ export default function RootLayout({ children }: {
 </CodeGroup>
 
 <Info>
-If needed, you can use the `getBearerToken` or `headers` [props](/api-reference/hooks/autumn-provider) in the provider to pass the auth token or headers to the handler.
+If needed, you can use the `getBearerToken` or `headers` [props](/react/hooks/autumn-provider) in the provider to pass the auth token or headers to the handler.
 </Info>
 
 </Step>
@@ -348,7 +348,7 @@ If needed, you can use the `getBearerToken` or `headers` [props](/api-reference/
 <Step>
 ### Create an Autumn customer
 
-From a frontend component, use the [`useCustomer()` hook](/api-reference/hooks/useCustomer). This will automatically create an Autumn customer if they're a new user and enable the <Badge color="green">Free</Badge> plan for them, or get the customer's state for existing users.
+From a frontend component, use the [`useCustomer()` hook](/react/hooks/useCustomer). This will automatically create an Autumn customer if they're a new user and enable the <Badge color="green">Free</Badge> plan for them, or get the customer's state for existing users.
 
 ```jsx React
 import { useCustomer } from 'autumn-js/react'
@@ -441,7 +441,7 @@ You will see your user under the [customers](https://app.useautumn.com/customers
 
 Call `checkout` to redirect the customer to a Stripe checkout page when they want to purchase the <Badge color="blue">Pro</Badge> plan. Once they've paid, Autumn will grant access to "100 messages per month" defined in Step 1.
 
-For subsequent payments, no payment details are required, so a Checkout URL is not returned. You can pass in Autumn's [&#60;CheckoutDialog /&#62;](/getting-started/components/checkout-dialog) component, which will automatically open instead to let the user confirm their payment.
+For subsequent payments, no payment details are required, so a Checkout URL is not returned. You can pass in Autumn's [&#60;CheckoutDialog /&#62;](/react/components/checkout-dialog) component, which will automatically open instead to let the user confirm their payment.
 
 <Note>
 Use Stripe's test card `4242 4242 4242 4242` to make a purchase in sandbox. You can enter any Expiry and CVV.
@@ -485,10 +485,10 @@ Upgrades will happen immediately, and downgrades will be scheduled for the next 
 
 
 <Tip>
-  Autumn also has a prebuilt [&#60;PricingTable /&#62;](/getting-started/components/pricing-table) UI component, which you can drop in to dynamically display plans and upgrade states.
+  Autumn also has a prebuilt [&#60;PricingTable /&#62;](/react/components/pricing-table) UI component, which you can drop in to dynamically display plans and upgrade states.
   
   
-  Alternatively, you can [build your own](/getting-started/components/pricing-table#build-your-own) components and flows using Autumn's headless API for full control.
+  Alternatively, you can [build your own](/react/components/pricing-table#build-your-own) components and flows using Autumn's headless API for full control.
 </Tip>
 
 </Step>
@@ -501,7 +501,7 @@ Now that the plan is enabled and you've handled payments, you can now make sure 
 
 <Card
   title="Track and limit usage"
-  href='/getting-started/gating'
+  href='/documentation/getting-started/gating'
  >
 Enforce usage limits and feature permissions using Autumn's `check` and `track` functions
  </Card>

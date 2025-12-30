@@ -52,7 +52,7 @@ Opens a checkout URL for the user to make a payment.
 
 If the payment method already exists, purchase confirmation data will be returned.
 
-If a `dialog` is passed in, a payment confirmation dialog ([`CheckoutDialog`](/quickstart/shadcn#checkout-dialog)) will be opened.
+If a `dialog` is passed in, a payment confirmation dialog ([`CheckoutDialog`](/react/components/checkout-dialog)) will be opened.
 
 ```jsx
 import { useCustomer } from "autumn-js/react";
@@ -84,7 +84,7 @@ export default function PurchaseButton() {
 </ParamField>
 <ParamField body="dialog" type="(data: any) => JSX.Element | React.ReactNode">
   A dialog that pops up to confirm the purchase (eg, for upgrades/downgrades).
-  See the [billing flows](/quickstart/billing-flows#usage) page.
+  See the [\<CheckoutDialog />](/react/components/checkout-dialog) page.
 </ParamField>
 
 <ParamField body="entityId" type="string">
@@ -239,7 +239,7 @@ export default function FeatureGate({ children }) {
 
 <ParamField body="dialog" type="(data: any) => JSX.Element | React.ReactNode">
   A dialog that pops up to act as a paywall (eg, when a feature runs out). See
-  the [billing flows](/quickstart/billing-flows) page.
+  the [\<PaywallDialog />](/react/components/paywall-dialog) page.
 </ParamField>
 
 <ParamField body="entityId" type="string">
@@ -430,7 +430,7 @@ export default function CustomerWithRefresh() {
 
 ### `createEntity()`
 
-Function to create one or more [entities](/features/feature-entities) for the customer.
+Function to create one or more [entities](/documentation/customers/feature-entities) for the customer.
 
 ```jsx
 import { useCustomer } from "autumn-js/react";

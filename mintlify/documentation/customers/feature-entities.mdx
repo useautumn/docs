@@ -10,7 +10,7 @@ Feature entities are used to keep track of sub-balances for a feauture. For exam
 There are two ways you can handle entities depending on your use case.
 
 1. **Entity product items**: this is the simplest way of handling entities, and keeps everything under 1 subscription.
-2. **Attaching a product to an entity**: if an entity can have its own subscription tiers, then you can attach a product directly at the entity level by passing the [entity ID](/api-reference/attach#body-entity-id) into an attach function. Each will be under its own subscription in Stripe with the billing cycles synced.
+2. **Attaching a product to an entity**: if an entity can have its own subscription tiers, then you can attach a product directly at the entity level by passing the [entity ID](/api-reference/core/attach#body-entity-id) into an attach function. Each will be under its own subscription in Stripe with the billing cycles synced.
 
 <Info>
 **Example**

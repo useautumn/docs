@@ -80,10 +80,9 @@ A feature's balance can either be a negative number or a positive number.
 - **Negative Balance**: this represents that the customer has used more than the included usage, and they have usage that they will be billed for in the next billing period.
 
 <Note>
-  Features can only have a negative balance if they have a usage-based price associated with them. This means their product items must be [priced features](/products/product-items#priced-features).
+Features can only have a negative balance if they have a [usage-based price](/documentation/pricing/plan-features#priced-features) associated with them.
 
 If a feature does not have a price, its balance will never fall below 0 even if more usage events are sent.
-
 </Note>
 
 ## Reset Intervals
@@ -116,12 +115,7 @@ These features should not have a reset interval, so that their balances are neve
   interval of “no reset”
 </Note>
 
-You can configure a product item to have no reset interval by selecting "No Reset" in the reset interval dropdown via the UI.
-
-If you're creating a [product item via API](/api-reference/products/post):
-
-- If the feature has no price: omit `interval` or set it to `null`
-- If the feature has a price: `interval` will be the billing interval, but you can use `item.reset_usage_on_billing: false`
+You can configure a product item to have no reset interval by selecting "One-off" in the plan editor dashboard.
 
 <Info>
 
@@ -168,13 +162,6 @@ There are certain cases in which a feature's balance will diverge from the typic
 #### Setting a feature's balance manually
 
 You can manually edit a users balance via the dashboard or via the API.
-
-<Card
-  title="Editing a customer's feature balance"
-  href="/customers/managing-customers#editing-feature-balances"
-  horizontal
-  icon="scale-unbalanced"
-/>
 
 When this happens, the balance will be updated to the new value, but the `included_usage` and `usage` will not be updated.
 

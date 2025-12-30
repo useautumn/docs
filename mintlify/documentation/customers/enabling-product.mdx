@@ -84,7 +84,7 @@ curl --request POST \
 1. Go to the Autumn [customers page](https://app.useautumn.com/customers)
 2. Navigate to the customer you want to enable the product for
 3. Click "Attach product", and choose the product you want to enable for this customer
-4. Optionally, make any changes to the product items before enabling it. This will create a [custom version](/customers/managing-customers#custom-product-versions) of the product.
+4. Optionally, make any changes to the product items before enabling it. This will create a [custom version](/documentation/customers/managing-customers#custom-product-versions) of the product.
 5. Choose how the customer should pay for the product:
    - **Checkout URL**: this will only last 1 day before it expires (a limitation of Stripe)
    - **Invoice**: this is a long lasting payment link. You'll be taken to the Stripe invoice page where you can check over the invoice, add an email if necessary, and send it
@@ -131,7 +131,7 @@ A customer can cancel the scheduled downgrade by attaching the existing product 
 
 <Note>
 
-If you've set a [`group`](/products/create-product#product-properties) when creating the product, upgrades and
+If you've set a [`group`](/documentation/pricing/plans#plan-properties) when creating the product, upgrades and
 downgrades will only apply to products within the same group.
 
 Attaching a new product from a different `group` will enable the new product in

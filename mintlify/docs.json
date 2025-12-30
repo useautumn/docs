@@ -119,9 +119,9 @@
 					{
 						"group": "Component Library",
 						"pages": [
-							"getting-started/components/pricing-table",
-							"getting-started/components/checkout-dialog",
-							"getting-started/components/paywall-dialog"
+							"react/components/pricing-table",
+							"react/components/checkout-dialog",
+							"react/components/paywall-dialog"
 						]
 					}
 				]
