@@ -5,6 +5,56 @@ description: "Some new things we've shipped at Autumn HQ"
 ---
 
 <Update
+  label="January 12th 2026"
+>
+  ## Onboarding prompts
+
+We've added a new in-app onboarding guide to help you get your billing set up in less than 30 minutes.
+
+- **Docs in app**: Access documentation directly within the dashboard
+- **3 prompts → full billing setup**: Complete your entire billing configuration in just 3 steps
+- **Dynamic code snippets**: Get code snippets and prompts tailored to your specific pricing config
+- **Real-time updates**: See your progress update as you complete each step
+
+<br />
+  <Frame style={{ width: "500px" }}>
+    <img src="/assets/changelog/onboarding-prompts.png" />
+  </Frame>
+  <br />
+
+<AccordionGroup>
+    <Accordion title="Improvements">
+      - Code cleanup and refactoring in Stripe billing plan evaluation system - [#525](https://github.com/useautumn/autumn/pull/525)
+      - Added `customerId` to request context for improved tracking and observability - [#520](https://github.com/useautumn/autumn/pull/520)
+      - Improved cache verification workflow with free product filtering and Sentry alert tags - [#519](https://github.com/useautumn/autumn/pull/519)
+      - Major Redis Lua refactor with cache versioning, filtering, and safer updates - [#512](https://github.com/useautumn/autumn/pull/512)
+    </Accordion>
+    
+    <Accordion title="Bug Fixes">
+      - Fixed multi-region cache deletion to delete from all configured regions - [#539](https://github.com/useautumn/autumn/pull/539)
+      - Fixed import path casing issue for createProrationinvoice - [#537](https://github.com/useautumn/autumn/pull/537)
+      - Fixed TypeScript type compatibility in BullMQ worker - [#538](https://github.com/useautumn/autumn/pull/538)
+      - Fixed type annotations in OpenAPI definitions and RevenueCat mappings - [#533](https://github.com/useautumn/autumn/pull/533), [#534](https://github.com/useautumn/autumn/pull/534)
+      - Fixed migration logic for product downgrades and cancellations - [#529](https://github.com/useautumn/autumn/pull/529)
+      - Fixed subscription migration to prevent auto-uncanceling during version updates - [#527](https://github.com/useautumn/autumn/pull/527)
+      - Fixed `included_usage` calculation in V1.2 API backward compatibility layer - [#526](https://github.com/useautumn/autumn/pull/526)
+      - Implemented Redis-first caching for add-to-balance operations - [#524](https://github.com/useautumn/autumn/pull/524)
+      - Simplified Stripe webhook cache refresh strategy - [#523](https://github.com/useautumn/autumn/pull/523)
+      - Removed redundant `plan_version` field from subscription API schema - [#522](https://github.com/useautumn/autumn/pull/522)
+      - Fixed duplicate features in plan editor when closing edit feature sheet - [#508](https://github.com/useautumn/autumn/pull/508)
+    </Accordion>
+    
+    <Accordion title="API">
+      - Added `entity_id` parameter support to legacy balance update endpoint - [#532](https://github.com/useautumn/autumn/pull/532)
+      - Added `/configs/push` and `/configs/nuke` endpoints for managing organization configuration in sandbox environments - [#521](https://github.com/useautumn/autumn/pull/521)
+      - Implemented idempotency protection for billing endpoints using `idempotency-key` header - [#516](https://github.com/useautumn/autumn/pull/516)
+      - Added new `POST /customers/list` V2 endpoint with plan filtering, subscription status filtering, and search functionality - [#518](https://github.com/useautumn/autumn/pull/518), [#517](https://github.com/useautumn/autumn/pull/517)
+    </Accordion>
+  </AccordionGroup>
+</Update>
+
+
+<Update
   label="December 26th 2025"
 >
   ## Add to balance in the dashboard
