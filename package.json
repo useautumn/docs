@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "bun": "^1.3.1",
-    "mintlify": "^4.2.219",
+    "mintlify": "^4.2.272",
     "yaml": "^2.8.1"
   },
   "scripts": {
