@@ -175,7 +175,8 @@
 							"api-reference/features/update-feature",
 							"api-reference/features/delete-feature",
 							"api-reference/features/set-feature-usage",
-							"api-reference/features/set-feature-balances"
+							"api-reference/features/set-feature-balances",
+							"api-reference/features/create-balance"
 						]
 					},
 					{
