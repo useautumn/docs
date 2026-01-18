@@ -628,7 +628,6 @@ paths:
                 - entities
                 - referrals
                 - payment_method
-                - upcoming_invoice
                 - subscriptions.plan
                 - scheduled_subscriptions.plan
                 - balances.feature
@@ -834,7 +833,6 @@ paths:
                 - entities
                 - referrals
                 - payment_method
-                - upcoming_invoice
                 - subscriptions.plan
                 - scheduled_subscriptions.plan
                 - balances.feature
