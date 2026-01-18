@@ -15,6 +15,29 @@ It sits between your server and Stripe billing, and acts as your managed databas
 
 ## How it works
 
+```mermaid
+flowchart TD
+    subgraph app["Your Application"]
+        A["Frontend App"]
+        B["Backend Server"]
+    end
+
+    subgraph autumn["Autumn"]
+        C["Autumn Server"]
+        D["Dashboard or CLI"]
+        E["Postgres DB & Redis"]
+    end
+
+    F["Stripe"]
+
+    A -- "Autumn hooks (optional)" --> B
+    B -- "Autumn API" --> C
+    C -- "Subsciption state and metering" --> E
+    C -- "Payments" --> F
+    F -- "Webhooks" --> C
+    D -- "Configure Pricing" --> C
+```
+
 <Steps>
 <Step title="Model your pricing in Autumn">
 Model your pricing plans in the Autumn UI, or through a config file. Define your free, paid and any add-on pricing tiers.

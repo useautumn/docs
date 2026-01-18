@@ -5,6 +5,84 @@ description: "Some new things we've shipped at Autumn HQ"
 ---
 
 <Update
+  label="January 18th 2026"
+>
+  ## New Subscription Update Flow
+
+We've completely rebuilt the subscription update experience. You can now update a customer's plan directly from the dashboard with a live preview of changes, animated transitions, and proper handling of trials, add-ons, and version upgrades.
+
+- **Live preview**: See exactly what will change before confirming the update
+- **Version upgrades**: Update customers to specific plan versions with one click
+- **Stripe discount support**: Percent-off and amount-off coupons now apply correctly during updates
+
+This endpoint will be released in our new API v2.0, which will be available in the next few weeks.
+
+<br />
+  <Frame style={{ width: "500px" }}>
+    <img src="/assets/changelog/update-sub-2.png" />
+  </Frame>
+  <br />
+
+  ## Pricing Agent Onboarding
+
+Design your pricing with AI. Our new chat-based pricing builder lets you describe your pricing in plain English and watch it come to life. You can preview the results, what the checkout page will look like, then copy into your org when ready.
+
+<br />
+  <Frame style={{ width: "500px" }}>
+    <img src="/assets/changelog/agent-onboarding.png" />
+  </Frame>
+  <br />
+
+  ## Create a Standalone Balance
+
+Grant credits or feature access to customers without requiring them to be on a plan. Perfect for promotional credits, manual adjustments, or custom entitlements. You can set a custom expiration date for each balance you create.
+
+<Card 
+icon="code"
+horizontal={true}
+href="/api-reference/features/create-balance"
+title="Create Balance - API Reference"
+/>
+
+
+**Other changes**
+<AccordionGroup>
+    <Accordion title="Improvements">
+      - Discord feedback dialog in sidebar for quick user feedback - [#568](https://github.com/useautumn/autumn/pull/568)
+      - Timezone-aware analytics with proper bucket alignment for user's local time - [#567](https://github.com/useautumn/autumn/pull/567)
+      - Redis JSON cache for full customer data with atomic Lua deduction engine - [#540](https://github.com/useautumn/autumn/pull/540)
+      - Split customer plans into Subscriptions and Purchases views - [#588](https://github.com/useautumn/autumn/pull/588)
+      - Tiered pricing support added to Pricing Agent - [#588](https://github.com/useautumn/autumn/pull/588)
+      - Products list reorganized into Recurring (Main/Add-on) vs One-off sections - [#588](https://github.com/useautumn/autumn/pull/588)
+      - Added Vite build GitHub Action for CI type-checking - [#580](https://github.com/useautumn/autumn/pull/580)
+      - PostHog session tracking for improved analytics - [#565](https://github.com/useautumn/autumn/pull/565), [#566](https://github.com/useautumn/autumn/pull/566)
+    </Accordion>
+    
+    <Accordion title="Bug Fixes">
+      - Fixed bug where you can't disable a default product - [#541](https://github.com/useautumn/autumn/pull/541)
+      - Fixed Redis floating point precision error causing false insufficient balance rejections - [#549](https://github.com/useautumn/autumn/pull/549)
+      - Fixed referral redemption flow - [#548](https://github.com/useautumn/autumn/pull/548)
+      - Fixed create customer race condition with proper duplicate handling - [#560](https://github.com/useautumn/autumn/pull/560), [#563](https://github.com/useautumn/autumn/pull/563)
+      - Fixed update add-on flow to properly remove and replace existing sub-items - [#569](https://github.com/useautumn/autumn/pull/569)
+      - Fixed Advanced section visibility for continuous use features - [#572](https://github.com/useautumn/autumn/pull/572)
+      - Fixed entity feature config logic for continuous use features - [#571](https://github.com/useautumn/autumn/pull/571)
+      - Fixed trial handling for one-off and free products - [#581](https://github.com/useautumn/autumn/pull/581)
+      - Fixed TypeScript type errors in server and tests - [#579](https://github.com/useautumn/autumn/pull/579), [#562](https://github.com/useautumn/autumn/pull/562)
+      - Fixed UI balance display bug - [#555](https://github.com/useautumn/autumn/pull/555)
+    </Accordion>
+    
+    <Accordion title="API">
+      - Added `POST /balances/create` endpoint for creating standalone balances - [#547](https://github.com/useautumn/autumn/pull/547), [#556](https://github.com/useautumn/autumn/pull/556)
+      - Added `GET /balances/list` endpoint for listing customer balances - [#547](https://github.com/useautumn/autumn/pull/547)
+      - Added `version` parameter to subscription update API for version-specific upgrades - [#551](https://github.com/useautumn/autumn/pull/551)
+      - Stripe discounts now properly applied to line items during subscription updates - [#535](https://github.com/useautumn/autumn/pull/535)
+      - Removed paid-only restriction on trials - any plan can now have trials - [#577](https://github.com/useautumn/autumn/pull/577)
+    </Accordion>
+  </AccordionGroup>
+</Update>
+
+
+<Update
   label="January 12th 2026"
 >
   ## Dynamic onboarding prompts
