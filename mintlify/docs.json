@@ -59,7 +59,8 @@
 								]
 							},
 							"documentation/getting-started/gating",
-							"documentation/getting-started/display-billing"
+							"documentation/getting-started/display-billing",
+							"documentation/getting-started/migration"
 						]
 					},
 					{
@@ -76,9 +77,16 @@
 					{
 						"group": "Manage Customers",
 						"pages": [
+							{
+								"group": "Balances",
+								"pages": [
+									"documentation/customers/balances",
+									"documentation/customers/balance-stacking",
+									"documentation/customers/managing-balances"
+								]
+							},
 							"documentation/customers/check",
 							"documentation/customers/tracking-usage",
-							"documentation/customers/balances",
 							"documentation/customers/feature-entities",
 							"documentation/customers/enabling-product",
 							"documentation/customers/creating-customers",
@@ -87,7 +95,10 @@
 					},
 					{
 						"group": "Additional Resources",
-						"pages": ["documentation/external-providers/revenuecat"]
+						"pages": [
+							"documentation/webhooks",
+							"documentation/external-providers/revenuecat"
+						]
 					}
 				]
 			},
