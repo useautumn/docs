@@ -2948,8 +2948,7 @@ paths:
                   description: ID which you provided when creating the customer
                   type: string
                 feature_id:
-                  description: ID of the feature to check access to. Required if product_id is not
-                    provided.
+                  description: ID of the feature to check access to.
                   type: string
                 entity_id:
                   description: If using entity balances (eg, seats), the entity ID to check access
