@@ -74,25 +74,32 @@
 							"documentation/pricing/rewards"
 						]
 					},
-					{
-						"group": "Manage Customers",
-						"pages": [
-							{
-								"group": "Balances",
-								"pages": [
-									"documentation/customers/balances",
-									"documentation/customers/balance-stacking",
-									"documentation/customers/managing-balances"
-								]
-							},
-							"documentation/customers/check",
-							"documentation/customers/tracking-usage",
-							"documentation/customers/feature-entities",
-							"documentation/customers/enabling-product",
-							"documentation/customers/creating-customers",
-							"documentation/customers/managing-customers"
-						]
-					},
+				{
+					"group": "Manage Customers",
+					"pages": [
+						{
+							"group": "Subscriptions",
+							"pages": [
+								"documentation/subscriptions/overview",
+								"documentation/subscriptions/accepting-payments",
+								"documentation/subscriptions/managing-subscriptions"
+							]
+						},
+						{
+							"group": "Balances",
+							"pages": [
+								"documentation/customers/balances",
+								"documentation/customers/balance-stacking",
+								"documentation/customers/managing-balances"
+							]
+						},
+						"documentation/customers/check",
+						"documentation/customers/tracking-usage",
+						"documentation/customers/feature-entities",
+						"documentation/customers/creating-customers",
+						"documentation/customers/managing-customers"
+					]
+				},
 					{
 						"group": "Additional Resources",
 						"pages": [
@@ -102,16 +109,17 @@
 					}
 				]
 			},
-			{
-				"tab": "Examples",
-				"icon": "graduation-cap",
-				"pages": [
-					"examples/credits",
-					"examples/prepaid",
-					"examples/trial-card-required",
-					"examples/trial-card-not-required"
-				]
-			},
+		{
+			"tab": "Examples",
+			"icon": "graduation-cap",
+			"pages": [
+				"examples/credits",
+				"examples/prepaid",
+				"examples/per-seat",
+				"examples/trial-card-required",
+				"examples/trial-card-not-required"
+			]
+		},
 			{
 				"tab": "React",
 				"icon": "image",
