@@ -14,6 +14,13 @@ When you create a plan, you can set its price:
 - **Paid, recurring** - a fixed amount a user will be charged per unit of time. This is often used for subscriptions.
 - **Variable** - there is no fixed price for this plan. The plan is priced purely based on feature usage or quantity purchased.
 
+<Note>
+#### Currency
+
+In sandbox mode, Autumn provisions a Stripe account for you which defaults to **USD**. In live mode, plan prices use your connected Stripe account's default currency.
+
+To change your currency, go to the [Stripe](https://app.useautumn.com/sandbox/dev?tab=stripe) page in the Autumn dashboard. When you update the currency, new Stripe prices will be created automatically when `checkout` is called.
+</Note>
 
 ## Plan Features
 
@@ -26,21 +33,23 @@ When a plan is enabled for a customer, they will be granted access to the featur
 
 ## Plan Properties
 
-**Auto-enable**
+#### Auto-enable
 
 Set this is the plan should be automatically applied to a customer when they're created. This is typically for free plans that give customers access to a limited set of features without paying.
 
 
-**Add ons**
+#### Add ons
 
 Set this if the plan is an add on. This will mean it can be purchased together with other plans. If this flag is not set, then enabling a plan will replace the existing plan.
 
-**Plan Groups**
+A plan can only be an add-on if it has a recurring price. One-time plans can always be purchased together with other plans.
+
+#### Plan Groups
 
 If you have multiple groups of plans, and customers can have an active plan from each of these subscription groups at the same time, group the plans together. All plan tiers from the same group should have the same value.
 
 <Info>
-**Example**
+#### Example
 
 Let's say you have two different types of chatbots - one for customer support and one for sales. You want customers to be able to have both types of chatbots at the same time, but only one tier from each type.
 
