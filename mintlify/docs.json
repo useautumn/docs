@@ -115,6 +115,7 @@
 					"examples/credits",
 					"examples/prepaid",
 					"examples/per-seat",
+					"examples/entity-balances",
 					"examples/trial-card-required",
 					"examples/trial-card-not-required"
 				]
