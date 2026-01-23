@@ -221,3 +221,29 @@ See the credits pricing guide for a more detailed example of setting up a moneta
   href="/examples/credits"
   icon="money-bills"
 />
+
+
+
+## FAQs
+
+<AccordionGroup>
+
+<Accordion title='Do I need two credit systems for “monthly credits” + “one-time credits”?'>
+No — you typically want **one balance**, and you grant it from **two different plan items**:
+
+- **Monthly subscription grant**: credits with `interval: "month"` (these reset/expire each month).
+- **One-time top-ups**: credits with `interval: "one_off"` / one-off prepaid (these **never reset**)
+</Accordion>
+
+<Accordion title='What’s the difference between “rollover” and “one-off” credits?'>
+- **One-off credits**: do **not** have a reset, so they don’t need rollover.
+- **Rollover**: only applies to **recurring** grants (eg, monthly). If rollover is enabled, any unused credits at reset time are carried into the next interval. Over time, this can make the balance grow month-to-month.
+</Accordion>
+
+<Accordion title='Do I have to use a credit system?'>
+Only if you want Autumn to manage the mapping from *actions → credit cost*.
+
+- If you already compute “credits consumed” in your app, you can skip credit systems and just `track` a single consumable feature like `credits`.
+</Accordion>
+
+</AccordionGroup>
