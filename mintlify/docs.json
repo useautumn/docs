@@ -112,7 +112,7 @@
 				"tab": "Examples",
 				"icon": "graduation-cap",
 				"pages": [
-					"examples/credits",
+					"examples/monetary-credits",
 					"examples/prepaid",
 					"examples/per-seat",
 					"examples/entity-balances",
