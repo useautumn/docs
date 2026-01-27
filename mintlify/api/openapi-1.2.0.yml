@@ -2095,8 +2095,8 @@ paths:
             const autumn = new Autumn();
 
 
-            const { data, error } = await autumn.entities.get("entity_id",
-            "customer_id");
+            const { data, error } = await autumn.entities.get("customer_id",
+            "entity_id");
         - lang: Python
           source: >-
             import asyncio
@@ -2153,8 +2153,8 @@ paths:
             const autumn = new Autumn();
 
 
-            const { data, error } = await autumn.entities.delete("entity_id",
-            "customer_id");
+            const { data, error } = await autumn.entities.delete("customer_id",
+            "entity_id");
         - lang: Python
           source: >-
             import asyncio
