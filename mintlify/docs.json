@@ -115,6 +115,7 @@
 					"examples/monetary-credits",
 					"examples/prepaid",
 					"examples/per-seat",
+					"examples/pay-as-you-go-overages",
 					"examples/entity-balances",
 					"examples/trial-card-required",
 					"examples/trial-card-not-required"
