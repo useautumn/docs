@@ -4,6 +4,89 @@ mode: "center"
 description: "Some new things we've shipped at Autumn HQ"
 ---
 
+<Update label="February 2nd 2026">
+  ## AI Pricing Editor
+
+  Edit your pricing with AI. You can now modify plans and features via chat directly from the Products page, preview grouped changes with visual diffs, and save updates with automatic versioning.
+
+  - **Chat-based editing**: Toggle between list and chat view; start from your existing pricing and edit via natural language
+  - **Visual diffs**: See exactly what changed with highlighted plans and credit schemas
+  - **Batch versioning**: Review grouped changes (subscriptions, add-ons, one-time) and apply with one click
+
+  <br />
+  <Frame style={{ width: "500px" }}>
+    <img src="/assets/changelog/ai-pricing-editor.png" />
+  </Frame>
+  <br />
+
+  ## Faster Analytics via Tinybird
+
+  We've rebuilt our analytics infrastructure on Tinybird for significantly faster queries. You can now group usage data by customer ID or any event property, with smart handling for high-cardinality results.
+
+  - **Group by support**: Slice analytics by customer ID or custom properties
+  - **Faster queries**: Tinybird-backed aggregation and pagination for snappy dashboards
+  - **Smart truncation**: Shows top 10 results with a toast when there are too many unique groups
+
+  <br />
+  <Frame style={{ width: "500px" }}>
+    <img src="/assets/changelog/tinybird-analytics.png" />
+  </Frame>
+  <br />
+
+  <AccordionGroup>
+    <Accordion title="Improvements">
+      - Virtualized customer tables with @tanstack/react-virtual for fast scrolling with large datasets - [#660](https://github.com/useautumn/autumn/pull/660)
+      - Page size selector (50/100/250/500) for customer tables - [#660](https://github.com/useautumn/autumn/pull/660)
+      - Cancel and uncancel subscription UI with live preview and refund options - [#620](https://github.com/useautumn/autumn/pull/620)
+      - Better Auth dashboard integration with activity tracking - [#642](https://github.com/useautumn/autumn/pull/642)
+      - Knip CI workflow to detect unused code - [#643](https://github.com/useautumn/autumn/pull/643), [#644](https://github.com/useautumn/autumn/pull/644)
+      - Customer filters: Active/Past Due status, renamed "Products" to "Plans" - [#589](https://github.com/useautumn/autumn/pull/589)
+      - Shared sheet overlay for plan editors with unsaved-change protection - [#589](https://github.com/useautumn/autumn/pull/589)
+      - New customer creation flow with deterministic defaults and idempotent Stripe provisioning - [#601](https://github.com/useautumn/autumn/pull/601)
+      - Open in Stripe added to reward dropdown - [#599](https://github.com/useautumn/autumn/pull/599)
+      - Renamed "Plan Features" to "Features" in sidebar - [#597](https://github.com/useautumn/autumn/pull/597)
+      - Immediate cancel option when subscription is already scheduled for cancellation - [#679](https://github.com/useautumn/autumn/pull/679)
+      - List products cache for improved performance - [#674](https://github.com/useautumn/autumn/pull/674)
+    </Accordion>
+    
+    <Accordion title="Bug Fixes">
+      - Fixed alphanumeric-only validation for discount/promo codes - [#659](https://github.com/useautumn/autumn/pull/659), [#660](https://github.com/useautumn/autumn/pull/660)
+      - Fixed prepaid allocated tracking for allocated users - [#651](https://github.com/useautumn/autumn/pull/651), [#652](https://github.com/useautumn/autumn/pull/652)
+      - Fixed consent screen overflow - [#653](https://github.com/useautumn/autumn/pull/653)
+      - Fixed impersonation search while impersonating - [#654](https://github.com/useautumn/autumn/pull/654)
+      - Fixed subscription update preview version handling - [#650](https://github.com/useautumn/autumn/pull/650)
+      - Fixed admin dashboard bugs - [#649](https://github.com/useautumn/autumn/pull/649)
+      - Fixed Alipay payment method - [#640](https://github.com/useautumn/autumn/pull/640)
+      - Fixed sub cache multi-region issues - [#638](https://github.com/useautumn/autumn/pull/638)
+      - Fixed migrate cancel flow - [#636](https://github.com/useautumn/autumn/pull/636)
+      - Fixed one-time purchase race condition - [#630](https://github.com/useautumn/autumn/pull/630), [#631](https://github.com/useautumn/autumn/pull/631)
+      - Fixed Stripe canceling condition - [#626](https://github.com/useautumn/autumn/pull/626)
+      - Fixed default trial cancellation behavior - [#671](https://github.com/useautumn/autumn/pull/671)
+      - Fixed usage table balances display - [#670](https://github.com/useautumn/autumn/pull/670)
+      - Fixed setup payment after trial - [#668](https://github.com/useautumn/autumn/pull/668)
+      - Fixed Safari and Zen browser pricing agent bug - [#615](https://github.com/useautumn/autumn/pull/615)
+      - Fixed entity-scoped customer balance display - [#611](https://github.com/useautumn/autumn/pull/611), [#616](https://github.com/useautumn/autumn/pull/616), [#617](https://github.com/useautumn/autumn/pull/617)
+      - Fixed archived features appearing in selection dropdowns - [#622](https://github.com/useautumn/autumn/pull/622)
+      - Fixed proration visibility - [#618](https://github.com/useautumn/autumn/pull/618)
+      - Fixed table column selection bug - [#672](https://github.com/useautumn/autumn/pull/672)
+      - Fixed rate limiting on list products - [#673](https://github.com/useautumn/autumn/pull/673)
+    </Accordion>
+    
+    <Accordion title="API">
+      - Added `billing_behavior` and `refund_behavior` to update subscription API for deferred charges and payment method refunds - [#619](https://github.com/useautumn/autumn/pull/619)
+      - Added `cancel: null` (uncancel) support to update subscription API - [#614](https://github.com/useautumn/autumn/pull/614)
+      - Cancel V2: immediate, end_of_cycle, and uncancel modes with proper arrears billing - [#628](https://github.com/useautumn/autumn/pull/628)
+      - Email receipts on invoice.paid when customer `send_email_receipts` is enabled - [#637](https://github.com/useautumn/autumn/pull/637)
+      - Auto-void open invoices on subscription deletion (org config `void_invoices_on_subscription_deletion`) - [#637](https://github.com/useautumn/autumn/pull/637), [#643](https://github.com/useautumn/autumn/pull/643)
+      - Added `customers.update` to Autumn client SDK - [#643](https://github.com/useautumn/autumn/pull/643)
+      - List events without requiring customer_id or feature_id filters - [#594](https://github.com/useautumn/autumn/pull/594)
+      - Tinybird-backed `POST /events/list` with offset/limit pagination - [#675](https://github.com/useautumn/autumn/pull/675)
+      - Admin API: `GET /admin/oauth-clients` for OAuth client metadata - [#652](https://github.com/useautumn/autumn/pull/652)
+    </Accordion>
+  </AccordionGroup>
+</Update>
+
+
 <Update
   label="January 18th 2026"
 >
