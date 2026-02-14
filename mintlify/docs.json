@@ -103,7 +103,8 @@
 						"group": "Additional Resources",
 						"pages": [
 							"documentation/webhooks",
-							"documentation/external-providers/revenuecat"
+							"documentation/external-providers/revenuecat",
+							"documentation/external-providers/vercel-marketplace"
 						]
 					}
 				]
