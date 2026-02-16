@@ -4,6 +4,58 @@ mode: "center"
 description: "Some new things we've shipped at Autumn HQ"
 ---
 
+<Update label="February 16th 2026">
+  ## Vercel Marketplace Integration
+
+You can now use Autumn to list your products on Vercel Marketplace, letting Vercel users discover, install, and subscribe directly from their Vercel dashboard. Billing is handled automatically through Vercel's payment infrastructure, bridged to Stripe.
+
+  - **One-click setup**: Configure your Vercel Integration credentials and webhook URL from the Autumn dashboard
+  - **Automatic plan mapping**: Your Autumn products are automatically listed as Vercel billing plans with cost formatting and entitlements
+  - **Per-environment filtering**: Choose which products are visible in sandbox vs live environments
+  - **Webhook event log**: Debug Vercel webhook events with a built-in Svix-powered event log
+
+  <br />
+  <Frame style={{ width: "500px" }}>
+    <img src="/assets/changelog/vercel-marketplace.png" />
+  </Frame>
+  <br />
+
+  <AccordionGroup>
+    <Accordion title="Improvements">
+      - Onboarding guide cleanups with loading, waiting, and dismiss states - [#707](https://github.com/useautumn/autumn/pull/707), [#710](https://github.com/useautumn/autumn/pull/710)
+      - Feature picker shows "Already in plan" to prevent accidental duplicate adds - [#711](https://github.com/useautumn/autumn/pull/711)
+      - Inline plan editor: "Add Feature" sheet correctly scoped to editor context - [#717](https://github.com/useautumn/autumn/pull/717)
+      - Edit customer ID directly from the dashboard - [#715](https://github.com/useautumn/autumn/pull/715)
+      - Allow adding duplicate features to plans when intentional - [#683](https://github.com/useautumn/autumn/pull/683)
+      - Cleaned up rate limiters for better performance - [#696](https://github.com/useautumn/autumn/pull/696)
+      - Product cache invalidation improvements - [#682](https://github.com/useautumn/autumn/pull/682), [#684](https://github.com/useautumn/autumn/pull/684)
+    </Accordion>
+    
+    <Accordion title="Bug Fixes">
+      - Fixed rollover credit tracking with per-rollover credit_cost and proper deductions in feature units - [#736](https://github.com/useautumn/autumn/pull/736)
+      - Fixed irrational billing units from included usage - [#728](https://github.com/useautumn/autumn/pull/728)
+      - Fixed timezone mismatch in frontend - [#726](https://github.com/useautumn/autumn/pull/726)
+      - Fixed products being created unnecessarily - [#731](https://github.com/useautumn/autumn/pull/731)
+      - Fixed update subscription custom trial handling - [#738](https://github.com/useautumn/autumn/pull/738)
+      - Fixed legacy entity attach - [#734](https://github.com/useautumn/autumn/pull/734)
+      - Fixed customer race condition with name - [#729](https://github.com/useautumn/autumn/pull/729)
+      - Fixed allocated carry with unlimited - [#709](https://github.com/useautumn/autumn/pull/709)
+      - Fixed double default product issue - [#701](https://github.com/useautumn/autumn/pull/701)
+      - Fixed attach on dashboard respects success URL - [#613](https://github.com/useautumn/autumn/pull/613)
+      - Fixed breakdown not showing expires_at - [#688](https://github.com/useautumn/autumn/pull/688)
+      - Fixed charts on customer table using Tinybird - [#689](https://github.com/useautumn/autumn/pull/689)
+      - Fixed hash idempotency key - [#685](https://github.com/useautumn/autumn/pull/685), [#686](https://github.com/useautumn/autumn/pull/686)
+      - Fixed cancel flow for free/one-off default plans - [#695](https://github.com/useautumn/autumn/pull/695)
+    </Accordion>
+    
+    <Accordion title="API">
+      - Vercel Marketplace Billing API: plan listing, installation management, resource provisioning, and webhook handling - [#741](https://github.com/useautumn/autumn/pull/741)
+      - Per-environment product filtering for Vercel plans - [#741](https://github.com/useautumn/autumn/pull/741)
+    </Accordion>
+  </AccordionGroup>
+</Update>
+
+
 <Update label="February 2nd 2026">
   ## AI Pricing Editor
 
