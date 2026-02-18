@@ -1,0 +1,516 @@
+---
+title: "Development Workflows"
+description: "Practical patterns for local development, sandbox testing, production deployment, and team collaboration"
+---
+
+Learn the practical workflows for using the `atmn` CLI effectively in different development scenarios, from local development to production deployment.
+
+## Local Development Workflow
+
+### Quick Start Pattern
+
+The fastest way to get started with a new project:
+
+<CodeGroup>
+
+```bash Complete Setup
+# 1. Authenticate
+atmn login
+
+# 2. Initialize project with template
+atmn init
+# → Choose template (e.g., T3 Chat)
+# → Customize plan names and pricing
+
+# 3. Deploy to sandbox for testing
+atmn push
+
+# 4. Preview locally while developing
+atmn preview
+```
+
+</CodeGroup>
+
+### Iterative Development
+
+Day-to-day development workflow:
+
+<CodeGroup>
+
+```bash Daily Development Loop
+# Start with latest config
+atmn pull
+
+# Edit autumn.config.ts
+# - Add new features
+# - Modify pricing
+# - Adjust plan limits
+
+# Test locally (no API calls)
+atmn preview
+
+# Deploy to sandbox when ready
+atmn push
+
+# Generate updated SDK types
+atmn pull  # Auto-generates @useautumn-sdk.d.ts
+```
+
+</CodeGroup>
+
+### Local API Server Development
+
+When running Autumn locally for development:
+
+<CodeGroup>
+
+```bash Local Development Setup
+# Start local Autumn server (separate terminal)
+# docker-compose up autumn-api
+
+# Use local API server
+atmn push --local
+atmn pull --local
+
+# Preview connects to local dashboard
+atmn dashboard --local  # → http://localhost:3000
+
+# Mix local API with production data
+atmn pull --local --prod  # Pull prod data to local server
+```
+
+</CodeGroup>
+
+## Sandbox Testing Workflow
+
+### Feature Development
+
+Test new features thoroughly in sandbox:
+
+<CodeGroup>
+
+```bash Feature Testing
+# Deploy new feature to sandbox
+atmn push
+
+# Test feature behavior with data commands
+atmn customers --headless --limit 5
+atmn features --headless --id "new_feature"
+
+# Create test usage events (via your app or dashboard)
+# Monitor with events command
+atmn events --headless --feature "new_feature" --time 24h
+
+# Verify billing calculations
+atmn customers --headless --id "test_customer" --format json
+```
+
+</CodeGroup>
+
+### Plan Modifications
+
+Test pricing changes safely:
+
+<CodeGroup>
+
+```bash Plan Testing Workflow
+# Modify plan in autumn.config.ts
+# - Change pricing tiers
+# - Adjust included amounts
+# - Add/remove features
+
+# Preview changes locally
+atmn preview --plan pro
+
+# Deploy to sandbox
+atmn push
+# → CLI shows change analysis
+# → Creates new plan version if needed
+
+# Test with existing sandbox customers
+atmn customers --headless --search "test-customer"
+
+# Monitor usage and billing
+atmn events --headless --mode aggregate --time 7d
+```
+
+</CodeGroup>
+
+### Clean Slate Testing
+
+Use `nuke` for fresh testing environments:
+
+<CodeGroup>
+
+```bash Clean Slate Pattern
+# Nuclear option: destroy all sandbox data
+atmn nuke
+# → Multiple confirmations required
+# → Only works in sandbox environment
+
+# Rebuild from configuration
+atmn push
+
+# Create fresh test data (via dashboard or API)
+# Test complete customer journey
+```
+
+</CodeGroup>
+
+<Warning>
+**Nuke is destructive!** Only use `atmn nuke` when you want to completely start over. It permanently deletes all sandbox data.
+</Warning>
+
+## Production Deployment Workflow
+
+### Safe Production Deployment
+
+Deploy to production with proper safety checks:
+
+<CodeGroup>
+
+```bash Production Deployment
+# 1. Final testing in sandbox
+atmn pull
+atmn push  # Ensure sandbox is up-to-date
+
+# 2. Review changes carefully
+atmn push --prod
+# → CLI shows detailed change analysis
+# → Extra confirmation for production
+# → Smart prompts for customer impact
+
+# 3. Confirm deployment
+# Y/n prompts for:
+# - Production environment confirmation
+# - Plan versioning (if customers exist)
+# - Feature deletions (if any)
+
+# 4. Monitor deployment
+atmn env --prod  # Verify environment
+```
+
+</CodeGroup>
+
+### Automated Production Deployment
+
+For CI/CD pipelines:
+
+<CodeGroup>
+
+```bash Automated Production
+# Skip interactive prompts
+atmn push --prod --yes
+
+# Or use environment variables for conditional deployment
+if [ "$ENVIRONMENT" = "production" ]; then
+  atmn push --prod --yes
+else
+  atmn push --yes
+fi
+```
+
+</CodeGroup>
+
+### Rollback Strategy
+
+Handle production issues:
+
+<CodeGroup>
+
+```bash Emergency Rollback
+# Option 1: Revert config file and redeploy
+git revert HEAD
+atmn push --prod --yes
+
+# Option 2: Pull previous version from Autumn
+atmn pull --prod --force  # Overwrites local config
+git commit -am "Rollback to production state"
+
+# Option 3: Manual fixes via dashboard
+# Then pull the manual changes
+atmn pull --prod
+git commit -am "Pull manual production fixes"
+```
+
+</CodeGroup>
+
+## Team Collaboration Workflows
+
+### Config as Source of Truth
+
+Best for engineering-focused teams:
+
+<CodeGroup>
+
+```bash Config-First Workflow
+# Developer A:
+git pull origin main
+atmn pull  # Sync with remote state
+# Edit autumn.config.ts
+atmn push
+git commit -am "Update pricing for new feature"
+git push origin feature/new-pricing
+
+# Developer B:
+git pull origin feature/new-pricing
+atmn pull  # Get updated types
+# Use updated feature IDs in code
+git commit -am "Implement new feature integration"
+```
+
+</CodeGroup>
+
+### Dashboard as Source of Truth
+
+Best for teams with non-technical stakeholders:
+
+<CodeGroup>
+
+```bash Dashboard-First Workflow
+# Business team makes changes in dashboard
+
+# Developer syncs changes:
+atmn pull
+git commit -am "Sync pricing changes from dashboard"
+git push origin main
+
+# Generated types ensure code stays in sync
+# TypeScript will show errors for removed features
+```
+
+</CodeGroup>
+
+### Hybrid Workflow
+
+Balance between technical and business teams:
+
+<CodeGroup>
+
+```bash Hybrid Workflow
+# Major changes: Use config files
+# - New features
+# - Complex pricing models  
+# - Bulk changes
+
+# Minor changes: Use dashboard
+# - Price adjustments
+# - Plan name changes
+# - Feature descriptions
+
+# Always sync after dashboard changes
+atmn pull
+git commit -am "Sync dashboard changes"
+```
+
+</CodeGroup>
+
+## Advanced Workflows
+
+### Multi-Environment Development
+
+Manage multiple environments (dev, staging, prod):
+
+<CodeGroup>
+
+```bash Multi-Environment Setup
+# Different API keys for each environment
+# .env.development
+AUTUMN_SECRET_KEY=am_sk_test_dev_123...
+
+# .env.staging  
+AUTUMN_SECRET_KEY=am_sk_test_staging_123...
+
+# .env.production
+AUTUMN_PROD_SECRET_KEY=am_sk_live_prod_123...
+
+# Deploy to specific environments
+NODE_ENV=development atmn push
+NODE_ENV=staging atmn push  
+NODE_ENV=production atmn push --prod
+```
+
+</CodeGroup>
+
+### Configuration Branching
+
+Handle complex feature development:
+
+<CodeGroup>
+
+```bash Feature Branch Workflow
+# Create feature branch
+git checkout -b feature/new-billing-model
+
+# Develop new pricing model
+# Edit autumn.config.ts extensively
+atmn preview  # Test locally
+atmn push     # Deploy to sandbox
+
+# Long-running feature development
+# Regularly sync with main
+git checkout main
+git pull origin main
+atmn pull  # Get latest production state
+
+git checkout feature/new-billing-model
+git rebase main
+# Resolve any config conflicts
+atmn push  # Test rebased changes
+
+# When ready to merge
+git checkout main
+git merge feature/new-billing-model
+atmn push --prod  # Deploy to production
+```
+
+</CodeGroup>
+
+### Data-Driven Iterations
+
+Use CLI data commands for product decisions:
+
+<CodeGroup>
+
+```bash Analytics-Driven Development
+# Analyze current usage patterns
+atmn events --headless --mode aggregate --group-by feature_id --time 30d --format csv > usage.csv
+
+# Find low-usage features
+atmn features --headless --format json | jq '.[] | select(.usage_30d < 100)'
+
+# Identify high-value customers
+atmn customers --headless --format json | jq 'sort_by(.revenue_30d) | reverse | .[0:10]'
+
+# Design new pricing based on data
+# Edit autumn.config.ts with data insights
+atmn preview  # Validate new pricing
+atmn push     # Deploy and monitor impact
+```
+
+</CodeGroup>
+
+## Troubleshooting Workflows
+
+### Configuration Conflicts
+
+Handle merge conflicts in configuration:
+
+<CodeGroup>
+
+```bash Conflict Resolution
+# Conflict in autumn.config.ts during git merge
+git status
+# both modified: autumn.config.ts
+
+# Option 1: Use remote version and customize
+git checkout --theirs autumn.config.ts
+atmn pull --force  # Get remote state
+# Edit to add your changes
+atmn push
+
+# Option 2: Use local version and sync
+git checkout --ours autumn.config.ts  
+atmn push  # Deploy your version
+# Handle any conflicts in Autumn
+```
+
+</CodeGroup>
+
+### Environment Sync Issues
+
+Fix environment synchronization problems:
+
+<CodeGroup>
+
+```bash Environment Sync
+# Sandbox and production out of sync
+atmn pull --prod     # Get production state
+atmn push            # Push to sandbox
+
+# Or sync in opposite direction
+atmn pull            # Get sandbox state  
+atmn push --prod     # Push to production (careful!)
+
+# Compare environments
+atmn plans --prod --headless --format json > prod_plans.json
+atmn plans --headless --format json > sandbox_plans.json
+diff prod_plans.json sandbox_plans.json
+```
+
+</CodeGroup>
+
+### Recovery Patterns
+
+Common recovery scenarios:
+
+<CodeGroup>
+
+```bash Recovery Scenarios
+# Lost local config file
+rm autumn.config.ts
+atmn pull --force  # Regenerate from Autumn
+
+# Corrupted environment file
+rm .env
+atmn login  # Re-authenticate
+
+# Type generation issues
+rm @useautumn-sdk.d.ts
+atmn pull  # Regenerate types
+
+# Complete reset (sandbox only)
+atmn nuke
+atmn push  # Rebuild from config
+```
+
+</CodeGroup>
+
+## Performance Optimization
+
+### Efficient Data Usage
+
+Optimize CLI usage for large datasets:
+
+<CodeGroup>
+
+```bash Performance Tips
+# Use pagination for large datasets
+atmn customers --headless --limit 1000 --page 1 --format csv
+atmn customers --headless --limit 1000 --page 2 --format csv
+
+# Filter early to reduce data transfer
+atmn events --headless --customer "cus_123" --time 7d --format json
+
+# Use aggregate mode for analytics
+atmn events --headless --mode aggregate --bin day --time 30d
+
+# Batch operations in scripts
+for customer in $(atmn customers --headless --format json | jq -r '.[].id'); do
+  atmn events --headless --customer "$customer" --time 24h --format json
+done
+```
+
+</CodeGroup>
+
+## Best Practices Summary
+
+### Development Phase
+1. **Start with templates** - Choose the closest template
+2. **Preview locally** - Use `atmn preview` before deploying
+3. **Test in sandbox** - Always test before production
+4. **Version control config** - Commit `autumn.config.ts`
+
+### Production Phase
+1. **Review changes** - Understand change impact
+2. **Plan versioning** - Handle existing customers properly
+3. **Monitor deployment** - Use data commands post-deployment
+4. **Gradual rollouts** - Consider feature flags for big changes
+
+### Team Phase  
+1. **Choose workflow** - Config-first vs dashboard-first
+2. **Sync regularly** - Keep environments in sync
+3. **Document changes** - Clear commit messages
+4. **Share types** - Commit generated SDK types
+
+These workflows provide battle-tested patterns for using the CLI effectively across different team sizes, technical skill levels, and deployment strategies.

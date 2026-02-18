@@ -1,0 +1,383 @@
+---
+title: "Push & Pull"
+description: "Sync configuration between local files and Autumn - workflows, change analysis, and production safety"
+---
+
+The `push` and `pull` commands keep your local `autumn.config.ts` in sync with your Autumn account. This guide covers the workflows, safety features, and best practices for configuration management.
+
+## Pull Workflow
+
+Pull changes from Autumn to your local configuration files.
+
+### Basic Pull
+
+```bash
+atmn pull
+```
+
+This fetches features and plans from your current environment and updates your local `autumn.config.ts` file.
+
+### Pull Options
+
+<ParamField body="-f, --force" type="flag">
+  Force overwrite the config file instead of using smart in-place updates
+</ParamField>
+
+<ParamField body="-p, --prod" type="flag">
+  Pull from production environment instead of sandbox
+</ParamField>
+
+<ParamField body="-l, --local" type="flag">
+  Pull from localhost:8080 instead of api.useautumn.com
+</ParamField>
+
+### In-Place Updates vs Force Overwrite
+
+**In-place updates (default):**
+- Preserves your local changes, comments, and code structure
+- Merges remote changes with local modifications
+- Shows detailed change summary
+
+**Force overwrite (`--force`):**
+- Completely rewrites the config file
+- Loses local changes and comments
+- Useful for resolving complex conflicts
+
+<CodeGroup>
+
+```bash In-place update (default)
+atmn pull
+
+✓ Pulled 5 features, 3 plans from sandbox
+  In-place update: 2 features updated, 1 added, 0 deleted
+                   1 plans updated, 0 added, 0 deleted
+✓ Generated SDK types at: @useautumn-sdk.d.ts
+```
+
+```bash Force overwrite
+atmn pull --force
+
+✓ Pulled 5 features, 3 plans from sandbox  
+✓ Overwrote autumn.config.ts
+✓ Generated SDK types at: @useautumn-sdk.d.ts
+```
+
+</CodeGroup>
+
+### SDK Type Generation
+
+Pull automatically generates TypeScript definitions for your SDK:
+
+<CodeGroup>
+
+```ts @useautumn-sdk.d.ts (generated)
+declare module '@useautumn/sdk' {
+  // Feature IDs from your config
+  type FeatureIds = 'messages' | 'seats' | 'sso' | 'api_credits';
+  
+  // Plan IDs from your config
+  type PlanIds = 'free' | 'pro' | 'enterprise';
+  
+  // Strongly typed SDK methods
+  export function trackUsage(
+    feature: FeatureIds, 
+    amount?: number
+  ): Promise<void>;
+  
+  export function useCustomer(): {
+    features: Record<FeatureIds, FeatureUsage>;
+    plans: PlanIds[];
+  };
+}
+```
+
+</CodeGroup>
+
+## Push Workflow
+
+Push your local configuration to Autumn.
+
+### Basic Push
+
+```bash
+atmn push
+```
+
+This analyzes your local config, compares it with remote state, and syncs changes to Autumn.
+
+### Push Options
+
+<ParamField body="-y, --yes" type="flag">
+  Automatically confirm all prompts (useful for CI/CD)
+</ParamField>
+
+<ParamField body="-p, --prod" type="flag">
+  Push to production environment instead of sandbox
+</ParamField>
+
+<ParamField body="-l, --local" type="flag">
+  Push to localhost:8080 instead of api.useautumn.com
+</ParamField>
+
+### Change Analysis
+
+Before making changes, push analyzes the differences and shows you exactly what will happen:
+
+```bash
+atmn push
+
+Analyzing changes...
+
+Features:
+  ✓ messages (no changes)
+  + seats (new feature)  
+  ~ sso (updated: name changed)
+  - old_feature (will be deleted)
+
+Plans: 
+  ✓ free (no changes)
+  ~ pro (updated: price changed $20 → $25)
+  + enterprise (new plan)
+
+Ready to push 1 new feature, 1 updated feature, 1 deletion
+              1 new plan, 1 updated plan
+```
+
+### Smart Prompts
+
+Push uses intelligent prompts based on the changes detected:
+
+#### Production Confirmation
+
+```bash
+atmn push --prod
+
+⚠️  PRODUCTION PUSH
+You are about to push changes to your LIVE production environment.
+This will affect real customers and billing.
+
+Continue? (y/N)
+```
+
+#### Plan Versioning
+
+When a plan has active customers, push creates a new version instead of modifying the existing one:
+
+```bash
+Plan "pro" has 15 customers and will create a new version.
+Existing customers will remain on the current version.
+New customers will get the updated version.
+
+Continue? (y/N)
+```
+
+#### Safe Deletions
+
+Different prompts for different deletion scenarios:
+
+```bash
+# Plan with customers - suggests archiving
+Plan "old-plan" has 5 customers. 
+Deleting it will affect existing subscriptions.
+Recommend archiving instead of deleting.
+
+Delete anyway? (y/N)
+
+# Feature used by plans - shows dependencies  
+Feature "seats" is used by 3 plans: pro, enterprise, team
+Deleting it will affect these plans.
+
+Delete anyway? (y/N)
+
+# Safe deletion - no dependencies
+Feature "unused-feature" has no dependencies.
+Safe to delete.
+
+Continue? (y/N)
+```
+
+#### Archived Item Recovery
+
+```bash
+Plan "archived-plan" is currently archived.
+Do you want to unarchive it? (Y/n)
+```
+
+### Headless Mode
+
+In CI/CD environments without TTY, push provides clear feedback:
+
+```bash
+# Without --yes flag when prompts are needed
+atmn push
+
+Push requires confirmation for the following:
+  - Pushing to production environment
+  - Plan "pro" has customers and will create a new version  
+  - Feature "old_feature" will be deleted
+
+To proceed, either:
+  1. Run this command in an interactive terminal to review each action
+  2. Run with --yes to automatically proceed with default actions
+```
+
+```bash
+# With --yes flag - auto-confirms with safe defaults
+atmn push --yes
+
+✓ Pushed 2 features, 1 plan to sandbox
+  - Created new version of plan "pro" (v1.2)  
+  - Archived feature "old_feature" instead of deleting
+```
+
+## Environment-Specific Workflows
+
+### Sandbox Development
+
+Typical development workflow using sandbox:
+
+```bash
+# Work in sandbox by default
+atmn pull
+# Edit autumn.config.ts
+atmn push
+atmn preview  # Test locally
+```
+
+### Production Deployment
+
+When ready to deploy to production:
+
+```bash
+# Push to production with confirmation
+atmn push --prod
+
+# Or automate in CI/CD
+atmn push --prod --yes
+```
+
+### Local Development Server
+
+When running Autumn locally:
+
+```bash
+# Use local API server
+atmn push --local
+atmn pull --local
+
+# Combined with production data
+atmn push --local --prod
+```
+
+## Best Practices
+
+### Development Workflow
+
+1. **Start with Pull**: Always pull before making changes
+   ```bash
+   atmn pull
+   ```
+
+2. **Make Changes**: Edit your `autumn.config.ts` file
+
+3. **Preview Locally**: Test your changes without API calls
+   ```bash  
+   atmn preview
+   ```
+
+4. **Push to Sandbox**: Test in sandbox environment
+   ```bash
+   atmn push
+   ```
+
+5. **Deploy to Production**: When ready
+   ```bash
+   atmn push --prod
+   ```
+
+### Team Collaboration
+
+**Option 1: Config as Source of Truth**
+- Commit `autumn.config.ts` to version control
+- Team members pull from VCS and push to Autumn
+- Good for code-first teams
+
+**Option 2: Autumn as Source of Truth**  
+- Make changes in Autumn dashboard
+- Run `atmn pull` to sync local files
+- Commit the updated config
+- Good for less technical team members
+
+### CI/CD Integration
+
+```yaml
+# GitHub Actions example
+- name: Deploy Autumn Config
+  run: |
+    atmn push --prod --yes
+  env:
+    AUTUMN_PROD_SECRET_KEY: ${{ secrets.AUTUMN_PROD_SECRET_KEY }}
+```
+
+<Warning>
+**Production Safety**: Always review changes carefully before pushing to production. Use `--yes` flag only in automated environments where you trust the configuration.
+</Warning>
+
+### Handling Conflicts
+
+When pull detects conflicts between local and remote changes:
+
+```bash
+# Use force to overwrite with remote
+atmn pull --force
+
+# Or manually resolve and push your changes  
+atmn push
+```
+
+## Error Handling
+
+### Common Issues
+
+**Config file not found:**
+```bash
+atmn push
+
+Error: autumn.config.ts not found
+Run `atmn init` to create a config file
+```
+
+**Invalid configuration:**
+```bash
+atmn push
+
+Error: Feature "invalid-id" uses unsupported characters
+IDs must be lowercase letters, numbers, and underscores only
+```
+
+**API key issues:**
+```bash
+atmn pull
+
+Error: 401 Unauthorized - Invalid API key
+# CLI automatically prompts for re-authentication
+```
+
+**Network issues:**
+```bash
+atmn push
+
+Error: Unable to connect to api.useautumn.com
+Check your internet connection and try again
+```
+
+### Recovery
+
+Most errors are automatically handled:
+
+- **Invalid tokens**: Automatic OAuth re-authentication
+- **Network issues**: Retry with exponential backoff  
+- **Validation errors**: Clear error messages with field details
+- **Conflicts**: Smart prompts to guide resolution
+
+The CLI is designed to be resilient and help you recover from common issues without data loss.

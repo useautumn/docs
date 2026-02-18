@@ -1,0 +1,179 @@
+---
+title: "Getting Started"
+description: "Install the atmn CLI and set up your first Autumn project"
+---
+
+Get up and running with the `atmn` CLI in minutes. This guide will walk you through installation, authentication, and creating your first pricing configuration.
+
+## Installation
+
+Install the `atmn` CLI globally using npm:
+
+```bash
+npm install -g atmn
+```
+
+Or run commands directly with npx (no installation required):
+
+```bash
+npx atmn <command>
+```
+
+<Note>
+The CLI requires Node.js 16 or higher.
+</Note>
+
+## Authentication
+
+Before you can use the CLI, you need to authenticate with your Autumn account:
+
+```bash
+atmn login
+```
+
+This opens your browser to authenticate via OAuth and automatically creates API keys for both sandbox and production environments.
+
+The login process will:
+
+1. Open your browser to Autumn's login page
+2. Prompt you to select your organization
+3. Generate API keys for sandbox (`am_sk_test_*`) and production (`am_sk_live_*`)
+4. Save the keys to a `.env` file in your current directory
+
+<CodeGroup>
+
+```bash .env (generated)
+AUTUMN_SECRET_KEY=am_sk_test_1234567890abcdef
+AUTUMN_PROD_SECRET_KEY=am_sk_live_1234567890abcdef
+```
+
+</CodeGroup>
+
+## Create Your First Project
+
+Initialize a new Autumn project in your current directory:
+
+```bash
+atmn init
+```
+
+The interactive wizard will help you choose from several starter templates:
+
+- **OpenAI**: API credits and usage-based pricing
+- **T3 Chat**: Messaging app with seats and message limits  
+- **Railway**: Infrastructure pricing with usage tiers
+- **Linear**: SaaS tool with feature flags and usage limits
+
+This creates an `autumn.config.ts` file with your pricing configuration:
+
+<CodeGroup>
+
+```ts autumn.config.ts (example)
+import { feature, plan, planFeature } from 'atmn';
+
+export const messages = feature({
+  id: 'messages',
+  name: 'AI Messages',
+  type: 'metered',
+  consumable: true  // Single-use (consumed when used)
+});
+
+export const seats = feature({
+  id: 'seats', 
+  name: 'Team Seats',
+  type: 'metered',
+  consumable: false  // Continuous-use (ongoing usage)
+});
+
+export const pro = plan({
+  id: 'pro',
+  name: 'Professional',
+  description: 'For growing teams',
+  price: {
+    amount: 50,      // $50.00
+    interval: 'month'
+  },
+  items: [
+    planFeature({
+      feature_id: messages.id,
+      included: 1000,
+      reset: { interval: 'month' }
+    }),
+    planFeature({
+      feature_id: seats.id, 
+      included: 5,
+      price: {
+        amount: 10,
+        interval: 'month',
+        billing_method: 'usage_based',
+        billing_units: 1
+      }
+    })
+  ]
+});
+```
+
+</CodeGroup>
+
+## Sync Your Configuration
+
+Push your local configuration to Autumn:
+
+```bash
+atmn push
+```
+
+This will create your features and plans in Autumn's sandbox environment, ready for testing in your application.
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card
+  title="Authentication Guide"
+  icon="key"
+  href="/api-reference/cli/authentication"
+>
+  Learn about OAuth flow, API keys, and environment management
+</Card>
+
+<Card
+  title="Configuration Reference"
+  icon="gear"
+  href="/api-reference/cli/config"
+>
+  Complete reference for autumn.config.ts file format
+</Card>
+
+<Card
+  title="Push & Pull"
+  icon="arrows-rotate"
+  href="/api-reference/cli/push-pull"
+>
+  Sync changes between local files and Autumn
+</Card>
+
+<Card
+  title="Command Reference"
+  icon="terminal"
+  href="/api-reference/cli/commands"
+>
+  Complete list of all CLI commands and options
+</Card>
+</CardGroup>
+
+## Verify Your Setup
+
+Check that everything is working correctly:
+
+```bash
+# Check your environment and organization
+atmn env
+
+# Preview your plans locally
+atmn preview
+
+# Open the Autumn dashboard
+atmn dashboard
+```
+
+You're now ready to integrate Autumn's pricing and billing into your application!

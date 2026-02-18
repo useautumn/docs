@@ -1,0 +1,412 @@
+---
+title: "SDK Type Generation"
+description: "Automatic TypeScript definition generation for type-safe feature and plan IDs"
+---
+
+The CLI automatically generates TypeScript definitions from your configuration, providing compile-time type safety for your SDK usage.
+
+## Generated Types
+
+When you run `atmn pull`, the CLI generates `@useautumn-sdk.d.ts` with strongly-typed interfaces based on your actual features and plans.
+
+### File Generation
+
+<CodeGroup>
+
+```bash Automatic generation
+atmn pull
+
+✓ Pulled 5 features, 3 plans from sandbox
+✓ Generated SDK types at: @useautumn-sdk.d.ts
+```
+
+```ts @useautumn-sdk.d.ts (generated)
+declare module '@useautumn/sdk' {
+  // Feature IDs from your configuration
+  type FeatureIds = 'messages' | 'seats' | 'sso' | 'ai_credits' | 'storage';
+  
+  // Plan IDs from your configuration  
+  type PlanIds = 'free' | 'pro' | 'enterprise' | 'credit_top_up';
+  
+  // Strongly typed SDK methods
+  export function trackUsage(
+    feature: FeatureIds, 
+    amount?: number
+  ): Promise<void>;
+  
+  export function useCustomer(): {
+    features: Record<FeatureIds, FeatureUsage>;
+    plans: PlanIds[];
+    // ... other customer properties
+  };
+  
+  // Other SDK functions with typed parameters
+  export function checkout(options: {
+    planIds: PlanIds[];
+    // ... other checkout options
+  }): Promise<CheckoutResult>;
+}
+```
+
+</CodeGroup>
+
+## Type Safety Benefits
+
+### Feature Tracking
+
+Without types, you might accidentally use wrong feature IDs:
+
+<CodeGroup>
+
+```ts Without Types (Error-prone)
+// Runtime error if feature ID is wrong
+await trackUsage('mesages', 1);  // Typo! 
+await trackUsage('invalid_feature', 1);  // Doesn't exist
+```
+
+```ts With Types (Compile-time safety)
+// TypeScript catches errors at compile time
+await trackUsage('messages', 1);         // ✓ Valid
+await trackUsage('mesages', 1);          // ✗ TypeScript error
+await trackUsage('invalid_feature', 1);  // ✗ TypeScript error
+```
+
+</CodeGroup>
+
+### Plan Management
+
+<CodeGroup>
+
+```ts Checkout with Type Safety
+// Only valid plan IDs are accepted
+const checkout = await checkout({
+  planIds: ['pro'],              // ✓ Valid plan
+  customerId: 'cus_123'
+});
+
+// TypeScript prevents invalid plans
+const badCheckout = await checkout({
+  planIds: ['premium'],          // ✗ TypeScript error - plan doesn't exist
+  customerId: 'cus_123' 
+});
+```
+
+</CodeGroup>
+
+### Customer Data Access
+
+<CodeGroup>
+
+```ts Type-safe Customer Data
+const customer = useCustomer();
+
+// Type-safe access to features
+const messageUsage = customer.features.messages.usage;    // ✓ Type-safe
+const seatUsage = customer.features.seats.usage;          // ✓ Type-safe
+const invalidUsage = customer.features.invalid.usage;     // ✗ TypeScript error
+
+// Type-safe plan checking
+const hasProPlan = customer.plans.includes('pro');        // ✓ Type-safe
+const hasFakePlan = customer.plans.includes('fake');      // ✗ TypeScript error
+```
+
+</CodeGroup>
+
+## Generation Process
+
+### Multi-Environment Merging
+
+The CLI intelligently merges features and plans from both environments to create comprehensive types:
+
+1. **Fetch from Sandbox**: Gets all features/plans from sandbox environment
+2. **Fetch from Production**: Gets all features/plans from production environment  
+3. **Merge & Deduplicate**: Combines both sets, removing duplicates by ID
+4. **Generate Types**: Creates union types from all unique IDs
+
+This ensures your types include everything from both environments.
+
+### Configuration Parsing
+
+The generation process:
+
+<CodeGroup>
+
+```ts Source Configuration
+export const messages = feature({
+  id: 'messages',
+  name: 'AI Messages',
+  type: 'metered',
+  consumable: true
+});
+
+export const sso = feature({
+  id: 'sso', 
+  name: 'SSO Authentication',
+  type: 'boolean'
+});
+
+export const pro = plan({
+  id: 'pro',
+  name: 'Professional',
+  // ...config
+});
+```
+
+```ts Generated Types
+type FeatureIds = 'messages' | 'sso';
+type PlanIds = 'pro';
+
+// Used in SDK method signatures
+export function trackUsage(
+  feature: FeatureIds,
+  amount?: number
+): Promise<void>;
+```
+
+</CodeGroup>
+
+## IDE Integration
+
+### IntelliSense Support
+
+Modern editors provide excellent support for the generated types:
+
+- **Autocomplete**: Feature and plan IDs are suggested as you type
+- **Error Detection**: Invalid IDs are highlighted immediately
+- **Documentation**: Hover to see feature names and descriptions
+- **Refactoring**: Rename features safely across your codebase
+
+### VSCode Example
+
+<CodeGroup>
+
+```ts IntelliSense in Action
+// Typing 'await trackUsage(' shows:
+//   ✓ 'messages' - AI Messages
+//   ✓ 'seats' - Team Seats  
+//   ✓ 'sso' - SSO Authentication
+//   ✓ 'ai_credits' - AI Credits
+
+await trackUsage('|');  // Cursor here - shows all valid options
+```
+
+</CodeGroup>
+
+## Advanced Usage
+
+### Custom Type Extensions
+
+Extend the generated types for your specific needs:
+
+<CodeGroup>
+
+```ts Custom extensions
+// types/autumn.d.ts
+import type { FeatureIds, PlanIds } from '@useautumn/sdk';
+
+// Add custom utilities
+export type MeteredFeatureIds = Extract<FeatureIds, 'messages' | 'seats'>;
+export type BooleanFeatureIds = Extract<FeatureIds, 'sso'>;
+
+// Custom helper types
+export interface FeatureConfig {
+  id: FeatureIds;
+  name: string;
+  description?: string;
+}
+
+export interface PlanConfig {
+  id: PlanIds;
+  name: string;
+  price: number;
+  features: FeatureIds[];
+}
+```
+
+</CodeGroup>
+
+### Runtime Validation
+
+Combine types with runtime validation:
+
+<CodeGroup>
+
+```ts Type + Runtime validation
+import type { FeatureIds, PlanIds } from '@useautumn/sdk';
+import { z } from 'zod';
+
+// Schemas that match your types
+const FeatureIdSchema = z.union([
+  z.literal('messages'),
+  z.literal('seats'),
+  z.literal('sso'),
+  z.literal('ai_credits')
+]);
+
+const PlanIdSchema = z.union([
+  z.literal('free'),
+  z.literal('pro'),
+  z.literal('enterprise')
+]);
+
+// Type-safe parsing of external data
+function parseApiRequest(data: unknown) {
+  const parsed = z.object({
+    feature: FeatureIdSchema,
+    plan: PlanIdSchema,
+    amount: z.number()
+  }).parse(data);
+  
+  // Now you know parsed.feature is a valid FeatureIds
+  return parsed;
+}
+```
+
+</CodeGroup>
+
+## Keeping Types in Sync
+
+### Development Workflow
+
+1. **Modify Configuration**: Edit your `autumn.config.ts`
+2. **Push Changes**: `atmn push` to update Autumn
+3. **Pull Types**: `atmn pull` to regenerate types
+4. **Fix Errors**: Address any TypeScript errors in your code
+
+### Automated Sync
+
+For CI/CD pipelines:
+
+<CodeGroup>
+
+```bash CI/CD Script
+#!/bin/bash
+# Deploy configuration and update types
+
+# Push configuration changes
+atmn push --prod --yes
+
+# Pull to regenerate types (even if no config changes)
+atmn pull --prod
+
+# Commit updated types
+git add @useautumn-sdk.d.ts
+git commit -m "Update SDK types"
+```
+
+</CodeGroup>
+
+### Type Drift Detection
+
+Catch when your code uses outdated feature/plan IDs:
+
+<CodeGroup>
+
+```ts Catching drift
+// Old code using renamed feature
+await trackUsage('old_feature_name', 1);  // ✗ TypeScript error
+
+// Type system guides you to the correct ID
+await trackUsage('new_feature_name', 1);  // ✓ Updated
+```
+
+</CodeGroup>
+
+## Configuration Options
+
+### Disable Type Generation
+
+If you don't want automatic type generation:
+
+<CodeGroup>
+
+```ts autumn.config.ts
+// Add this to your config to disable SDK type generation
+export const config = {
+  generateSdkTypes: false
+};
+```
+
+</CodeGroup>
+
+### Custom Output Path
+
+Change where types are generated:
+
+<CodeGroup>
+
+```ts autumn.config.ts
+export const config = {
+  sdkTypesPath: './src/types/autumn-sdk.d.ts'
+};
+```
+
+</CodeGroup>
+
+## Troubleshooting
+
+### Types Not Updating
+
+If types aren't reflecting your changes:
+
+```bash
+# Force regeneration
+atmn pull --force
+
+# Check the generated file
+cat @useautumn-sdk.d.ts
+```
+
+### TypeScript Errors
+
+Common issues and solutions:
+
+<CodeGroup>
+
+```ts Module not found
+// Error: Cannot find module '@useautumn/sdk'
+// Solution: Make sure @useautumn-sdk.d.ts is in your project root
+
+// Add to tsconfig.json if needed:
+{
+  "compilerOptions": {
+    "typeRoots": ["./node_modules/@types", "./"]
+  }
+}
+```
+
+```ts Duplicate declarations
+// Error: Duplicate identifier 'FeatureIds'
+// Solution: Only keep one @useautumn-sdk.d.ts file
+
+// Remove old files
+rm old-sdk-types.d.ts
+```
+
+</CodeGroup>
+
+### Missing Types
+
+If features/plans are missing from types:
+
+1. **Check Environment**: Ensure you're pulling from the right environment
+2. **Verify Push**: Make sure your config was successfully pushed
+3. **Force Regeneration**: Use `atmn pull --force` to rebuild types
+
+<CodeGroup>
+
+```bash Debug missing types
+# Check what's in Autumn
+atmn features --headless --format json
+atmn plans --headless --format json
+
+# Force regenerate types
+atmn pull --force
+
+# Verify the generated types
+grep -A 5 "type FeatureIds" @useautumn-sdk.d.ts
+```
+
+</CodeGroup>
+
+The generated types provide a seamless bridge between your configuration and your application code, catching errors early and making your billing integration more reliable.

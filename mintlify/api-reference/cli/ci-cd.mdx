@@ -1,0 +1,615 @@
+---
+title: "CI/CD Integration"
+description: "Automate Autumn deployments with headless mode, proper exit codes, and environment variables"
+---
+
+The `atmn` CLI is designed for seamless CI/CD integration with headless mode, proper exit codes, and environment variable support for automated deployments.
+
+## Headless Mode
+
+The CLI automatically detects non-TTY environments (CI/CD) and switches to headless mode, providing:
+
+- **Plain text output** suitable for logs
+- **Structured data** in JSON/CSV formats  
+- **Proper exit codes** for success/failure detection
+- **No interactive prompts** that would hang builds
+- **Batch operations** optimized for automation
+
+### Automatic Detection
+
+<CodeGroup>
+
+```bash Local development (TTY detected)
+atmn push
+# Shows beautiful interactive UI with colors and prompts
+```
+
+```bash CI/CD environment (no TTY)
+atmn push
+# Shows plain text output suitable for logs
+# Analyzing changes...
+# ✓ Pushed 3 features, 2 plans to sandbox
+```
+
+</CodeGroup>
+
+### Force Headless Mode
+
+Override TTY detection with the `--headless` flag:
+
+```bash
+atmn push --headless  # Force headless mode even in terminal
+```
+
+## Environment Setup
+
+### API Key Configuration
+
+Set environment variables in your CI/CD platform:
+
+<ParamField body="AUTUMN_SECRET_KEY" type="string">
+  Sandbox API key (format: `am_sk_test_*`)
+</ParamField>
+
+<ParamField body="AUTUMN_PROD_SECRET_KEY" type="string">
+  Production API key (format: `am_sk_live_*`)
+</ParamField>
+
+<CodeGroup>
+
+```yaml GitHub Actions
+env:
+  AUTUMN_SECRET_KEY: ${{ secrets.AUTUMN_SECRET_KEY }}
+  AUTUMN_PROD_SECRET_KEY: ${{ secrets.AUTUMN_PROD_SECRET_KEY }}
+```
+
+```yaml GitLab CI
+variables:
+  AUTUMN_SECRET_KEY: $AUTUMN_SECRET_KEY
+  AUTUMN_PROD_SECRET_KEY: $AUTUMN_PROD_SECRET_KEY
+```
+
+```bash Environment Variables
+export AUTUMN_SECRET_KEY="am_sk_test_1234567890abcdef"
+export AUTUMN_PROD_SECRET_KEY="am_sk_live_1234567890abcdef"
+```
+
+</CodeGroup>
+
+## GitHub Actions Integration
+
+### Basic Workflow
+
+<CodeGroup>
+
+```yaml .github/workflows/autumn-deploy.yml
+name: Deploy Autumn Configuration
+
+on:
+  push:
+    branches: [main]
+    paths: ['autumn.config.ts']
+
+jobs:
+  deploy-sandbox:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Install atmn CLI
+        run: npm install -g atmn
+        
+      - name: Deploy to Sandbox
+        run: atmn push --yes
+        env:
+          AUTUMN_SECRET_KEY: ${{ secrets.AUTUMN_SECRET_KEY }}
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    needs: deploy-sandbox
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Install atmn CLI
+        run: npm install -g atmn
+        
+      - name: Deploy to Production
+        run: atmn push --prod --yes
+        env:
+          AUTUMN_PROD_SECRET_KEY: ${{ secrets.AUTUMN_PROD_SECRET_KEY }}
+```
+
+</CodeGroup>
+
+### Advanced Workflow with Validation
+
+<CodeGroup>
+
+```yaml .github/workflows/autumn-advanced.yml
+name: Autumn Configuration Pipeline
+
+on:
+  pull_request:
+    paths: ['autumn.config.ts']
+  push:
+    branches: [main]
+    paths: ['autumn.config.ts']
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Install dependencies
+        run: |
+          npm install -g atmn
+          npm install typescript
+          
+      - name: Validate Configuration
+        run: |
+          # Check TypeScript compilation
+          npx tsc --noEmit autumn.config.ts
+          
+          # Validate with Autumn (dry-run)
+          atmn preview
+        env:
+          AUTUMN_SECRET_KEY: ${{ secrets.AUTUMN_SECRET_KEY }}
+
+  deploy-sandbox:
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Install atmn CLI
+        run: npm install -g atmn
+        
+      - name: Deploy to Sandbox
+        run: atmn push --yes
+        env:
+          AUTUMN_SECRET_KEY: ${{ secrets.AUTUMN_SECRET_KEY }}
+          
+      - name: Generate SDK Types
+        run: atmn pull
+        env:
+          AUTUMN_SECRET_KEY: ${{ secrets.AUTUMN_SECRET_KEY }}
+          
+      - name: Commit Updated Types
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'Update SDK types'
+          file_pattern: '@useautumn-sdk.d.ts'
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    needs: deploy-sandbox
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Install atmn CLI
+        run: npm install -g atmn
+        
+      - name: Deploy to Production
+        run: atmn push --prod --yes
+        env:
+          AUTUMN_PROD_SECRET_KEY: ${{ secrets.AUTUMN_PROD_SECRET_KEY }}
+          
+      - name: Notify Deployment
+        run: |
+          echo "🚀 Autumn configuration deployed to production"
+          atmn env --prod
+        env:
+          AUTUMN_PROD_SECRET_KEY: ${{ secrets.AUTUMN_PROD_SECRET_KEY }}
+```
+
+</CodeGroup>
+
+## GitLab CI Integration
+
+<CodeGroup>
+
+```yaml .gitlab-ci.yml
+stages:
+  - validate
+  - deploy-sandbox
+  - deploy-production
+
+variables:
+  NODE_VERSION: "18"
+
+before_script:
+  - apt-get update -qq && apt-get install -y nodejs npm
+  - npm install -g atmn
+
+validate-config:
+  stage: validate
+  script:
+    - atmn preview
+  only:
+    changes:
+      - autumn.config.ts
+
+deploy-sandbox:
+  stage: deploy-sandbox
+  script:
+    - atmn push --yes
+    - atmn pull  # Generate updated types
+  artifacts:
+    paths:
+      - "@useautumn-sdk.d.ts"
+    expire_in: 1 hour
+  only:
+    - main
+  environment:
+    name: sandbox
+
+deploy-production:
+  stage: deploy-production
+  script:
+    - atmn push --prod --yes
+  when: manual
+  only:
+    - main
+  environment:
+    name: production
+```
+
+</CodeGroup>
+
+## Exit Codes & Error Handling
+
+The CLI provides proper exit codes for CI/CD error detection:
+
+<ParamField body="0" type="exit-code">
+  **Success** - Operation completed successfully
+</ParamField>
+
+<ParamField body="1" type="exit-code">
+  **General Error** - Command failed (network, auth, validation, etc.)
+</ParamField>
+
+<ParamField body="2" type="exit-code">
+  **Configuration Error** - Invalid autumn.config.ts or missing file
+</ParamField>
+
+### Error Handling Examples
+
+<CodeGroup>
+
+```bash Handling Errors in Scripts
+#!/bin/bash
+set -e  # Exit on any error
+
+# Deploy to sandbox
+if atmn push --yes; then
+    echo "✅ Sandbox deployment successful"
+else
+    echo "❌ Sandbox deployment failed"
+    exit 1
+fi
+
+# Deploy to production only if sandbox succeeded
+if atmn push --prod --yes; then
+    echo "✅ Production deployment successful"
+    # Send success notification
+    curl -X POST "$SLACK_WEBHOOK" -d '{"text":"🚀 Autumn config deployed to production"}'
+else
+    echo "❌ Production deployment failed"
+    # Send failure notification
+    curl -X POST "$SLACK_WEBHOOK" -d '{"text":"❌ Autumn production deployment failed"}'
+    exit 1
+fi
+```
+
+</CodeGroup>
+
+## Automated Workflows
+
+### Scheduled Sync
+
+Keep your types up-to-date with scheduled pulls:
+
+<CodeGroup>
+
+```yaml .github/workflows/sync-types.yml
+name: Sync SDK Types
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # Daily at 2 AM
+  workflow_dispatch:      # Manual trigger
+
+jobs:
+  sync-types:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Install atmn CLI
+        run: npm install -g atmn
+        
+      - name: Sync from Production
+        run: atmn pull --prod
+        env:
+          AUTUMN_PROD_SECRET_KEY: ${{ secrets.AUTUMN_PROD_SECRET_KEY }}
+          
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: sync SDK types from production'
+          title: 'Sync SDK Types'
+          body: 'Automated sync of SDK types from Autumn production'
+          branch: 'chore/sync-sdk-types'
+```
+
+</CodeGroup>
+
+### Multi-Environment Deployments
+
+Deploy different configurations to different environments:
+
+<CodeGroup>
+
+```yaml Multi-environment Pipeline
+name: Multi-Environment Deploy
+
+on:
+  push:
+    branches: [develop, staging, main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Install atmn CLI
+        run: npm install -g atmn
+        
+      - name: Deploy to Development
+        if: github.ref == 'refs/heads/develop'
+        run: atmn push --yes
+        env:
+          AUTUMN_SECRET_KEY: ${{ secrets.AUTUMN_DEV_SECRET_KEY }}
+          
+      - name: Deploy to Staging
+        if: github.ref == 'refs/heads/staging' 
+        run: atmn push --yes
+        env:
+          AUTUMN_SECRET_KEY: ${{ secrets.AUTUMN_STAGING_SECRET_KEY }}
+          
+      - name: Deploy to Production
+        if: github.ref == 'refs/heads/main'
+        run: atmn push --prod --yes
+        env:
+          AUTUMN_PROD_SECRET_KEY: ${{ secrets.AUTUMN_PROD_SECRET_KEY }}
+```
+
+</CodeGroup>
+
+## Docker Integration
+
+### Dockerfile
+
+<CodeGroup>
+
+```dockerfile Dockerfile
+FROM node:18-alpine
+
+# Install atmn CLI
+RUN npm install -g atmn
+
+# Copy configuration
+COPY autumn.config.ts .
+
+# Set up entrypoint
+COPY deploy.sh .
+RUN chmod +x deploy.sh
+
+ENTRYPOINT ["./deploy.sh"]
+```
+
+```bash deploy.sh
+#!/bin/sh
+set -e
+
+echo "🚀 Deploying Autumn configuration..."
+
+# Validate environment
+if [ "$ENVIRONMENT" = "production" ]; then
+    if [ -z "$AUTUMN_PROD_SECRET_KEY" ]; then
+        echo "❌ AUTUMN_PROD_SECRET_KEY required for production"
+        exit 1
+    fi
+    echo "📦 Deploying to production..."
+    atmn push --prod --yes
+else
+    if [ -z "$AUTUMN_SECRET_KEY" ]; then
+        echo "❌ AUTUMN_SECRET_KEY required for sandbox"
+        exit 1
+    fi
+    echo "📦 Deploying to sandbox..."
+    atmn push --yes
+fi
+
+echo "✅ Deployment complete!"
+```
+
+</CodeGroup>
+
+### Docker Compose
+
+<CodeGroup>
+
+```yaml docker-compose.yml
+version: '3.8'
+
+services:
+  autumn-deploy:
+    build: .
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT:-sandbox}
+      - AUTUMN_SECRET_KEY=${AUTUMN_SECRET_KEY}
+      - AUTUMN_PROD_SECRET_KEY=${AUTUMN_PROD_SECRET_KEY}
+    volumes:
+      - .:/app
+    working_dir: /app
+```
+
+```bash Usage
+# Deploy to sandbox
+ENVIRONMENT=sandbox docker-compose run autumn-deploy
+
+# Deploy to production  
+ENVIRONMENT=production docker-compose run autumn-deploy
+```
+
+</CodeGroup>
+
+## Monitoring & Notifications
+
+### Slack Notifications
+
+<CodeGroup>
+
+```bash Slack Integration
+#!/bin/bash
+
+SLACK_WEBHOOK="https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
+
+# Deploy configuration
+if atmn push --prod --yes; then
+    # Success notification
+    curl -X POST "$SLACK_WEBHOOK" \
+         -H 'Content-type: application/json' \
+         -d '{
+           "text": "✅ Autumn configuration deployed to production",
+           "attachments": [{
+             "color": "good",
+             "fields": [{
+               "title": "Environment",
+               "value": "Production",
+               "short": true
+             }, {
+               "title": "Branch", 
+               "value": "'$GITHUB_REF_NAME'",
+               "short": true
+             }]
+           }]
+         }'
+else
+    # Failure notification
+    curl -X POST "$SLACK_WEBHOOK" \
+         -H 'Content-type: application/json' \
+         -d '{
+           "text": "❌ Autumn configuration deployment failed",
+           "attachments": [{
+             "color": "danger",
+             "fields": [{
+               "title": "Environment",
+               "value": "Production",
+               "short": true
+             }, {
+               "title": "Branch",
+               "value": "'$GITHUB_REF_NAME'",
+               "short": true
+             }]
+           }]
+         }'
+    exit 1
+fi
+```
+
+</CodeGroup>
+
+## Security Best Practices
+
+### Secret Management
+
+<Warning>
+**Never commit API keys to version control.** Always use your CI/CD platform's secret management system.
+</Warning>
+
+<CodeGroup>
+
+```yaml GitHub Actions Security
+# ✅ Good - Use secrets
+env:
+  AUTUMN_PROD_SECRET_KEY: ${{ secrets.AUTUMN_PROD_SECRET_KEY }}
+
+# ❌ Bad - Hardcoded key  
+env:
+  AUTUMN_PROD_SECRET_KEY: "am_sk_live_1234567890abcdef"
+```
+
+</CodeGroup>
+
+### Environment Isolation
+
+- **Development**: Use separate Autumn organization/sandbox
+- **Staging**: Use production organization but sandbox environment
+- **Production**: Use production organization and production environment
+
+### Access Controls
+
+Limit who can trigger production deployments:
+
+<CodeGroup>
+
+```yaml Protected Production
+deploy-production:
+  runs-on: ubuntu-latest
+  needs: deploy-sandbox
+  environment: production  # Requires approval
+  
+  steps:
+    - name: Deploy to Production
+      run: atmn push --prod --yes
+```
+
+</CodeGroup>
+
+The CLI's headless mode and proper exit codes make it ideal for automated deployments while maintaining the safety and validation features you need for production systems.
