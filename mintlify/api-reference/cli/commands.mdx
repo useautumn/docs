@@ -1,0 +1,510 @@
+---
+title: "Command Reference"
+description: "Complete reference for all atmn CLI commands, options, and arguments"
+---
+
+Complete reference for all `atmn` CLI commands with every flag, argument, and default value.
+
+## Global Options
+
+These options are available for all commands:
+
+<ParamField body="-p, --prod" type="flag">
+  Use production environment instead of sandbox
+</ParamField>
+
+<ParamField body="-l, --local" type="flag">  
+  Use localhost:8080 API server instead of api.useautumn.com
+</ParamField>
+
+<ParamField body="--headless" type="flag">
+  Force non-interactive mode (useful for CI/agents)
+</ParamField>
+
+<ParamField body="-c, --config <path>" type="string" default="autumn.config.ts">
+  Path to configuration file
+</ParamField>
+
+### Global Flag Combinations
+
+| Flags | Environment | API Server | Use Case |
+|-------|-------------|------------|----------|
+| (none) | Sandbox | Remote | Default development |
+| `-p` | Production | Remote | Production deployment |
+| `-l` | Sandbox | Local | Local development |
+| `-lp` | Production | Local | Local dev with prod data |
+
+## Authentication Commands
+
+### `atmn login`
+
+Authenticate with Autumn using OAuth 2.0.
+
+```bash
+atmn login
+```
+
+**Behavior:**
+- **Interactive**: Beautiful OAuth flow with browser integration
+- **Headless**: Opens browser with fallback URL
+- **Creates**: API keys for both sandbox and production
+- **Stores**: Keys in `.env` file
+
+**No additional options**
+
+### `atmn logout`
+
+Remove API keys from environment file.
+
+```bash
+atmn logout
+```
+
+**Removes:**
+- `AUTUMN_SECRET_KEY` (sandbox)
+- `AUTUMN_PROD_SECRET_KEY` (production)
+
+**No additional options**
+
+### `atmn env`
+
+Display current environment and organization info.
+
+```bash
+atmn env
+```
+
+**Displays:**
+- Organization name and slug
+- Current environment (sandbox/production)
+- API endpoint being used
+
+**No additional options**
+
+## Configuration Commands
+
+### `atmn init`
+
+Initialize a new Autumn project with template selection.
+
+```bash
+atmn init
+```
+
+**Features:**
+- **Interactive**: Template selection wizard
+- **Headless**: Uses default template
+- **Templates**: OpenAI, T3 Chat, Railway, Linear
+- **Generates**: `autumn.config.ts` and optional `.env`
+
+**No additional options**
+
+### `atmn push`
+
+Push local configuration to Autumn.
+
+```bash
+atmn push [options]
+```
+
+<ParamField body="-y, --yes" type="flag">
+  Automatically confirm all prompts (useful for CI/CD)
+</ParamField>
+
+**Features:**
+- Change analysis and smart prompts
+- Production safety guards  
+- Plan versioning for customers
+- Batch operations
+
+### `atmn pull`
+
+Pull configuration from Autumn to local files.
+
+```bash
+atmn pull [options]
+```
+
+<ParamField body="-f, --force" type="flag">
+  Force overwrite config instead of in-place updates
+</ParamField>
+
+**Features:**
+- Smart in-place updates (preserves local changes)
+- SDK type generation
+- Multi-environment merging
+
+## Data Commands
+
+### `atmn customers`
+
+Browse and inspect customer data.
+
+```bash
+atmn customers [options]
+```
+
+<ParamField body="--headless" type="flag">
+  Run in headless mode (output for scripts/agents)
+</ParamField>
+
+<ParamField body="--page <n>" type="number" default="1">
+  Page number for pagination (headless mode)
+</ParamField>
+
+<ParamField body="--search <query>" type="string">
+  Search query for filtering customers (headless mode)
+</ParamField>
+
+<ParamField body="--id <id>" type="string">
+  Get specific customer by ID (headless mode)
+</ParamField>
+
+<ParamField body="--limit <n>" type="number" default="50">
+  Number of customers per page (headless mode)
+</ParamField>
+
+<ParamField body="--format <format>" type="enum" default="text">
+  Output format: `text`, `json`, `csv` (headless mode)
+</ParamField>
+
+### `atmn plans` / `atmn products`
+
+Browse and inspect plans/products. Both commands are identical.
+
+```bash
+atmn plans [options]
+atmn products [options]  # Alias
+```
+
+<ParamField body="--headless" type="flag">
+  Run in headless mode (output for scripts/agents)
+</ParamField>
+
+<ParamField body="--page <n>" type="number" default="1">
+  Page number for pagination (headless mode)
+</ParamField>
+
+<ParamField body="--search <query>" type="string">
+  Search query for filtering plans (headless mode)
+</ParamField>
+
+<ParamField body="--id <id>" type="string">
+  Get specific plan by ID (headless mode)
+</ParamField>
+
+<ParamField body="--limit <n>" type="number" default="50">
+  Number of plans per page (headless mode)
+</ParamField>
+
+<ParamField body="--format <format>" type="enum" default="text">
+  Output format: `text`, `json`, `csv` (headless mode)
+</ParamField>
+
+<ParamField body="--include-archived" type="flag">
+  Include archived plans in results
+</ParamField>
+
+### `atmn features`
+
+Browse and inspect feature definitions.
+
+```bash
+atmn features [options]
+```
+
+<ParamField body="--headless" type="flag">
+  Run in headless mode (output for scripts/agents)
+</ParamField>
+
+<ParamField body="--page <n>" type="number" default="1">
+  Page number for pagination (headless mode)
+</ParamField>
+
+<ParamField body="--search <query>" type="string">
+  Search query for filtering features (headless mode)
+</ParamField>
+
+<ParamField body="--id <id>" type="string">
+  Get specific feature by ID (headless mode)
+</ParamField>
+
+<ParamField body="--limit <n>" type="number" default="50">
+  Number of features per page (headless mode)
+</ParamField>
+
+<ParamField body="--format <format>" type="enum" default="text">
+  Output format: `text`, `json`, `csv` (headless mode)
+</ParamField>
+
+<ParamField body="--include-archived" type="flag">
+  Include archived features in results
+</ParamField>
+
+### `atmn events`
+
+Browse and analyze usage events.
+
+```bash
+atmn events [options]
+```
+
+<ParamField body="--headless" type="flag">
+  Run in headless mode (output for scripts/agents)
+</ParamField>
+
+<ParamField body="--page <n>" type="number" default="1">
+  Page number for pagination
+</ParamField>
+
+<ParamField body="--customer <id>" type="string">
+  Filter events by customer ID
+</ParamField>
+
+<ParamField body="--feature <id>" type="string">
+  Filter by feature ID (comma-separated for multiple)
+</ParamField>
+
+<ParamField body="--limit <n>" type="number" default="100">
+  Number of events per page
+</ParamField>
+
+<ParamField body="--time <range>" type="enum" default="7d">
+  Time range: `24h`, `7d`, `30d`, `90d`
+</ParamField>
+
+<ParamField body="--mode <mode>" type="enum" default="list">
+  View mode: `list` (individual events) or `aggregate` (summary stats)
+</ParamField>
+
+<ParamField body="--bin <size>" type="enum">
+  Bin size for aggregate mode: `hour`, `day`, `month`
+</ParamField>
+
+<ParamField body="--group-by <property>" type="string">
+  Group by property for aggregate mode (e.g., `customer_id`, `feature_id`)
+</ParamField>
+
+<ParamField body="--format <format>" type="enum" default="text">
+  Output format: `text`, `json`, `csv`
+</ParamField>
+
+## Utility Commands
+
+### `atmn preview`
+
+Preview plans from local configuration without API calls.
+
+```bash
+atmn preview [options]
+```
+
+<ParamField body="--plan <id>" type="string">
+  Preview specific plan by ID (shows all plans if omitted)
+</ParamField>
+
+<ParamField body="--currency <code>" type="string" default="USD">
+  Currency code for price display
+</ParamField>
+
+**Features:**
+- Renders pricing tables from `autumn.config.ts`
+- No API calls required
+- Useful for local development and testing
+
+### `atmn dashboard`
+
+Open Autumn dashboard in browser.
+
+```bash
+atmn dashboard
+```
+
+**Opens:**
+- `https://app.useautumn.com` (default)
+- `http://localhost:3000` (with `--local` flag)
+
+**No additional options**
+
+### `atmn nuke`
+
+**⚠️ DESTRUCTIVE:** Permanently delete all sandbox data.
+
+```bash
+atmn nuke [options]
+```
+
+<ParamField body="--dangerously-skip-all-confirmation-prompts" type="flag">
+  Skip all confirmation prompts (VERY DANGEROUS)
+</ParamField>
+
+**Safety Features:**
+- **Sandbox only** - Refuses to run with `--prod` flag
+- **Multiple confirmations** required
+- **Visual warnings** with red text
+- **Explicit flag name** for dangerous skip option
+
+**Error with Production:**
+```
+ERROR: nuke command is only available for sandbox!
+Remove the -p/--prod flag to nuke your sandbox.
+```
+
+### `atmn version` / `atmn v`
+
+Display CLI version.
+
+```bash
+atmn version
+atmn v  # Alias
+```
+
+**Output:**
+- Version from `package.json` (e.g., `1.0.0-beta.15`)
+- `"dev"` in development environments
+
+**No additional options**
+
+## Command Examples
+
+### Environment Management
+
+<CodeGroup>
+
+```bash Check current environment
+atmn env
+
+# Output:
+# Organization: Acme Corp
+# Slug: acme-corp
+# Environment: Sandbox
+```
+
+```bash Work with production
+atmn env --prod
+atmn push --prod
+atmn pull --prod
+```
+
+```bash Local development server
+atmn push --local
+atmn pull --local
+atmn dashboard --local  # Opens localhost:3000
+```
+
+</CodeGroup>
+
+### Configuration Workflow
+
+<CodeGroup>
+
+```bash Complete setup from scratch
+atmn login                    # Authenticate
+atmn init                     # Create project
+atmn push                     # Deploy to sandbox
+atmn preview                  # Preview locally
+atmn push --prod             # Deploy to production
+```
+
+```bash Daily development  
+atmn pull                     # Get latest changes
+# Edit autumn.config.ts
+atmn preview --plan pro       # Test specific plan
+atmn push                     # Deploy changes
+```
+
+</CodeGroup>
+
+### Data Export
+
+<CodeGroup>
+
+```bash Export customer data
+atmn customers --headless --format csv > customers.csv
+atmn customers --headless --search "john@" --format json
+```
+
+```bash Usage analytics
+atmn events --headless --mode aggregate --group-by feature_id --time 30d --format csv
+atmn events --headless --customer "cus_123" --time 7d --format json
+```
+
+```bash Plan analysis
+atmn plans --headless --include-archived --format json > all_plans.json
+atmn features --headless --format csv > features.csv
+```
+
+</CodeGroup>
+
+### CI/CD Usage
+
+<CodeGroup>
+
+```bash Automated deployment
+# Headless mode with auto-confirmation
+atmn push --prod --yes --headless
+
+# Exit codes for error handling
+if atmn push --yes; then
+  echo "Deployment successful"
+else
+  echo "Deployment failed"
+  exit 1
+fi
+```
+
+</CodeGroup>
+
+## Exit Codes
+
+All commands return appropriate exit codes:
+
+<ParamField body="0" type="exit-code">
+  Success - Operation completed successfully
+</ParamField>
+
+<ParamField body="1" type="exit-code">
+  General error - Command failed (network, auth, validation, etc.)
+</ParamField>
+
+<ParamField body="2" type="exit-code">
+  Configuration error - Invalid `autumn.config.ts` or missing file
+</ParamField>
+
+## Error Handling
+
+Common error scenarios and CLI behavior:
+
+### Authentication Errors
+
+```bash
+# 401 Unauthorized - triggers automatic re-auth
+atmn push
+# → CLI automatically runs OAuth flow
+# → Retries original command
+```
+
+### Configuration Errors
+
+```bash  
+# Missing config file
+atmn push
+# Error: autumn.config.ts not found
+# Run `atmn init` to create a config file
+
+# Invalid configuration
+atmn push  
+# Error: Feature "invalid-id" uses unsupported characters
+# IDs must be lowercase letters, numbers, and underscores only
+```
+
+### Network Errors
+
+```bash
+# Connection issues - automatic retry with backoff
+atmn pull
+# Retrying connection... (attempt 2/3)
+# ✓ Connected successfully
+```
+
+The CLI is designed to be resilient with clear error messages and automatic recovery where possible.

@@ -1,0 +1,508 @@
+---
+title: "Templates"
+description: "Built-in starter templates and project scaffolding with atmn init"
+---
+
+The `atmn init` command provides pre-built templates to quickly scaffold common pricing models. Each template demonstrates different billing patterns and feature types.
+
+## Available Templates
+
+### OpenAI Template
+**Use case:** API-based services with credit consumption  
+**Features:** Credit system for different model tiers
+
+<CodeGroup>
+
+```ts OpenAI Template Structure
+// Features
+export const basicModel = feature({
+  id: 'basic_model',
+  name: 'Basic AI Model',
+  type: 'metered', 
+  consumable: true
+});
+
+export const premiumModel = feature({
+  id: 'premium_model',
+  name: 'Premium AI Model', 
+  type: 'metered',
+  consumable: true
+});
+
+export const aiCredits = feature({
+  id: 'ai_credits',
+  name: 'AI Credits',
+  type: 'credit_system',
+  credit_schema: [
+    { metered_feature_id: basicModel.id, credit_cost: 1 },
+    { metered_feature_id: premiumModel.id, credit_cost: 5 }
+  ]
+});
+
+// Plans
+export const payAsYouGo = plan({
+  id: 'pay_as_you_go',
+  name: 'Pay as you go',
+  items: [
+    planFeature({
+      feature_id: aiCredits.id,
+      price: {
+        amount: 1000,        // $10 per 1000 credits
+        billing_units: 1000,
+        billing_method: 'prepaid'
+      }
+    })
+  ]
+});
+```
+
+</CodeGroup>
+
+**Best for:** AI/ML services, API platforms, consumption-based pricing
+
+### T3 Chat Template  
+**Use case:** Messaging applications with seat-based billing  
+**Features:** Seat management and message limits
+
+<CodeGroup>
+
+```ts T3 Chat Template Structure
+// Features
+export const seats = feature({
+  id: 'seats',
+  name: 'Seats',
+  type: 'metered',
+  consumable: false  // Continuous use
+});
+
+export const messages = feature({
+  id: 'messages', 
+  name: 'Messages',
+  type: 'metered',
+  consumable: true   // Single use
+});
+
+// Plans
+export const free = plan({
+  id: 'free',
+  name: 'Free',
+  auto_enable: true,
+  items: [
+    planFeature({
+      feature_id: seats.id,
+      included: 2
+    }),
+    planFeature({
+      feature_id: messages.id,
+      included: 100,
+      reset: { interval: 'month' }
+    })
+  ]
+});
+
+export const pro = plan({
+  id: 'pro',
+  name: 'Pro',
+  price: {
+    amount: 2000,      // $20/month
+    interval: 'month'
+  },
+  items: [
+    planFeature({
+      feature_id: seats.id,
+      included: 10,
+      price: {
+        amount: 500,   // $5 per additional seat
+        interval: 'month',
+        billing_method: 'usage_based',
+        billing_units: 1
+      }
+    }),
+    planFeature({
+      feature_id: messages.id,
+      included: 10000,
+      reset: { interval: 'month' }
+    })
+  ]
+});
+```
+
+</CodeGroup>
+
+**Best for:** Team collaboration tools, chat applications, SaaS with user-based pricing
+
+### Railway Template
+**Use case:** Infrastructure services with resource-based pricing  
+**Features:** Usage tiers and resource limits
+
+<CodeGroup>
+
+```ts Railway Template Structure
+// Features
+export const cpuHours = feature({
+  id: 'cpu_hours',
+  name: 'CPU Hours',
+  type: 'metered',
+  consumable: true
+});
+
+export const storage = feature({
+  id: 'storage',
+  name: 'Storage GB',
+  type: 'metered', 
+  consumable: false
+});
+
+export const bandwidth = feature({
+  id: 'bandwidth',
+  name: 'Bandwidth GB',
+  type: 'metered',
+  consumable: true
+});
+
+// Plans with tiered pricing
+export const hobby = plan({
+  id: 'hobby',
+  name: 'Hobby',
+  price: {
+    amount: 500,       // $5/month
+    interval: 'month'
+  },
+  items: [
+    planFeature({
+      feature_id: cpuHours.id,
+      included: 100,
+      price: {
+        amount: 10,    // $0.10 per hour after limit
+        billing_method: 'usage_based',
+        billing_units: 1
+      }
+    }),
+    planFeature({
+      feature_id: storage.id, 
+      included: 10,    // 10GB included
+      price: {
+        amount: 200,   // $2 per additional GB
+        interval: 'month',
+        billing_method: 'usage_based',
+        billing_units: 1
+      }
+    })
+  ]
+});
+```
+
+</CodeGroup>
+
+**Best for:** Infrastructure platforms, hosting services, resource-metered applications
+
+### Linear Template
+**Use case:** SaaS tools with feature flags and usage limits  
+**Features:** Boolean features and flexible usage controls
+
+<CodeGroup>
+
+```ts Linear Template Structure  
+// Features
+export const issues = feature({
+  id: 'issues',
+  name: 'Issues', 
+  type: 'metered',
+  consumable: false
+});
+
+export const projects = feature({
+  id: 'projects',
+  name: 'Projects',
+  type: 'metered',
+  consumable: false  
+});
+
+export const apiAccess = feature({
+  id: 'api_access',
+  name: 'API Access',
+  type: 'boolean'
+});
+
+export const customFields = feature({
+  id: 'custom_fields',
+  name: 'Custom Fields',
+  type: 'boolean'
+});
+
+// Plans with boolean features
+export const standard = plan({
+  id: 'standard',
+  name: 'Standard',
+  price: {
+    amount: 800,       // $8 per seat
+    interval: 'month'
+  },
+  items: [
+    planFeature({
+      feature_id: issues.id
+      // Unlimited issues
+    }),
+    planFeature({
+      feature_id: projects.id,
+      included: 10
+    }),
+    planFeature({
+      feature_id: apiAccess.id
+    })
+  ]
+});
+
+export const plus = plan({
+  id: 'plus', 
+  name: 'Plus',
+  price: {
+    amount: 1400,      // $14 per seat
+    interval: 'month'
+  },
+  items: [
+    planFeature({
+      feature_id: issues.id
+    }),
+    planFeature({
+      feature_id: projects.id
+      // Unlimited projects
+    }),
+    planFeature({
+      feature_id: apiAccess.id
+    }),
+    planFeature({
+      feature_id: customFields.id
+    })
+  ]
+});
+```
+
+</CodeGroup>
+
+**Best for:** Project management tools, productivity SaaS, feature flag-driven applications
+
+## Using Templates
+
+### Interactive Template Selection
+
+Run `atmn init` to see the interactive template picker:
+
+```bash
+atmn init
+```
+
+The CLI will prompt you to:
+1. Choose your preferred template
+2. Customize plan names and pricing (optional)
+3. Set up initial configuration
+
+### Template Customization
+
+Each template can be customized during initialization:
+
+- **Plan Names**: Modify tier names (free → starter, pro → growth, etc.)
+- **Pricing**: Adjust base prices and usage rates
+- **Features**: Add or remove features from plans
+- **Limits**: Change included quantities and reset intervals
+
+### Template Structure
+
+All templates follow the same structure:
+
+```
+Generated Files:
+├── autumn.config.ts     # Main configuration
+└── .env                # API keys (if logged in)
+```
+
+## Customizing Templates
+
+After initialization, you can modify the generated configuration:
+
+### Add New Features
+
+<CodeGroup>
+
+```ts Adding a Boolean Feature
+export const sso = feature({
+  id: 'sso',
+  name: 'SSO Authentication', 
+  type: 'boolean'
+});
+
+// Add to enterprise plan
+export const enterprise = plan({
+  // ... existing config
+  items: [
+    // ... existing features
+    planFeature({
+      feature_id: sso.id
+    })
+  ]
+});
+```
+
+</CodeGroup>
+
+### Modify Pricing Models
+
+<CodeGroup>
+
+```ts Adding Tiered Pricing
+planFeature({
+  feature_id: apiCalls.id,
+  price: {
+    tiers: [
+      { to: 1000, amount: 2 },     // $0.02 for first 1000
+      { to: 10000, amount: 1.5 },  // $0.015 for next 9000  
+      { to: 'inf', amount: 1 }     // $0.01 for 10000+
+    ],
+    billing_method: 'usage_based',
+    interval: 'month'
+  }
+})
+```
+
+</CodeGroup>
+
+### Add Free Trials
+
+<CodeGroup>
+
+```ts Adding Free Trial
+export const pro = plan({
+  id: 'pro',
+  name: 'Professional',
+  free_trial: {
+    duration_length: 14,
+    duration_type: 'day',
+    card_required: true
+  },
+  // ... rest of config
+});
+```
+
+</CodeGroup>
+
+## Template Best Practices
+
+### Choosing the Right Template
+
+**OpenAI Template** when you have:
+- Variable cost per operation
+- Different service tiers (basic vs premium models)
+- Credit/token-based consumption
+
+**T3 Chat Template** when you have:
+- Per-user pricing (seats)
+- Usage limits per user
+- Team/organization billing
+
+**Railway Template** when you have:
+- Resource consumption (CPU, storage, bandwidth)
+- Infrastructure-as-a-Service model
+- Tiered resource pricing
+
+**Linear Template** when you have:
+- Feature-based differentiation
+- Boolean feature flags
+- Project/workspace limits
+
+### Modification Strategies
+
+1. **Start Simple**: Begin with the closest template
+2. **Iterate**: Use `atmn preview` to test changes locally
+3. **Sync Often**: Push changes with `atmn push` to test in sandbox
+4. **Validate**: Use data commands to verify billing behavior
+
+### Common Modifications
+
+<CodeGroup>
+
+```ts Add Rollover to Messages
+planFeature({
+  feature_id: messages.id,
+  included: 1000,
+  reset: { interval: 'month' },
+  rollover: {
+    max: 500,                    // Max 500 rollover
+    expiry_duration_type: 'month',
+    expiry_duration_length: 3    // Expires after 3 months
+  }
+})
+```
+
+```ts Add Maximum Purchase Limits
+planFeature({
+  feature_id: seats.id,
+  included: 10,
+  price: {
+    amount: 1000,
+    interval: 'month', 
+    billing_method: 'usage_based',
+    billing_units: 1,
+    max_purchase: 100            // Max 100 additional seats
+  }
+})
+```
+
+```ts Add Proration Rules
+planFeature({
+  feature_id: storage.id,
+  included: 50,
+  price: {
+    amount: 200,
+    interval: 'month',
+    billing_method: 'usage_based'
+  },
+  proration: {
+    on_increase: 'prorate',
+    on_decrease: 'refund_immediately'
+  }
+})
+```
+
+</CodeGroup>
+
+## Testing Templates
+
+### Local Preview
+
+Test your configuration without API calls:
+
+```bash
+atmn preview
+```
+
+### Sandbox Testing
+
+Push to sandbox for full testing:
+
+```bash
+atmn push
+atmn customers --headless  # Check customer creation
+atmn events --headless     # Monitor usage events
+```
+
+### Integration Testing
+
+Use the generated SDK types for type-safe integration:
+
+<CodeGroup>
+
+```ts Using Generated Types
+import { trackUsage, useCustomer } from '@useautumn/sdk';
+
+// Type-safe feature tracking
+await trackUsage('messages', 1);     // ✓ Valid feature ID
+await trackUsage('invalid', 1);      // ✗ TypeScript error
+
+// Type-safe customer data
+const { features, plans } = useCustomer();
+console.log(features.messages.usage); // ✓ Type-safe access
+```
+
+</CodeGroup>
+
+Templates provide a solid foundation for common pricing models while remaining fully customizable for your specific needs.

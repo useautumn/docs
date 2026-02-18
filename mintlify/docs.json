@@ -220,7 +220,18 @@
 
 					{
 						"group": "CLI",
-						"pages": ["api-reference/cli/config"]
+						"pages": [
+							"api-reference/cli/getting-started",
+							"api-reference/cli/authentication",
+							"api-reference/cli/config",
+							"api-reference/cli/push-pull",
+							"api-reference/cli/data",
+							"api-reference/cli/templates",
+							"api-reference/cli/sdk-types",
+							"api-reference/cli/ci-cd",
+							"api-reference/cli/commands",
+							"api-reference/cli/workflows"
+						]
 					},
 					{
 						"group": "Platform (Beta)",

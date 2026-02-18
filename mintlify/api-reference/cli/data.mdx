@@ -1,0 +1,436 @@
+---
+title: "Data Commands"
+description: "Browse customers, plans, features, and events - interactive exploration and headless data export"
+---
+
+The data commands provide powerful tools to explore and analyze your Autumn data. Each command offers both interactive browsing and headless export capabilities.
+
+## Customers
+
+Browse and inspect your customer data, subscriptions, and usage.
+
+### Basic Usage
+
+```bash
+atmn customers
+```
+
+Opens an interactive table interface for browsing customers with search, filtering, and pagination.
+
+### Command Options
+
+<ParamField body="--headless" type="flag">
+  Run in headless mode for scripting and automation
+</ParamField>
+
+<ParamField body="--page <n>" type="number" default="1">
+  Page number for pagination (headless mode)
+</ParamField>
+
+<ParamField body="--search <query>" type="string">
+  Search customers by name, email, or ID (headless mode)
+</ParamField>
+
+<ParamField body="--id <id>" type="string">
+  Get a specific customer by ID (headless mode)
+</ParamField>
+
+<ParamField body="--limit <n>" type="number" default="50">
+  Number of customers per page (headless mode)
+</ParamField>
+
+<ParamField body="--format <format>" type="enum" default="text">
+  Output format: `text`, `json`, `csv` (headless mode)
+</ParamField>
+
+### Interactive Mode
+
+The interactive interface provides:
+
+- **Rich Table Display**: Sortable columns with customer info, plans, and usage
+- **Live Search**: Filter customers in real-time
+- **Detailed View**: Press Enter to see full customer details
+- **Pagination**: Navigate through large customer lists
+- **Plan Information**: See active subscriptions and add-ons
+
+### Headless Mode Examples
+
+<CodeGroup>
+
+```bash List all customers
+atmn customers --headless --format json
+```
+
+```bash Search for specific customer
+atmn customers --headless --search "john@example.com" --format text
+```
+
+```bash Get customer by ID
+atmn customers --headless --id "cus_1234567890" --format json
+```
+
+```bash Export to CSV
+atmn customers --headless --limit 1000 --format csv > customers.csv
+```
+
+</CodeGroup>
+
+## Plans/Products
+
+Browse and inspect your pricing plans and product configurations.
+
+### Basic Usage
+
+```bash
+atmn plans
+# or
+atmn products
+```
+
+Both commands are aliases and provide identical functionality.
+
+### Command Options
+
+<ParamField body="--headless" type="flag">
+  Run in headless mode for scripting and automation
+</ParamField>
+
+<ParamField body="--page <n>" type="number" default="1">
+  Page number for pagination (headless mode)
+</ParamField>
+
+<ParamField body="--search <query>" type="string">
+  Search plans by name or ID (headless mode)
+</ParamField>
+
+<ParamField body="--id <id>" type="string">
+  Get a specific plan by ID (headless mode)
+</ParamField>
+
+<ParamField body="--limit <n>" type="number" default="50">
+  Number of plans per page (headless mode)
+</ParamField>
+
+<ParamField body="--format <format>" type="enum" default="text">
+  Output format: `text`, `json`, `csv` (headless mode)
+</ParamField>
+
+<ParamField body="--include-archived" type="flag">
+  Include archived plans in the results
+</ParamField>
+
+### Interactive Features
+
+- **Plan Overview**: See pricing, features, and customer counts
+- **Feature Breakdown**: View included features and pricing rules
+- **Customer Analytics**: See how many customers are on each plan
+- **Version History**: Browse different versions of plans
+- **Archive Status**: Filter between active and archived plans
+
+### Headless Examples
+
+<CodeGroup>
+
+```bash List all active plans
+atmn plans --headless --format json
+```
+
+```bash Include archived plans
+atmn plans --headless --include-archived --format csv
+```
+
+```bash Get specific plan details
+atmn plans --headless --id "pro" --format json
+```
+
+</CodeGroup>
+
+## Features
+
+Browse and inspect your feature definitions and configurations.
+
+### Basic Usage
+
+```bash
+atmn features
+```
+
+### Command Options
+
+<ParamField body="--headless" type="flag">
+  Run in headless mode for scripting and automation
+</ParamField>
+
+<ParamField body="--page <n>" type="number" default="1">
+  Page number for pagination (headless mode)
+</ParamField>
+
+<ParamField body="--search <query>" type="string">
+  Search features by name or ID (headless mode)
+</ParamField>
+
+<ParamField body="--id <id>" type="string">
+  Get a specific feature by ID (headless mode)
+</ParamField>
+
+<ParamField body="--limit <n>" type="number" default="50">
+  Number of features per page (headless mode)
+</ParamField>
+
+<ParamField body="--format <format>" type="enum" default="text">
+  Output format: `text`, `json`, `csv` (headless mode)
+</ParamField>
+
+<ParamField body="--include-archived" type="flag">
+  Include archived features in the results
+</ParamField>
+
+### Interactive Features
+
+- **Feature Types**: See boolean, metered, and credit system features
+- **Usage Analytics**: View usage patterns and limits
+- **Plan Usage**: See which plans include each feature
+- **Credit Mappings**: For credit system features, see cost mappings
+- **Dependencies**: Understand feature relationships
+
+### Headless Examples
+
+<CodeGroup>
+
+```bash List all features with types
+atmn features --headless --format json | jq '.[] | {id, name, type}'
+```
+
+```bash Find credit system features  
+atmn features --headless --format json | jq '.[] | select(.type == "credit_system")'
+```
+
+```bash Export feature definitions
+atmn features --headless --format csv > features.csv
+```
+
+</CodeGroup>
+
+## Events
+
+Browse and analyze usage events from your application.
+
+### Basic Usage
+
+```bash
+atmn events
+```
+
+### Command Options
+
+<ParamField body="--headless" type="flag">
+  Run in headless mode for scripting and automation
+</ParamField>
+
+<ParamField body="--page <n>" type="number" default="1">
+  Page number for pagination
+</ParamField>
+
+<ParamField body="--customer <id>" type="string">
+  Filter events by customer ID
+</ParamField>
+
+<ParamField body="--feature <id>" type="string">
+  Filter by feature ID (comma-separated for multiple)
+</ParamField>
+
+<ParamField body="--limit <n>" type="number" default="100">
+  Number of events per page
+</ParamField>
+
+<ParamField body="--time <range>" type="enum" default="7d">
+  Time range: `24h`, `7d`, `30d`, `90d`
+</ParamField>
+
+<ParamField body="--mode <mode>" type="enum" default="list">
+  View mode: `list` (individual events) or `aggregate` (summary stats)
+</ParamField>
+
+<ParamField body="--bin <size>" type="enum">
+  Bin size for aggregate mode: `hour`, `day`, `month`
+</ParamField>
+
+<ParamField body="--group-by <property>" type="string">
+  Group by property in aggregate mode (e.g., `customer_id`, `feature_id`)
+</ParamField>
+
+<ParamField body="--format <format>" type="enum" default="text">
+  Output format: `text`, `json`, `csv`
+</ParamField>
+
+### Interactive Mode Features
+
+**List Mode:**
+- **Event Stream**: Real-time view of usage events
+- **Rich Details**: Customer, feature, amount, timestamp
+- **Filtering**: Live filters for customer, feature, and time range
+- **Search**: Find specific events or patterns
+
+**Aggregate Mode:**
+- **Usage Charts**: Visual charts of usage patterns
+- **Time Series**: Usage trends over time
+- **Grouping**: Break down usage by customer, feature, or other dimensions
+- **Statistics**: Min, max, average, total usage
+
+### Headless Examples
+
+<CodeGroup>
+
+```bash Recent events for customer
+atmn events --headless --customer "cus_123" --time "24h" --format json
+```
+
+```bash Feature usage analysis
+atmn events --headless --feature "messages,api_calls" --mode aggregate --bin day --format csv
+```
+
+```bash Usage by customer (last 30 days)
+atmn events --headless --mode aggregate --time 30d --group-by customer_id --format json
+```
+
+```bash Export all events to CSV
+atmn events --headless --limit 10000 --format csv > events.csv
+```
+
+</CodeGroup>
+
+### Aggregate Mode Examples
+
+Aggregate mode is powerful for analytics:
+
+```bash
+# Daily usage totals for last week
+atmn events --headless --mode aggregate --bin day --time 7d --format json
+
+# Usage by feature over last month  
+atmn events --headless --mode aggregate --group-by feature_id --time 30d --format csv
+
+# Hourly usage patterns for specific customer
+atmn events --headless --mode aggregate --bin hour --customer "cus_123" --time 7d
+```
+
+## Data Export Workflows
+
+### Customer Analysis
+
+<CodeGroup>
+
+```bash Export customer list with plans
+atmn customers --headless --format csv > customers.csv
+
+# Get detailed customer data
+atmn customers --headless --format json > customers.json
+```
+
+```bash Find high-usage customers
+atmn events --headless --mode aggregate --group-by customer_id --time 30d --format json | \
+  jq 'sort_by(.total_usage) | reverse | .[0:10]'
+```
+
+</CodeGroup>
+
+### Usage Analytics
+
+<CodeGroup>
+
+```bash Feature usage report
+atmn events --headless --mode aggregate --group-by feature_id --time 30d --format csv > usage_report.csv
+```
+
+```bash Daily usage trends
+atmn events --headless --mode aggregate --bin day --time 30d --format json > daily_usage.json
+```
+
+</CodeGroup>
+
+### Plan Performance
+
+<CodeGroup>
+
+```bash Plan adoption analysis
+atmn customers --headless --format json | \
+  jq 'group_by(.plan_id) | map({plan: .[0].plan_id, customers: length})'
+```
+
+```bash Feature utilization by plan
+atmn plans --headless --format json > plans.json
+atmn events --headless --mode aggregate --group-by feature_id --format json > feature_usage.json
+```
+
+</CodeGroup>
+
+## Automation & Scripting
+
+### Monitoring Scripts
+
+Create monitoring dashboards with regular data exports:
+
+```bash
+#!/bin/bash
+# Daily usage monitoring script
+
+DATE=$(date +%Y-%m-%d)
+
+# Export daily metrics
+atmn events --headless --mode aggregate --bin day --time 1d --format json > "usage_${DATE}.json"
+atmn customers --headless --format csv > "customers_${DATE}.csv"
+
+# Alert on high usage
+TOTAL_USAGE=$(jq '.[] | .total_usage' "usage_${DATE}.json" | awk '{sum+=$1} END {print sum}')
+if (( $(echo "$TOTAL_USAGE > 10000" | bc -l) )); then
+  echo "Alert: High usage detected: $TOTAL_USAGE"
+fi
+```
+
+### Data Pipeline Integration
+
+Integrate with analytics platforms:
+
+```bash
+# Export to BigQuery-compatible CSV
+atmn events --headless --time 7d --format csv --limit 100000 | \
+  bq load --source_format=CSV dataset.events /dev/stdin
+
+# Send to webhook for real-time processing
+atmn events --headless --time 1h --format json | \
+  curl -X POST -H "Content-Type: application/json" -d @- https://webhook.example.com/events
+```
+
+## Environment-Specific Data
+
+Remember that data is environment-specific:
+
+<CodeGroup>
+
+```bash Sandbox data (default)
+atmn customers --headless --format json
+```
+
+```bash Production data  
+atmn customers --prod --headless --format json
+```
+
+```bash Local development data
+atmn customers --local --headless --format json
+```
+
+</CodeGroup>
+
+<Warning>
+**Production Data**: Be cautious when exporting production data. Ensure you comply with privacy policies and data protection regulations when handling customer information.
+</Warning>
+
+## Performance Tips
+
+For large datasets:
+
+- Use `--limit` to control memory usage
+- Export in batches using `--page` parameter
+- Use `--format csv` for better performance with large datasets
+- Filter early with `--customer`, `--feature`, or `--time` flags
+- Use aggregate mode for summary statistics instead of raw events
