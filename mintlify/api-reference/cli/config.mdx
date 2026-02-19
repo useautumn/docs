@@ -1,329 +1,363 @@
 ---
-title: "Product Config"
-description: "Create your pricing plans and products via our CLI"
+title: "Configuration reference"
+description: "Define features, plans, and pricing in autumn.config.ts"
 ---
 
-Products can be created via our dashboard, or via our CLI defined in an `autumn.config.ts` file.
+Your `autumn.config.ts` file is the source of truth for your pricing. It exports features and plans using helper functions from the `atmn` package.
 
-You can export `features` and `products` from this config file, and push them to Autumn using `npx atmn push`
+```ts autumn.config.ts
+import { feature, plan, planFeature } from 'atmn';
 
-<Note>
-  CLI functionality is in beta. Please let us know any issues you run into and
-  we'll resolve them ASAP.
-</Note>
+export const messages = feature({ ... });
+export const pro = plan({ ... });
+```
 
-## Feature
+Push changes with `atmn push`, or pull existing config with `atmn pull`.
 
-The features of your application that can be gated depending on pricing tier. These will be used to define your products.
+## Features
+
+Features define what can be gated, metered, or billed in your app.
+
+### `feature(config)`
 
 <ParamField body="id" type="string" required>
-  The ID of the feature that will be used via Autumn's APIs.
+  Unique identifier used in API calls (`check`, `track`, etc).
 </ParamField>
 
-<ParamField body="name" type="string">
-  The display name of the feature
+<ParamField body="name" type="string" required>
+  Display name shown in the dashboard and billing UI.
 </ParamField>
 
-<ParamField body="type" type="enum">
-  One of `single_use`, `continuous_use`, `credit_system` or `boolean`. See below
-  for examples.
+<ParamField body="type" type="enum" required>
+  `"boolean"` | `"metered"` | `"credit_system"`
 </ParamField>
 
-### Feature Types
+<ParamField body="consumable" type="boolean">
+  **Required for `metered` features.** 
+  - `true` -- usage is consumed (messages, API calls, credits)
+  - `false` -- usage is ongoing (seats, storage, workspaces)
+</ParamField>
 
-#### Single-use meter
+<ParamField body="credit_schema" type="array">
+  **Required for `credit_system` features.** Maps metered features to credit costs.
+  
+  Each entry: `{ metered_feature_id: string, credit_cost: number }`
+</ParamField>
 
-Single-use features are those that can be used-up and replenished. They may have a reset interval (eg 200 per month).
+### Feature types
 
-Examples: AI messages, credits, API calls.
+**Boolean** -- simple on/off flag:
 
 ```ts
-export const messages = feature({
-  id: "messages",
-  name: "Messages",
-  type: "single_use",
+export const sso = feature({
+  id: 'sso',
+  name: 'SSO Authentication',
+  type: 'boolean',
 });
 ```
 
-#### Continuous-use meter
-
-Continuous-use features are those used on an ongoing basis. They do not reset periodically and may be prorated when billed for.
-
-Examples: Seats, storage, workspaces.
+**Metered, consumable** -- used up and replenished (messages, API calls):
 
 ```ts
 export const messages = feature({
-  id: "seats",
-  name: "Seats",
-  type: "continuous_use",
+  id: 'messages',
+  name: 'Messages',
+  type: 'metered',
+  consumable: true,
 });
 ```
 
-#### Credit system
-
-Use a credit system when you have multiple metered features that each cost a different amount.
-
-Eg, if a basic model message costs 1 credit, and a premium message costs 5 credits.
-
-<Tip>
-  If you set the price per credit to be 1 cent when you create your products,
-  these can be used as monetary credits (eg 0.05 USD per premium message)
-</Tip>
+**Metered, non-consumable** -- ongoing usage (seats, storage):
 
 ```ts
+export const seats = feature({
+  id: 'seats',
+  name: 'Seats',
+  type: 'metered',
+  consumable: false,
+});
+```
+
+**Credit system** -- maps multiple metered features to credit costs:
+
+```ts
+export const basicModel = feature({
+  id: 'basic_model',
+  name: 'Basic Model',
+  type: 'metered',
+  consumable: true,
+});
+
+export const premiumModel = feature({
+  id: 'premium_model',
+  name: 'Premium Model',
+  type: 'metered',
+  consumable: true,
+});
+
 export const credits = feature({
-  id: "ai_credits",
-  name: "AI Credits",
-  type: "credit_system",
+  id: 'credits',
+  name: 'AI Credits',
+  type: 'credit_system',
   credit_schema: [
-    {
-      metered_feature_id: basicMessage.id,
-      credit_cost: 1,
-    },
-    {
-      metered_feature_id: premiumMessage.id,
-      credit_cost: 5,
-    },
+    { metered_feature_id: basicModel.id, credit_cost: 1 },
+    { metered_feature_id: premiumModel.id, credit_cost: 5 },
   ],
 });
 ```
 
-#### Boolean
+<Tip>
+If you set the price per credit to 1 cent, credits become monetary credits (eg, 5 credits = $0.05 per premium message).
+</Tip>
 
-A feature flag that can be enabled or disabled.
+## Plans
 
-```ts
-export const sso = feature({
-  id: "sso",
-  name: "SSO Auth",
-  type: "boolean",
-});
-```
+Plans combine features with pricing to create your subscription tiers, add-ons, and top-ups.
 
-## Products
-
-Products are made up of features and prices, and define your pricing plans. You should create products for any free plans, paid plans and any add-ons / top-up products.
+### `plan(config)`
 
 <ParamField body="id" type="string" required>
-  The ID of the product that will be used via Autumn's APIs.
+  Unique identifier used in checkout and subscription APIs.
 </ParamField>
 
-<ParamField body="name" type="string">
-  The display name of the product.
+<ParamField body="name" type="string" required>
+  Display name shown in pricing tables and billing.
 </ParamField>
 
-<ParamField body="is_default" type="boolean">
-  Whether the product should be attached by default to new customers
-</ParamField>
-
-<ParamField body="is_add_on" type="boolean">
-  Whether the product is an add-on and can be purchased alongside other products
-  (as opposed to trigger upgrade/downgrade flows)
+<ParamField body="price" type="object">
+  Base subscription price:
+  - `amount: number` -- price amount (eg, `20` for $20)
+  - `interval: string` -- `"month"` | `"quarter"` | `"semi_annual"` | `"year"` | `"one_off"`
 </ParamField>
 
 <ParamField body="items" type="array">
-  An array of objects that define the product. Can be one of:
-  
-  - `featureItem`: a feature to grant access to when the product is enabled
-  - `priceItem`: a fixed price to pay for the product
-  - `pricedFeatureItem`: a feature that has a price associated based on usage or quantity purchased.
-
+  Array of `planFeature()` objects defining what's included.
 </ParamField>
 
-### Item Types
-
-Define your products using a combination of the 3 item types below.
-
-#### Feature Item
-
-A feature that is included with the product.
-
-<ParamField body="feature_id" type="string">
-  Feature ID for the product item
+<ParamField body="auto_enable" type="boolean" default="false">
+  Automatically assign this plan to new customers. Typically used for free plans.
 </ParamField>
 
-<ParamField body="included_usage" type="number">
-  How much usage is included with this item. This acts as a usage limit. Not
-  applicable for boolean features.
+<ParamField body="add_on" type="boolean" default="false">
+  Allow this plan to be purchased alongside other plans (instead of replacing them).
+</ParamField>
+
+<ParamField body="free_trial" type="object">
+  Free trial before billing starts:
+  - `duration_length: number` -- eg, `14`
+  - `duration_type: string` -- `"day"` | `"month"` | `"year"`
+  - `card_required: boolean` -- whether a card is needed to start the trial
+</ParamField>
+
+<ParamField body="group" type="string">
+  Group related plans together. Plans in the same group replace each other on upgrade/downgrade.
+</ParamField>
+
+## Plan features
+
+Plan features define what each plan includes -- usage limits, pricing, and billing behavior.
+
+### `planFeature(config)`
+
+<ParamField body="feature_id" type="string" required>
+  The `id` of the feature to include.
+</ParamField>
+
+<ParamField body="included" type="number">
+  Amount included for free. Omit for boolean features.
+</ParamField>
+
+<ParamField body="unlimited" type="boolean">
+  Grant unlimited usage of this feature.
+</ParamField>
+
+<ParamField body="reset" type="object">
+  How often the included amount resets:
+  - `interval: string` -- `"hour"` | `"day"` | `"week"` | `"month"` | `"quarter"` | `"semi_annual"` | `"year"`
+  - `interval_count: number` -- defaults to `1`
+</ParamField>
+
+<ParamField body="price" type="object">
+  Pricing for usage beyond the included amount. See [pricing patterns](#pricing-patterns) below.
+</ParamField>
+
+<ParamField body="proration" type="object">
+  How to handle mid-cycle quantity changes:
+  - `on_increase:` `"prorate"` | `"charge_immediately"`
+  - `on_decrease:` `"prorate"` | `"refund_immediately"` | `"no_action"`
+</ParamField>
+
+<ParamField body="rollover" type="object">
+  Carry unused balance forward:
+  - `max: number` -- maximum rollover amount
+  - `expiry_duration_type:` `"month"` | `"forever"`
+  - `expiry_duration_length: number` -- ignored if type is `"forever"`
+</ParamField>
+
+### Pricing patterns
+
+The `price` object on a plan feature supports different billing models:
+
+**Usage-based** -- charge based on actual usage:
+
+```ts
+planFeature({
+  feature_id: seats.id,
+  included: 5,
+  price: {
+    amount: 10,
+    interval: 'month',
+    billing_method: 'usage_based',
+    billing_units: 1,
+  },
+})
+```
+
+**Prepaid** -- customer buys a fixed quantity upfront:
+
+```ts
+planFeature({
+  feature_id: credits.id,
+  price: {
+    amount: 5,
+    billing_units: 100,
+    billing_method: 'prepaid',
+  },
+})
+```
+
+**Tiered** -- price changes based on usage volume:
+
+```ts
+planFeature({
+  feature_id: apiCalls.id,
+  price: {
+    tiers: [
+      { to: 1000, amount: 0.01 },
+      { to: 10000, amount: 0.008 },
+      { to: 'inf', amount: 0.005 },
+    ],
+    billing_method: 'usage_based',
+    interval: 'month',
+  },
+})
+```
+
+#### Price fields
+
+<ParamField body="amount" type="number">
+  Price per `billing_units`. Mutually exclusive with `tiers`.
+</ParamField>
+
+<ParamField body="tiers" type="array">
+  Tiered pricing. Each entry: `{ to: number | "inf", amount: number }`. Mutually exclusive with `amount`.
+</ParamField>
+
+<ParamField body="billing_method" type="enum" required>
+  `"usage_based"` | `"prepaid"`
 </ParamField>
 
 <ParamField body="interval" type="enum">
-
-`month` | `hour` | `day` | `week` | `quarter` | `semi_annual` | `year`
-
-How often the feature's balance should be reset back to the included_usage.
-Set as `null` for one-time grants.
-
+  `"week"` | `"month"` | `"quarter"` | `"semi_annual"` | `"year"`. Omit for one-time charges. Not needed if the plan feature has a top-level `reset`.
 </ParamField>
 
-<ParamField body="entity_feature_id" type="string">
-  The entity feature to assign this item to: eg, seats. This will set a usage
-  limit at the entity level (eg, 10 message per seat per month)
+<ParamField body="billing_units" type="number" default="1">
+  Units per price. Eg, $5 per 100 credits = `amount: 5, billing_units: 100`.
 </ParamField>
 
-**Example**
+<ParamField body="max_purchase" type="number">
+  Maximum quantity that can be purchased.
+</ParamField>
 
-```ts
-export const free = product({
-  id: "free",
-  name: "Free",
-  is_default: true,
+## Full example
+
+A complete config with a free plan, a paid plan with a trial, and a credits top-up add-on:
+
+```ts autumn.config.ts
+import { feature, plan, planFeature } from 'atmn';
+
+// Features
+export const messages = feature({
+  id: 'messages',
+  name: 'Messages',
+  type: 'metered',
+  consumable: true,
+});
+
+export const seats = feature({
+  id: 'seats',
+  name: 'Seats',
+  type: 'metered',
+  consumable: false,
+});
+
+export const sso = feature({
+  id: 'sso',
+  name: 'SSO',
+  type: 'boolean',
+});
+
+// Plans
+export const free = plan({
+  id: 'free',
+  name: 'Free',
+  auto_enable: true,
   items: [
-    // 5 messages per month
-    featureItem({
+    planFeature({
       feature_id: messages.id,
-      included_usage: 5,
-      interval: "month",
+      included: 5,
+      reset: { interval: 'month' },
     }),
-    // 3 seats (no reset)
-    featureItem({
+    planFeature({
       feature_id: seats.id,
-      included_usage: 3,
+      included: 1,
     }),
-    // SSO Auth (boolean)
-    featureItem({
+  ],
+});
+
+export const pro = plan({
+  id: 'pro',
+  name: 'Pro',
+  price: { amount: 20, interval: 'month' },
+  free_trial: {
+    duration_length: 14,
+    duration_type: 'day',
+    card_required: true,
+  },
+  items: [
+    planFeature({
+      feature_id: messages.id,
+      included: 1000,
+      reset: { interval: 'month' },
+    }),
+    planFeature({
+      feature_id: seats.id,
+      included: 5,
+      price: {
+        amount: 10,
+        interval: 'month',
+        billing_method: 'usage_based',
+        billing_units: 1,
+      },
+    }),
+    planFeature({
       feature_id: sso.id,
     }),
   ],
 });
-```
 
-#### Price Item
-
-A fixed price to be charged with the product: either one-time or a subscription.
-
-<ParamField body="price" type="number">
-  A fixed amount to charge for this product
-</ParamField>
-
-<ParamField body="interval" type="enum">
-
-`month` | `quarter` | `semi_annual` | `year`
-
-How often this price should be billed to the customer. Set as `null` for
-one-time prices.
-
-</ParamField>
-
-**Example**
-
-```ts
-export const pro = product({
-  id: "pro",
-  name: "Pro",
+export const topUp = plan({
+  id: 'top_up',
+  name: 'Message Top-Up',
+  add_on: true,
   items: [
-    // 20 USD per month
-    priceItem({
-      price: 20,
-      interval: "month",
-    }),
-    // 5 USD (one-time price)
-    priceItem({
-      price: 5,
-    }),
-  ],
-});
-```
-
-#### Priced Feature Item
-
-A price to be charged based on the usage or prepaid quantity of a feature.
-
-<ParamField body="feature_id" type="string">
-  Feature ID for the product item
-</ParamField>
-
-<ParamField body="price" type="number">
-  A fixed amount to charge per `billing_units` of this feature.
-</ParamField>
-
-<ParamField body="billing_units" type="number">
-  The package quantity that the price is charged in (eg 5 USD for 100 messages)
-</ParamField>
-
-<ParamField body="usage_model" type="enum" default="pay_per_use">
-
-`prepaid` | `pay_per_use`
-
-Whether the feature is charged based on how much is used (`pay_per_use`), or if a fixed quantity is purchased upfront (`prepaid`).
-
-For continuous use meters that are `pay_per_use` (eg paying per seat used), you can define billing behavior in the dashboard (eg, whether to bill immediately or at the end of the cycle).
-
-</ParamField>
-
-<ParamField body="included_usage" type="number">
-  How much usage is included with this item.
-</ParamField>
-
-<ParamField body="interval" type="enum">
-
-`month` | `quarter` | `semi_annual` | `year`
-
-How often this price should be billed to the customer. Set as `null` for
-one-time prices.
-
-</ParamField>
-
-<ParamField body="entity_feature_id" type="string">
-  The entity feature to assign this item to: eg, seats. This will set a usage
-  price at the entity level (eg, 0.01 USD per message per seat per month)
-</ParamField>
-
-**Example**
-
-```ts
-export const pro = product({
-  id: "pro",
-  name: "Pro",
-  items: [
-    // 100 messages included
-    // then, 0.01 USD per 10 messages
-    pricedFeatureItem({
+    planFeature({
       feature_id: messages.id,
-      included_usage: 100,
-      price: 0.01,
-      billing_units: 10,
-    }),
-  ],
-});
-```
-
-```ts
-export const team = product({
-  id: "team",
-  name: "team",
-  items: [
-    // 20 USD per seat per month
-    // paying per seat used
-    pricedFeatureItem({
-      feature_id: seats.id,
-      price: 20,
-      interval: "month",
-    }),
-    // 10 USD per seat per month
-    // paying upfront for a fixed quantity
-    pricedFeatureItem({
-      feature_id: seats.id,
-      price: 10,
-      interval: "month",
-      usage_model: "prepaid",
-    }),
-  ],
-});
-```
-
-```ts
-export const topUp = product({
-  id: "top_up",
-  name: "Credit top up",
-  items: [
-    // 5 USD per 100 credits
-    // one-time payment (+ credits don't reset periodically)
-    pricedFeatureItem({
-      feature_id: credits.id,
-      price: 5,
-      billing_units: 100,
-      usage_model: "prepaid",
+      price: {
+        amount: 5,
+        billing_units: 100,
+        billing_method: 'prepaid',
+      },
     }),
   ],
 });
