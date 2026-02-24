@@ -1,0 +1,100 @@
+---
+title: "Global Config"
+description: "Persistent CLI settings with atmn config"
+---
+
+The `atmn config` command lets you view and manage persistent CLI settings that apply across all projects on your machine.
+
+## Usage
+
+```bash
+atmn config                              # Show help and config file location
+atmn config --global                     # Same as above
+atmn config --global <key>               # Read a setting
+atmn config --global <key> <value>       # Write a setting
+```
+
+## Config File Location
+
+Running `atmn config` (with or without `--global`) shows the full path to your config file:
+
+```bash
+atmn config
+
+# Usage: atmn config --global <key> [value]
+# Location: /Users/you/Library/Preferences/atmn/config.json
+#
+# Supported keys:
+#   noDeclarationFile
+```
+
+The config file location follows OS conventions:
+
+| OS | Path |
+|------|------|
+| macOS | `~/Library/Preferences/atmn/config.json` |
+| Linux | `~/.config/atmn/config.json` (or `$XDG_CONFIG_HOME`) |
+| Windows | `%APPDATA%\atmn\config.json` |
+
+## Available Settings
+
+### `noDeclarationFile`
+
+**Type:** `boolean` &nbsp; **Default:** `false`
+
+Skip generating `@useautumn-sdk.d.ts` when running `atmn pull`. Useful if you don't use the TypeScript SDK or manage types separately.
+
+```bash
+# Enable globally (skip .d.ts generation)
+atmn config --global noDeclarationFile true
+
+# Disable (restore default behavior)
+atmn config --global noDeclarationFile false
+
+# Check current value
+atmn config --global noDeclarationFile
+```
+
+<Note>
+The `--no-declaration-file` CLI flag on `atmn pull` always takes priority over this setting. The global config acts as a default when the flag isn't passed.
+</Note>
+
+## Priority Order
+
+When the CLI resolves a setting, it checks in this order:
+
+1. **CLI flag** — e.g. `--no-declaration-file` on `atmn pull`
+2. **Global config** — set via `atmn config --global`
+3. **Default value** — built-in default
+
+This means you can set a global preference and still override it per-command when needed.
+
+## Examples
+
+<CodeGroup>
+
+```bash Set and verify
+# Set a preference
+atmn config --global noDeclarationFile true
+
+# Verify it
+atmn config --global noDeclarationFile
+# true
+
+# Pull without generating .d.ts (uses global setting)
+atmn pull
+
+# Override for a single run
+atmn pull --declaration-file
+```
+
+```bash Check config location
+atmn config --global
+# Usage: atmn config --global <key> [value]
+# Location: /Users/you/Library/Preferences/atmn/config.json
+#
+# Supported keys:
+#   noDeclarationFile
+```
+
+</CodeGroup>
