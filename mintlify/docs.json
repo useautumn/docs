@@ -11,6 +11,10 @@
 		"default": "system",
 		"strict": false
 	},
+	"banner": {
+		"content": "[Autumn's V2 API](https://docs.atmn.sh) is live in beta. We recommend using this version.",
+		"dismissible": true
+	},
 	"contextual": {
 		"options": ["copy", "cursor", "view"]
 	},
@@ -146,18 +150,18 @@
 						]
 					}
 				]
-		},
-		{
-			"tab": "CLI",
-			"icon": "terminal",
-			"pages": [
-				"api-reference/cli/getting-started",
-				"api-reference/cli/config",
-				"api-reference/cli/commands"
-			]
-		},
-		{
-			"tab": "API Reference",
+			},
+			{
+				"tab": "CLI",
+				"icon": "terminal",
+				"pages": [
+					"api-reference/cli/getting-started",
+					"api-reference/cli/config",
+					"api-reference/cli/commands"
+				]
+			},
+			{
+				"tab": "API Reference",
 				"icon": "rectangle-terminal",
 				"groups": [
 					{
@@ -227,7 +231,7 @@
 						]
 					},
 
-				{
+					{
 						"group": "Platform (Beta)",
 						"pages": [
 							"api-reference/platform/overview",
